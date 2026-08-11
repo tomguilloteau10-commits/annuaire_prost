@@ -9,13 +9,19 @@ const SENSITIVE_KEY_PATTERN =
 
 const REDACTED = "[redacted]";
 
-function redact(value: unknown, seen = new WeakSet<object>()): unknown {
+/**
+ * Exportée pour être réutilisée ailleurs qu'au moment du log — notamment
+ * par modules/moderation/audit-log.service.ts avant de persister
+ * `AuditLog.metadata` : même liste de champs sensibles, même garde-fou,
+ * un seul endroit à maintenir.
+ */
+export function redactSensitiveFields(value: unknown, seen = new WeakSet<object>()): unknown {
   if (value === null || typeof value !== "object") return value;
   if (seen.has(value)) return "[circular]";
   seen.add(value);
 
   if (Array.isArray(value)) {
-    return value.map((item) => redact(item, seen));
+    return value.map((item) => redactSensitiveFields(item, seen));
   }
 
   const output: Record<string, unknown> = {};
@@ -23,7 +29,7 @@ function redact(value: unknown, seen = new WeakSet<object>()): unknown {
     if (SENSITIVE_KEY_PATTERN.test(key)) {
       output[key] = REDACTED;
     } else {
-      output[key] = redact(val, seen);
+      output[key] = redactSensitiveFields(val, seen);
     }
   }
   return output;
@@ -32,7 +38,7 @@ function redact(value: unknown, seen = new WeakSet<object>()): unknown {
 type LogFields = Record<string, unknown> | undefined;
 
 function emit(level: "info" | "warn" | "error" | "debug", message: string, fields?: LogFields) {
-  const safeFields = fields ? redact(fields) : undefined;
+  const safeFields = fields ? redactSensitiveFields(fields) : undefined;
   // eslint-disable-next-line no-console -- seul point autorisé à écrire sur console.*
   console[level](JSON.stringify({ level, message, ...( safeFields ? { fields: safeFields } : {} ), timestamp: new Date().toISOString() }));
 }

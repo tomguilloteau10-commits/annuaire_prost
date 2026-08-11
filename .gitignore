@@ -29,3 +29,6 @@ coverage/
 
 # prisma
 prisma/dev.db
+
+# typescript
+*.tsbuildinfo

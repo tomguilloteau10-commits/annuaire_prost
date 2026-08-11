@@ -102,7 +102,7 @@ model VerificationRecord {
   provider               User                @relation(fields: [providerId], references: [id], onDelete: Cascade)
   verificationProvider   String // "mock" | "sumsub" | "veriff" | "pxl_vision" | "swiss_eid"
   externalVerificationId String // identifiant opaque renvoyé par le prestataire externe
-  isAdult                Boolean
+  isAdult                Boolean? // null tant que status est PENDING/IN_PROGRESS
   documentType            String? // ex: "passport", "id_card" — type seulement, jamais le numéro
   issuingCountry          String? // code ISO du pays émetteur
   status                  VerificationStatus @default(PENDING)
@@ -216,7 +216,7 @@ model Media {
   id              String          @id @default(cuid())
   profileId       String
   profile         ProviderProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  storageKey      String // clé interne au MediaStorage, jamais une URL publique directe
+  storageKey      String          @unique // clé interne au MediaStorage, jamais une URL publique directe
   status          MediaStatus     @default(PENDING)
   position        Int             @default(0)
   moderatedById   String?

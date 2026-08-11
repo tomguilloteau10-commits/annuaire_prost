@@ -129,11 +129,15 @@ champs sensibles (téléphone, email, adresse, date de naissance, documents).
 
 ## État du projet
 
-Ce dépôt pose l'**ossature** : configuration, Docker Compose, schéma de
-base et migrations, authentification (sessions, RBAC, CSRF, rate limiting
-de base), middleware (en-têtes de sécurité, géo-restriction stub), squelette
-i18n. Les abstractions métier (`VerificationProvider`, `MediaStorage`,
-`ModerationQueue`, entitlements), les parcours complets
-(prestataire → vérification → profil → modération → publication →
-affichage public) et le seed synthétique de démonstration sont les étapes
-suivantes — voir `docs/ARCHITECTURE.md`.
+- **Ossature** (fait) : configuration, Docker Compose, schéma de base et
+  migrations, authentification (sessions, RBAC, CSRF, rate limiting de
+  base), middleware (en-têtes de sécurité, géo-restriction stub),
+  squelette i18n.
+- **Abstractions** (fait) : `VerificationProvider` (+ `MockVerificationProvider`),
+  `MediaStorage` (+ stockage local avec URLs signées), `ModerationQueue`
+  (dérivée des statuts, décisions avec raison obligatoire), entitlements
+  (lecture typée des plans). Voir `docs/ARCHITECTURE.md`.
+- **À venir** : les parcours complets (prestataire → vérification → profil
+  → modération → publication → affichage public), les pages d'admin
+  (modération, taxonomies, audit log), et le seed synthétique de démo
+  (2-3 profils fictifs).

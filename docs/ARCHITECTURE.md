@@ -21,13 +21,23 @@ quel.
   `MODERATOR` < `ADMIN`).
 - `modules/retention/` : politique de rétention/purge data-driven (table
   `DataRetentionPolicy`), consommée par `scripts/purge-expired-data.ts`.
-- `modules/verification/`, `modules/media/`, `modules/moderation/`,
-  `modules/profiles/`, `modules/entitlements/`, `modules/taxonomies/` :
-  **à venir** (étapes "abstractions" et "parcours") — les interfaces
-  (`VerificationProvider`, `MediaStorage`) et leurs implémentations bêta
-  (mock, stockage local) y seront posées avant tout code de parcours
-  utilisateur, pour que rien ne dépende directement d'un détail
-  d'implémentation remplaçable.
+- `modules/verification/` : interface `VerificationProvider`
+  (`types.ts`), implémentation bêta `MockVerificationProvider`, service
+  d'orchestration DB ↔ provider (`verification.service.ts`) et factory
+  `getVerificationProvider()` (`index.ts`) — le seul endroit qui lit
+  `VERIFICATION_PROVIDER` pour choisir l'implémentation.
+- `modules/media/` : interface `MediaStorage` (`types.ts`),
+  implémentation bêta `LocalMediaStorage` (disque local, URLs signées
+  HMAC courte durée), service métier (`media.service.ts`, gère aussi la
+  limite de photos par plan) et factory `getMediaStorage()` (`index.ts`).
+- `modules/moderation/` : `moderation-queue.service.ts` (la file est
+  dérivée des statuts `PENDING`/`PENDING_REVIEW`, pas une table à part) et
+  `audit-log.service.ts`.
+- `modules/entitlements/` : lecture typée (zod) de `Plan.features`,
+  helpers comme `canUploadMorePhotos()`.
+- `modules/profiles/`, `modules/taxonomies/` : **à venir** (étape
+  "parcours") — profil public, révélation de contact, lecture des
+  taxonomies pour les filtres.
 
 ## Points de branchement futurs
 

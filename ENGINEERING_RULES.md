@@ -31,6 +31,17 @@ Mise en œuvre :
   (`VerificationResult`) que toute implémentation de `VerificationProvider`
   (y compris un futur Sumsub/Veriff/PXL Vision/e-ID suisse) doit respecter —
   il n'a physiquement pas de champ pour transporter un document.
+- `src/modules/verification/mock-provider.ts` : implémentation bêta —
+  `startVerification` ne prend qu'un `providerId` en entrée, aucune image ni
+  document n'y transite, y compris dans le stockage en mémoire interne.
+- `src/modules/verification/verification.service.ts` : orchestration
+  DB ↔ provider ; `hasPassedAdultVerification()` est la seule fonction qui
+  fait autorité sur la question « cette annonceuse a-t-elle passé la
+  vérification ? », réutilisée par `modules/moderation` avant toute
+  publication (voir contrainte #2).
+- **Test automatisé** : `tests/modules/verification/mock-provider.test.ts`
+  vérifie au runtime qu'aucun champ interdit n'apparaît dans un résultat
+  réellement renvoyé par le provider bêta.
 - **Test automatisé** : `tests/invariants/no-forbidden-fields-in-schema.test.ts`
   lit `prisma/schema.prisma` comme texte et échoue si un champ nommé
   `dateOfBirth`, `birthDate`, `documentNumber`, `documentImage`,
@@ -118,9 +129,24 @@ Les photos ne sont accessibles que via des URLs signées à durée de vie
 courte. Un média non modéré (`Media.status !== APPROVED`) est inaccessible
 publiquement, même avec une URL valide.
 
-Mise en œuvre : `src/modules/media/types.ts` (interface `MediaStorage`,
-la génération d'URL signée est le seul chemin de lecture) ; test
-`tests/invariants/unmoderated-media-inaccessible.test.ts`.
+Mise en œuvre :
+
+- `src/modules/media/types.ts` : interface `MediaStorage` — la génération
+  d'URL signée est le seul chemin de lecture prévu par le contrat.
+- `src/modules/media/media.service.ts` → `getPublicPhotoUrl()` : seule
+  fonction autorisée à appeler `storage.getSignedUrl()`, et uniquement si
+  `Media.status === "APPROVED"`. Aucun autre chemin de code ne génère
+  d'URL de média.
+- `src/app/api/media/serve/route.ts` : pour le stockage local, double
+  vérification à chaque requête — signature/expiration du jeton, PUIS
+  statut de modération en base — avant de servir le fichier. Documenté
+  comme défense en profondeur spécifique au stockage local : un backend S3
+  s'appuierait uniquement sur la vérification au moment de la génération
+  de l'URL (voir commentaire dans `modules/media/types.ts`).
+- Test `tests/modules/media/local-storage.test.ts` couvre la signature/
+  expiration des jetons (unitaire, sans DB) ; le test d'invariant complet
+  avec base de données (`tests/invariants/unmoderated-media-inaccessible.test.ts`)
+  reste à écrire à l'étape "tests d'invariants".
 
 ## 7. Toute décision automatique passe par un humain
 
@@ -128,6 +154,18 @@ Aucune suspension/rejet de profil ou de média entièrement automatisé : le
 système signale et met en file d'attente (`ModerationQueue`), un humain
 décide. Chaque action de modération produit une raison et est journalisée
 (`ModerationAction`, `AuditLog`).
+
+Mise en œuvre : `src/modules/moderation/moderation-queue.service.ts` —
+`decideOnProfile()`/`decideOnMedia()` exigent un `moderatorId` et une
+`reason` non vide (`ModerationReasonRequiredError` sinon), et sont les
+seules fonctions habilitées à faire passer un profil à `PUBLISHED` ou un
+média à `APPROVED`. `decideOnProfile()` revérifie
+`hasPassedAdultVerification()` avant toute approbation — une décision
+humaine positive ne suffit jamais seule si la vérification 18+ n'est plus
+valide (contrainte #2), même si l'UI de modération ne devrait présenter
+que des profils déjà vérifiés. `audit-log.service.ts` assainit
+`metadata` avec la même liste de champs sensibles que `lib/logger.ts`
+avant d'écrire dans `AuditLog`.
 
 ## 8. Localisation approximative
 
