@@ -10,7 +10,10 @@
     "login": "Accedi",
     "register": "Registrati",
     "dashboard": "Pannello",
-    "admin": "Amministrazione",
+    "moderation": "Moderazione",
+    "taxonomies": "Tassonomie",
+    "auditLog": "Registro di controllo",
+    "geoSettings": "Restrizione geografica",
     "logout": "Esci"
   },
   "home": {
@@ -32,13 +35,156 @@
       "ONLINE": "Online",
       "AWAY": "Assente",
       "OFFLINE": "Offline"
-    }
+    },
+    "noPhoto": "Nessuna foto",
+    "contactRateLimited": "Troppe richieste — riprova più tardi.",
+    "contactError": "Impossibile mostrare il contatto al momento."
   },
   "auth": {
     "loginTitle": "Accedi",
     "registerTitle": "Crea un account fornitrice",
     "emailLabel": "Email",
     "passwordLabel": "Password",
-    "submit": "Conferma"
+    "passwordHint": "Minimo 12 caratteri.",
+    "submit": "Conferma",
+    "loginError": "Email o password errati.",
+    "registerError": "Impossibile creare l'account al momento.",
+    "emailTakenError": "Esiste già un account con questa email."
+  },
+  "onboarding": {
+    "title": "Dichiarazione di onboarding",
+    "intro": "Prima di creare il tuo profilo, conferma quanto segue. Questa dichiarazione viene registrata con data e ora.",
+    "fields": {
+      "attestedAdult": "Sono maggiorenne.",
+      "attestedVoluntary": "Agisco volontariamente, senza costrizioni.",
+      "attestedAuthorizedToWorkInSwitzerland": "Sono autorizzata a lavorare in Svizzera.",
+      "attestedCantonalDeclaration": "Mi dichiaro alle autorità del mio cantone se richiesto."
+    },
+    "submit": "Conferma dichiarazione",
+    "submitError": "Impossibile salvare la dichiarazione al momento."
+  },
+  "verification": {
+    "title": "Verifica della maggiore età",
+    "intro": "La pubblicazione del tuo profilo richiede la verifica della maggiore età. Questo passaggio è simulato in beta (nessun documento viene conservato).",
+    "alreadyVerified": "Verifica superata.",
+    "start": "Avvia verifica",
+    "running": "Verifica in corso…",
+    "error": "Verifica fallita. Riprova."
+  },
+  "dashboard": {
+    "title": "Pannello",
+    "attestationLabel": "Dichiarazione di onboarding",
+    "verificationLabel": "Verifica della maggiore età",
+    "profileStatusLabel": "Stato del profilo",
+    "publiclyVisibleLabel": "Profilo visibile pubblicamente",
+    "done": "Completata",
+    "todo": "Da fare",
+    "yes": "Sì",
+    "no": "No",
+    "verificationStatus": {
+      "NONE": "Non avviata",
+      "PENDING": "In attesa",
+      "IN_PROGRESS": "In corso",
+      "VERIFIED": "Verificata",
+      "FAILED": "Fallita",
+      "EXPIRED": "Scaduta"
+    },
+    "profileStatus": {
+      "NONE": "Nessun profilo creato",
+      "DRAFT": "Bozza",
+      "PENDING_REVIEW": "In attesa di moderazione",
+      "PUBLISHED": "Pubblicato",
+      "REJECTED": "Rifiutato",
+      "SUSPENDED": "Sospeso"
+    },
+    "goToOnboarding": "Completa la dichiarazione di onboarding",
+    "goToVerification": "Avvia la verifica della maggiore età",
+    "editProfile": "Modifica il mio profilo",
+    "createProfile": "Crea il mio profilo",
+    "submitForReview": "Invia alla moderazione",
+    "submitErrorOnboarding": "La dichiarazione di onboarding deve essere completata prima dell'invio.",
+    "submitErrorVerification": "La verifica della maggiore età deve essere superata prima dell'invio.",
+    "submitErrorGeneric": "Impossibile inviare il profilo al momento."
+  },
+  "profileEdit": {
+    "title": "Il mio profilo",
+    "displayNameLabel": "Nome visualizzato",
+    "descriptionLabel": "Descrizione",
+    "cityLabel": "Città",
+    "categoryLabel": "Categoria",
+    "languagesLabel": "Lingue parlate",
+    "servicesLabel": "Servizi",
+    "onlineStatusLabel": "Stato",
+    "onlineStatusOptions": {
+      "ONLINE": "Online",
+      "AWAY": "Assente",
+      "OFFLINE": "Offline"
+    },
+    "save": "Salva",
+    "saved": "Salvato.",
+    "saveError": "Impossibile salvare al momento.",
+    "contactTitle": "Contatto",
+    "contactHint": "Mai mostrato pubblicamente — visibile solo tramite il pulsante \"Mostra contatto\" sulla tua pagina pubblica.",
+    "phoneLabel": "Telefono",
+    "contactEmailLabel": "Email di contatto",
+    "photosTitle": "Foto",
+    "photosHint": "Ogni foto passa dalla moderazione prima di diventare visibile pubblicamente.",
+    "photoStatus": {
+      "PENDING": "In attesa",
+      "APPROVED": "Approvata",
+      "REJECTED": "Rifiutata"
+    },
+    "photoDelete": "Elimina",
+    "photoLimitReached": "Limite di foto del tuo piano raggiunto.",
+    "photoUnsupportedType": "Formato immagine non supportato (solo JPEG, PNG, WebP).",
+    "photoUploadError": "Caricamento della foto non riuscito.",
+    "saveProfileFirstForPhotos": "Salva prima il tuo profilo per poter aggiungere foto."
+  },
+  "moderation": {
+    "title": "Moderazione",
+    "pendingProfiles": "Profili in attesa",
+    "pendingMedia": "Foto in attesa",
+    "emptyQueue": "Coda vuota.",
+    "reasonPlaceholder": "Motivo della decisione (obbligatorio)",
+    "approve": "Approva",
+    "reject": "Rifiuta",
+    "decisionError": "Impossibile salvare la decisione.",
+    "verificationRequiredError": "La verifica della maggiore età non è più valida: pubblicazione impossibile."
+  },
+  "adminTaxonomies": {
+    "title": "Tassonomie",
+    "categories": "Categorie",
+    "services": "Servizi",
+    "languages": "Lingue",
+    "cities": "Città",
+    "key": "Chiave",
+    "code": "Codice",
+    "labelFr": "Etichetta (FR)",
+    "labelEn": "Etichetta (EN)",
+    "status": "Stato",
+    "active": "Attivo",
+    "inactive": "Inattivo",
+    "add": "Aggiungi",
+    "createError": "Impossibile creare l'elemento.",
+    "cityName": "Nome",
+    "cityCanton": "Cantone"
+  },
+  "adminAuditLog": {
+    "title": "Registro di controllo",
+    "empty": "Nessuna voce.",
+    "date": "Data",
+    "actor": "Autore",
+    "action": "Azione",
+    "target": "Obiettivo"
+  },
+  "adminGeoSettings": {
+    "title": "Restrizione geografica",
+    "hint": "Paesi autorizzati ad accedere al sito (applicato dal middleware se un header GeoIP è fornito dal reverse proxy).",
+    "countryCode": "Codice paese (ISO 2)",
+    "status": "Stato",
+    "allowed": "Consentito",
+    "blocked": "Bloccato",
+    "addAllowed": "Consenti",
+    "saveError": "Impossibile salvare."
   }
 }

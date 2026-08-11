@@ -9,7 +9,10 @@
     "login": "Connexion",
     "register": "Inscription",
     "dashboard": "Tableau de bord",
-    "admin": "Administration",
+    "moderation": "Modération",
+    "taxonomies": "Taxonomies",
+    "auditLog": "Journal d'audit",
+    "geoSettings": "Géo-restriction",
     "logout": "Déconnexion"
   },
   "home": {
@@ -31,13 +34,156 @@
       "ONLINE": "En ligne",
       "AWAY": "Absente",
       "OFFLINE": "Hors ligne"
-    }
+    },
+    "noPhoto": "Pas de photo",
+    "contactRateLimited": "Trop de demandes — réessayez plus tard.",
+    "contactError": "Impossible d'afficher le contact pour le moment."
   },
   "auth": {
     "loginTitle": "Connexion",
     "registerTitle": "Créer un compte prestataire",
     "emailLabel": "Email",
     "passwordLabel": "Mot de passe",
-    "submit": "Valider"
+    "passwordHint": "12 caractères minimum.",
+    "submit": "Valider",
+    "loginError": "Email ou mot de passe incorrect.",
+    "registerError": "Impossible de créer le compte pour le moment.",
+    "emailTakenError": "Un compte existe déjà avec cet email."
+  },
+  "onboarding": {
+    "title": "Attestation d'onboarding",
+    "intro": "Avant de créer votre profil, merci de confirmer les points suivants. Cette attestation est horodatée et conservée.",
+    "fields": {
+      "attestedAdult": "Je suis majeure.",
+      "attestedVoluntary": "J'agis volontairement, sans contrainte.",
+      "attestedAuthorizedToWorkInSwitzerland": "Je suis autorisée à travailler en Suisse.",
+      "attestedCantonalDeclaration": "Je m'annonce auprès des autorités de mon canton si requis."
+    },
+    "submit": "Confirmer l'attestation",
+    "submitError": "Impossible d'enregistrer l'attestation pour le moment."
+  },
+  "verification": {
+    "title": "Vérification de majorité",
+    "intro": "La publication de votre profil nécessite une vérification que vous êtes majeure. Cette étape est simulée en bêta (aucun document n'est conservé).",
+    "alreadyVerified": "Vérification validée.",
+    "start": "Commencer la vérification",
+    "running": "Vérification en cours…",
+    "error": "La vérification a échoué. Réessayez."
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "attestationLabel": "Attestation d'onboarding",
+    "verificationLabel": "Vérification de majorité",
+    "profileStatusLabel": "Statut du profil",
+    "publiclyVisibleLabel": "Profil visible publiquement",
+    "done": "Complétée",
+    "todo": "À faire",
+    "yes": "Oui",
+    "no": "Non",
+    "verificationStatus": {
+      "NONE": "Non démarrée",
+      "PENDING": "En attente",
+      "IN_PROGRESS": "En cours",
+      "VERIFIED": "Validée",
+      "FAILED": "Échouée",
+      "EXPIRED": "Expirée"
+    },
+    "profileStatus": {
+      "NONE": "Aucun profil créé",
+      "DRAFT": "Brouillon",
+      "PENDING_REVIEW": "En attente de modération",
+      "PUBLISHED": "Publié",
+      "REJECTED": "Rejeté",
+      "SUSPENDED": "Suspendu"
+    },
+    "goToOnboarding": "Compléter l'attestation d'onboarding",
+    "goToVerification": "Démarrer la vérification de majorité",
+    "editProfile": "Modifier mon profil",
+    "createProfile": "Créer mon profil",
+    "submitForReview": "Soumettre à la modération",
+    "submitErrorOnboarding": "L'attestation d'onboarding doit être complétée avant de soumettre.",
+    "submitErrorVerification": "La vérification de majorité doit être validée avant de soumettre.",
+    "submitErrorGeneric": "Impossible de soumettre le profil pour le moment."
+  },
+  "profileEdit": {
+    "title": "Mon profil",
+    "displayNameLabel": "Nom d'affichage",
+    "descriptionLabel": "Description",
+    "cityLabel": "Ville",
+    "categoryLabel": "Catégorie",
+    "languagesLabel": "Langues parlées",
+    "servicesLabel": "Services",
+    "onlineStatusLabel": "Statut",
+    "onlineStatusOptions": {
+      "ONLINE": "En ligne",
+      "AWAY": "Absente",
+      "OFFLINE": "Hors ligne"
+    },
+    "save": "Enregistrer",
+    "saved": "Enregistré.",
+    "saveError": "Impossible d'enregistrer pour le moment.",
+    "contactTitle": "Contact",
+    "contactHint": "Jamais affiché publiquement — visible uniquement via le bouton « Afficher le contact » sur votre page publique.",
+    "phoneLabel": "Téléphone",
+    "contactEmailLabel": "Email de contact",
+    "photosTitle": "Photos",
+    "photosHint": "Chaque photo passe par la modération avant d'être visible publiquement.",
+    "photoStatus": {
+      "PENDING": "En attente",
+      "APPROVED": "Approuvée",
+      "REJECTED": "Rejetée"
+    },
+    "photoDelete": "Supprimer",
+    "photoLimitReached": "Limite de photos de votre plan atteinte.",
+    "photoUnsupportedType": "Format d'image non pris en charge (JPEG, PNG, WebP uniquement).",
+    "photoUploadError": "Échec de l'envoi de la photo.",
+    "saveProfileFirstForPhotos": "Enregistrez d'abord votre profil pour pouvoir ajouter des photos."
+  },
+  "moderation": {
+    "title": "Modération",
+    "pendingProfiles": "Profils en attente",
+    "pendingMedia": "Photos en attente",
+    "emptyQueue": "File vide.",
+    "reasonPlaceholder": "Raison de la décision (obligatoire)",
+    "approve": "Approuver",
+    "reject": "Rejeter",
+    "decisionError": "Impossible d'enregistrer la décision.",
+    "verificationRequiredError": "La vérification de majorité n'est plus valide : publication impossible."
+  },
+  "adminTaxonomies": {
+    "title": "Taxonomies",
+    "categories": "Catégories",
+    "services": "Services",
+    "languages": "Langues",
+    "cities": "Villes",
+    "key": "Clé",
+    "code": "Code",
+    "labelFr": "Libellé (FR)",
+    "labelEn": "Libellé (EN)",
+    "status": "Statut",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "add": "Ajouter",
+    "createError": "Impossible de créer l'élément.",
+    "cityName": "Nom",
+    "cityCanton": "Canton"
+  },
+  "adminAuditLog": {
+    "title": "Journal d'audit",
+    "empty": "Aucune entrée.",
+    "date": "Date",
+    "actor": "Auteur",
+    "action": "Action",
+    "target": "Cible"
+  },
+  "adminGeoSettings": {
+    "title": "Géo-restriction",
+    "hint": "Pays autorisés à accéder au site (appliqué par le middleware si un en-tête GeoIP est fourni par le reverse proxy).",
+    "countryCode": "Code pays (ISO 2)",
+    "status": "Statut",
+    "allowed": "Autorisé",
+    "blocked": "Bloqué",
+    "addAllowed": "Autoriser",
+    "saveError": "Impossible d'enregistrer."
   }
 }

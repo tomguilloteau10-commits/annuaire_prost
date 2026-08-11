@@ -58,10 +58,16 @@ modération n'a pas validé (`ProviderProfile.status === PUBLISHED`). Pas de
 silencieux — une suspension ou un dépublication reste possible, mais toute
 republication repasse par les deux mêmes conditions.
 
-Mise en œuvre : `modules/profiles/profile.service.ts` (la fonction qui
-construit la requête de liste publique filtre systématiquement sur
-`status = PUBLISHED`, jamais sur un flag modifiable indépendamment) ;
-test `tests/invariants/unverified-profile-not-public.test.ts`.
+Mise en œuvre : `modules/profiles/profile.service.ts` →
+`listPublishedProfiles()` / `getPublishedProfileBySlug()` filtrent
+systématiquement sur `status = "PUBLISHED"`, jamais sur un flag modifiable
+indépendamment — ce sont les deux seules fonctions utilisées par l'API et
+les pages publiques. `submitProfileForReview()` refuse la soumission si
+l'attestation ou la vérification ne sont pas complètes (retour immédiat à
+l'annonceuse) ; `modules/moderation/moderation-queue.service.ts` →
+`decideOnProfile()` revérifie `hasPassedAdultVerification()` avant toute
+approbation, indépendamment de ce qu'affiche l'UI de modération. Test à
+venir : `tests/invariants/unverified-profile-not-public.test.ts`.
 
 ## 3. Éditeur, pas agence
 

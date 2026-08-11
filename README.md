@@ -137,7 +137,14 @@ champs sensibles (téléphone, email, adresse, date de naissance, documents).
   `MediaStorage` (+ stockage local avec URLs signées), `ModerationQueue`
   (dérivée des statuts, décisions avec raison obligatoire), entitlements
   (lecture typée des plans). Voir `docs/ARCHITECTURE.md`.
-- **À venir** : les parcours complets (prestataire → vérification → profil
-  → modération → publication → affichage public), les pages d'admin
-  (modération, taxonomies, audit log), et le seed synthétique de démo
-  (2-3 profils fictifs).
+- **Parcours** (fait) : inscription/connexion prestataire, attestation
+  d'onboarding, vérification 18+ (mock), édition de profil (taxonomies,
+  photos avec modération), soumission à la modération, tableau de bord ;
+  côté visiteur : accueil avec filtres, page profil publique, révélation
+  de contact à la demande ; côté admin : file de modération (profils +
+  médias avec raison obligatoire), gestion des taxonomies, journal
+  d'audit, réglage de la géo-restriction.
+- **À venir** : le seed synthétique de démo (2-3 profils fictifs avec
+  images placeholder) et la suite de tests d'invariants avec base de
+  données réelle (voir `tests/invariants/` pour ce qui existe déjà en
+  tests unitaires sans DB).

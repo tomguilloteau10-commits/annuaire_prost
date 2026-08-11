@@ -10,7 +10,10 @@
     "login": "Anmelden",
     "register": "Registrieren",
     "dashboard": "Dashboard",
-    "admin": "Verwaltung",
+    "moderation": "Moderation",
+    "taxonomies": "Taxonomien",
+    "auditLog": "Prüfprotokoll",
+    "geoSettings": "Geo-Einschränkung",
     "logout": "Abmelden"
   },
   "home": {
@@ -32,13 +35,156 @@
       "ONLINE": "Online",
       "AWAY": "Abwesend",
       "OFFLINE": "Offline"
-    }
+    },
+    "noPhoto": "Kein Foto",
+    "contactRateLimited": "Zu viele Anfragen — später erneut versuchen.",
+    "contactError": "Kontakt kann derzeit nicht angezeigt werden."
   },
   "auth": {
     "loginTitle": "Anmelden",
     "registerTitle": "Anbieterkonto erstellen",
     "emailLabel": "E-Mail",
     "passwordLabel": "Passwort",
-    "submit": "Bestätigen"
+    "passwordHint": "Mindestens 12 Zeichen.",
+    "submit": "Bestätigen",
+    "loginError": "Falsche E-Mail oder falsches Passwort.",
+    "registerError": "Konto kann derzeit nicht erstellt werden.",
+    "emailTakenError": "Für diese E-Mail existiert bereits ein Konto."
+  },
+  "onboarding": {
+    "title": "Onboarding-Erklärung",
+    "intro": "Bevor Sie Ihr Profil erstellen, bestätigen Sie bitte Folgendes. Diese Erklärung wird zeitgestempelt gespeichert.",
+    "fields": {
+      "attestedAdult": "Ich bin volljährig.",
+      "attestedVoluntary": "Ich handle freiwillig, ohne Zwang.",
+      "attestedAuthorizedToWorkInSwitzerland": "Ich bin berechtigt, in der Schweiz zu arbeiten.",
+      "attestedCantonalDeclaration": "Ich melde mich bei den Behörden meines Kantons an, falls erforderlich."
+    },
+    "submit": "Erklärung bestätigen",
+    "submitError": "Erklärung kann derzeit nicht gespeichert werden."
+  },
+  "verification": {
+    "title": "Altersverifizierung",
+    "intro": "Die Veröffentlichung Ihres Profils erfordert eine Verifizierung Ihrer Volljährigkeit. Dieser Schritt ist in der Beta simuliert (kein Dokument wird gespeichert).",
+    "alreadyVerified": "Verifizierung bestanden.",
+    "start": "Verifizierung starten",
+    "running": "Verifizierung läuft…",
+    "error": "Verifizierung fehlgeschlagen. Bitte erneut versuchen."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "attestationLabel": "Onboarding-Erklärung",
+    "verificationLabel": "Altersverifizierung",
+    "profileStatusLabel": "Profilstatus",
+    "publiclyVisibleLabel": "Öffentlich sichtbares Profil",
+    "done": "Abgeschlossen",
+    "todo": "Ausstehend",
+    "yes": "Ja",
+    "no": "Nein",
+    "verificationStatus": {
+      "NONE": "Nicht gestartet",
+      "PENDING": "Ausstehend",
+      "IN_PROGRESS": "In Bearbeitung",
+      "VERIFIED": "Verifiziert",
+      "FAILED": "Fehlgeschlagen",
+      "EXPIRED": "Abgelaufen"
+    },
+    "profileStatus": {
+      "NONE": "Noch kein Profil",
+      "DRAFT": "Entwurf",
+      "PENDING_REVIEW": "Ausstehende Moderation",
+      "PUBLISHED": "Veröffentlicht",
+      "REJECTED": "Abgelehnt",
+      "SUSPENDED": "Gesperrt"
+    },
+    "goToOnboarding": "Onboarding-Erklärung abschliessen",
+    "goToVerification": "Altersverifizierung starten",
+    "editProfile": "Profil bearbeiten",
+    "createProfile": "Profil erstellen",
+    "submitForReview": "Zur Moderation einreichen",
+    "submitErrorOnboarding": "Die Onboarding-Erklärung muss vor dem Einreichen abgeschlossen sein.",
+    "submitErrorVerification": "Die Altersverifizierung muss vor dem Einreichen bestanden sein.",
+    "submitErrorGeneric": "Profil kann derzeit nicht eingereicht werden."
+  },
+  "profileEdit": {
+    "title": "Mein Profil",
+    "displayNameLabel": "Anzeigename",
+    "descriptionLabel": "Beschreibung",
+    "cityLabel": "Stadt",
+    "categoryLabel": "Kategorie",
+    "languagesLabel": "Gesprochene Sprachen",
+    "servicesLabel": "Leistungen",
+    "onlineStatusLabel": "Status",
+    "onlineStatusOptions": {
+      "ONLINE": "Online",
+      "AWAY": "Abwesend",
+      "OFFLINE": "Offline"
+    },
+    "save": "Speichern",
+    "saved": "Gespeichert.",
+    "saveError": "Kann derzeit nicht gespeichert werden.",
+    "contactTitle": "Kontakt",
+    "contactHint": "Nie öffentlich angezeigt — nur über die Schaltfläche „Kontakt anzeigen“ auf Ihrer öffentlichen Seite sichtbar.",
+    "phoneLabel": "Telefon",
+    "contactEmailLabel": "Kontakt-E-Mail",
+    "photosTitle": "Fotos",
+    "photosHint": "Jedes Foto durchläuft die Moderation, bevor es öffentlich sichtbar wird.",
+    "photoStatus": {
+      "PENDING": "Ausstehend",
+      "APPROVED": "Genehmigt",
+      "REJECTED": "Abgelehnt"
+    },
+    "photoDelete": "Löschen",
+    "photoLimitReached": "Fotolimit Ihres Plans erreicht.",
+    "photoUnsupportedType": "Nicht unterstütztes Bildformat (nur JPEG, PNG, WebP).",
+    "photoUploadError": "Foto-Upload fehlgeschlagen.",
+    "saveProfileFirstForPhotos": "Speichern Sie zuerst Ihr Profil, um Fotos hinzuzufügen."
+  },
+  "moderation": {
+    "title": "Moderation",
+    "pendingProfiles": "Ausstehende Profile",
+    "pendingMedia": "Ausstehende Fotos",
+    "emptyQueue": "Warteschlange leer.",
+    "reasonPlaceholder": "Begründung der Entscheidung (erforderlich)",
+    "approve": "Genehmigen",
+    "reject": "Ablehnen",
+    "decisionError": "Entscheidung konnte nicht gespeichert werden.",
+    "verificationRequiredError": "Die Altersverifizierung ist nicht mehr gültig: Veröffentlichung nicht möglich."
+  },
+  "adminTaxonomies": {
+    "title": "Taxonomien",
+    "categories": "Kategorien",
+    "services": "Leistungen",
+    "languages": "Sprachen",
+    "cities": "Städte",
+    "key": "Schlüssel",
+    "code": "Code",
+    "labelFr": "Bezeichnung (FR)",
+    "labelEn": "Bezeichnung (EN)",
+    "status": "Status",
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "add": "Hinzufügen",
+    "createError": "Element konnte nicht erstellt werden.",
+    "cityName": "Name",
+    "cityCanton": "Kanton"
+  },
+  "adminAuditLog": {
+    "title": "Prüfprotokoll",
+    "empty": "Keine Einträge.",
+    "date": "Datum",
+    "actor": "Akteur",
+    "action": "Aktion",
+    "target": "Ziel"
+  },
+  "adminGeoSettings": {
+    "title": "Geo-Einschränkung",
+    "hint": "Länder, die auf die Website zugreifen dürfen (angewendet vom Middleware, sofern ein GeoIP-Header vom Reverse-Proxy bereitgestellt wird).",
+    "countryCode": "Ländercode (ISO 2)",
+    "status": "Status",
+    "allowed": "Erlaubt",
+    "blocked": "Gesperrt",
+    "addAllowed": "Erlauben",
+    "saveError": "Konnte nicht gespeichert werden."
   }
 }

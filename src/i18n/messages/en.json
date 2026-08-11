@@ -9,7 +9,10 @@
     "login": "Log in",
     "register": "Sign up",
     "dashboard": "Dashboard",
-    "admin": "Admin",
+    "moderation": "Moderation",
+    "taxonomies": "Taxonomies",
+    "auditLog": "Audit log",
+    "geoSettings": "Geo-restriction",
     "logout": "Log out"
   },
   "home": {
@@ -31,13 +34,156 @@
       "ONLINE": "Online",
       "AWAY": "Away",
       "OFFLINE": "Offline"
-    }
+    },
+    "noPhoto": "No photo",
+    "contactRateLimited": "Too many requests — try again later.",
+    "contactError": "Could not load the contact right now."
   },
   "auth": {
     "loginTitle": "Log in",
     "registerTitle": "Create a provider account",
     "emailLabel": "Email",
     "passwordLabel": "Password",
-    "submit": "Submit"
+    "passwordHint": "12 characters minimum.",
+    "submit": "Submit",
+    "loginError": "Incorrect email or password.",
+    "registerError": "Could not create the account right now.",
+    "emailTakenError": "An account already exists with this email."
+  },
+  "onboarding": {
+    "title": "Onboarding attestation",
+    "intro": "Before creating your profile, please confirm the following. This attestation is timestamped and kept on record.",
+    "fields": {
+      "attestedAdult": "I am an adult.",
+      "attestedVoluntary": "I am acting voluntarily, without coercion.",
+      "attestedAuthorizedToWorkInSwitzerland": "I am authorized to work in Switzerland.",
+      "attestedCantonalDeclaration": "I will register with my canton's authorities if required."
+    },
+    "submit": "Confirm attestation",
+    "submitError": "Could not save the attestation right now."
+  },
+  "verification": {
+    "title": "Age verification",
+    "intro": "Publishing your profile requires verifying that you are an adult. This step is simulated in beta (no document is retained).",
+    "alreadyVerified": "Verification passed.",
+    "start": "Start verification",
+    "running": "Verifying…",
+    "error": "Verification failed. Please try again."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "attestationLabel": "Onboarding attestation",
+    "verificationLabel": "Age verification",
+    "profileStatusLabel": "Profile status",
+    "publiclyVisibleLabel": "Publicly visible profile",
+    "done": "Completed",
+    "todo": "To do",
+    "yes": "Yes",
+    "no": "No",
+    "verificationStatus": {
+      "NONE": "Not started",
+      "PENDING": "Pending",
+      "IN_PROGRESS": "In progress",
+      "VERIFIED": "Verified",
+      "FAILED": "Failed",
+      "EXPIRED": "Expired"
+    },
+    "profileStatus": {
+      "NONE": "No profile yet",
+      "DRAFT": "Draft",
+      "PENDING_REVIEW": "Pending moderation",
+      "PUBLISHED": "Published",
+      "REJECTED": "Rejected",
+      "SUSPENDED": "Suspended"
+    },
+    "goToOnboarding": "Complete the onboarding attestation",
+    "goToVerification": "Start age verification",
+    "editProfile": "Edit my profile",
+    "createProfile": "Create my profile",
+    "submitForReview": "Submit for moderation",
+    "submitErrorOnboarding": "The onboarding attestation must be completed before submitting.",
+    "submitErrorVerification": "Age verification must be passed before submitting.",
+    "submitErrorGeneric": "Could not submit the profile right now."
+  },
+  "profileEdit": {
+    "title": "My profile",
+    "displayNameLabel": "Display name",
+    "descriptionLabel": "Description",
+    "cityLabel": "City",
+    "categoryLabel": "Category",
+    "languagesLabel": "Languages spoken",
+    "servicesLabel": "Services",
+    "onlineStatusLabel": "Status",
+    "onlineStatusOptions": {
+      "ONLINE": "Online",
+      "AWAY": "Away",
+      "OFFLINE": "Offline"
+    },
+    "save": "Save",
+    "saved": "Saved.",
+    "saveError": "Could not save right now.",
+    "contactTitle": "Contact",
+    "contactHint": "Never shown publicly — only revealed via the \"Show contact\" button on your public page.",
+    "phoneLabel": "Phone",
+    "contactEmailLabel": "Contact email",
+    "photosTitle": "Photos",
+    "photosHint": "Every photo goes through moderation before becoming publicly visible.",
+    "photoStatus": {
+      "PENDING": "Pending",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected"
+    },
+    "photoDelete": "Delete",
+    "photoLimitReached": "Your plan's photo limit has been reached.",
+    "photoUnsupportedType": "Unsupported image format (JPEG, PNG, WebP only).",
+    "photoUploadError": "Photo upload failed.",
+    "saveProfileFirstForPhotos": "Save your profile first to add photos."
+  },
+  "moderation": {
+    "title": "Moderation",
+    "pendingProfiles": "Pending profiles",
+    "pendingMedia": "Pending photos",
+    "emptyQueue": "Queue is empty.",
+    "reasonPlaceholder": "Reason for the decision (required)",
+    "approve": "Approve",
+    "reject": "Reject",
+    "decisionError": "Could not save the decision.",
+    "verificationRequiredError": "Age verification is no longer valid: cannot publish."
+  },
+  "adminTaxonomies": {
+    "title": "Taxonomies",
+    "categories": "Categories",
+    "services": "Services",
+    "languages": "Languages",
+    "cities": "Cities",
+    "key": "Key",
+    "code": "Code",
+    "labelFr": "Label (FR)",
+    "labelEn": "Label (EN)",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "add": "Add",
+    "createError": "Could not create the item.",
+    "cityName": "Name",
+    "cityCanton": "Canton"
+  },
+  "adminAuditLog": {
+    "title": "Audit log",
+    "empty": "No entries.",
+    "date": "Date",
+    "actor": "Actor",
+    "action": "Action",
+    "target": "Target"
+  },
+  "adminGeoSettings": {
+    "title": "Geo-restriction",
+    "hint": "Countries allowed to access the site (enforced by the middleware if a GeoIP header is provided by the reverse proxy).",
+    "countryCode": "Country code (ISO 2)",
+    "status": "Status",
+    "allowed": "Allowed",
+    "blocked": "Blocked",
+    "addAllowed": "Allow",
+    "saveError": "Could not save."
   }
 }

@@ -35,9 +35,16 @@ quel.
   `audit-log.service.ts`.
 - `modules/entitlements/` : lecture typée (zod) de `Plan.features`,
   helpers comme `canUploadMorePhotos()`.
-- `modules/profiles/`, `modules/taxonomies/` : **à venir** (étape
-  "parcours") — profil public, révélation de contact, lecture des
-  taxonomies pour les filtres.
+- `modules/profiles/` : `profile.service.ts` (upsert du profil propre,
+  soumission à la modération, lecture publique — `contact` n'apparaît
+  jamais dans les `select` publics) et `contact-reveal.service.ts` (seul
+  point d'accès à `ProfileContact` pour un visiteur).
+- `modules/onboarding/` : `attestation.service.ts` — enregistrement
+  horodaté et idempotent de l'attestation, bloquant pour la publication au
+  même titre que la vérification 18+.
+- `modules/taxonomies/` : `taxonomy.service.ts` — lecture/écriture des 4
+  taxonomies (désactivation plutôt que suppression, jamais de perte de
+  référence).
 
 ## Points de branchement futurs
 
