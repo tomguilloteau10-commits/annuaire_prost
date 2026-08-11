@@ -1,0 +1,20 @@
+node_modules
+.next
+out
+build
+dist
+
+# Ne jamais faire entrer de secrets dans le contexte de build de l'image :
+# docker-compose injecte les variables d'environnement au conteneur
+# directement (env_file + environment), l'image elle-même n'a pas besoin
+# du fichier .env et ne doit jamais l'embarquer dans une layer.
+.env
+.env.local
+.env.*.local
+
+storage/media
+.git
+.vscode
+.idea
+coverage
+*.log

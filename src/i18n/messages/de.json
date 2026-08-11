@@ -123,6 +123,8 @@
     "save": "Speichern",
     "saved": "Gespeichert.",
     "saveError": "Kann derzeit nicht gespeichert werden.",
+    "selectAtLeastOneLanguage": "Wählen Sie mindestens eine gesprochene Sprache aus.",
+    "invalidFieldsError": "Überprüfen Sie die Formularfelder (Stadt, Kategorie und Sprachen müssen gültig sein).",
     "contactTitle": "Kontakt",
     "contactHint": "Nie öffentlich angezeigt — nur über die Schaltfläche „Kontakt anzeigen“ auf Ihrer öffentlichen Seite sichtbar.",
     "phoneLabel": "Telefon",

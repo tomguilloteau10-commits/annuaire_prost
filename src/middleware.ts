@@ -1,7 +1,13 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
-import { applySecurityHeaders } from "@/lib/security-headers";
+import { applySecurityHeaders, buildContentSecurityPolicy } from "@/lib/security-headers";
+
+function generateNonce(): string {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  return btoa(String.fromCharCode(...bytes));
+}
 
 const intlMiddleware = createIntlMiddleware(routing);
 
@@ -61,8 +67,19 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  const response = intlMiddleware(request);
-  applySecurityHeaders(response.headers);
+  // Nonce CSP par requête, propagé à la fois sur la requête transmise au
+  // renderer (pour que Next.js l'applique lui-même à ses scripts injectés
+  // de streaming/hydratation) et sur la réponse (pour que le navigateur
+  // l'applique). Voir le commentaire dans lib/security-headers.ts.
+  const nonce = generateNonce();
+  const csp = buildContentSecurityPolicy(nonce);
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-nonce", nonce);
+  requestHeaders.set("Content-Security-Policy", csp);
+  const requestWithNonce = new NextRequest(request, { headers: requestHeaders });
+
+  const response = intlMiddleware(requestWithNonce);
+  applySecurityHeaders(response.headers, csp);
   return response;
 }
 

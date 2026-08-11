@@ -123,6 +123,8 @@
     "save": "Salva",
     "saved": "Salvato.",
     "saveError": "Impossibile salvare al momento.",
+    "selectAtLeastOneLanguage": "Seleziona almeno una lingua parlata.",
+    "invalidFieldsError": "Controlla i campi del modulo (città, categoria e lingue devono essere validi).",
     "contactTitle": "Contatto",
     "contactHint": "Mai mostrato pubblicamente — visibile solo tramite il pulsante \"Mostra contatto\" sulla tua pagina pubblica.",
     "phoneLabel": "Telefono",

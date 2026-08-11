@@ -122,6 +122,8 @@
     "save": "Save",
     "saved": "Saved.",
     "saveError": "Could not save right now.",
+    "selectAtLeastOneLanguage": "Select at least one language spoken.",
+    "invalidFieldsError": "Check the form fields (city, category and languages must be valid).",
     "contactTitle": "Contact",
     "contactHint": "Never shown publicly — only revealed via the \"Show contact\" button on your public page.",
     "phoneLabel": "Phone",

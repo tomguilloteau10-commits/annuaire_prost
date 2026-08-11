@@ -66,8 +66,10 @@ les pages publiques. `submitProfileForReview()` refuse la soumission si
 l'attestation ou la vérification ne sont pas complètes (retour immédiat à
 l'annonceuse) ; `modules/moderation/moderation-queue.service.ts` →
 `decideOnProfile()` revérifie `hasPassedAdultVerification()` avant toute
-approbation, indépendamment de ce qu'affiche l'UI de modération. Test à
-venir : `tests/invariants/unverified-profile-not-public.test.ts`.
+approbation, indépendamment de ce qu'affiche l'UI de modération. Test
+d'intégration (vraie base) : `tests/invariants/unverified-profile-not-public.test.ts`
+— crée un profil réel pour chaque statut non-publié et vérifie qu'aucune
+fonction de lecture publique ne le renvoie.
 
 ## 3. Éditeur, pas agence
 
@@ -107,8 +109,13 @@ Mise en œuvre :
 - `eslint-rules/no-sensitive-log-fields.js` : règle de lint qui interdit
   `console.log`/`logger.*` avec un objet contenant littéralement une clé
   `phone`, `email`, `address`, `dateOfBirth`.
-- Test `tests/invariants/contact-not-leaked.test.ts` et
-  `tests/invariants/no-sensitive-data-in-logs.test.ts`.
+- Test d'intégration (vraie base) `tests/invariants/contact-not-leaked.test.ts` :
+  crée un profil publié avec un contact réel, vérifie que ni
+  `listPublishedProfiles()` ni `getPublishedProfileBySlug()` ne
+  l'exposent, et que `revealContact()` refuse un profil non publié.
+- Test unitaire (sans DB) `tests/invariants/no-sensitive-data-in-logs.test.ts` :
+  vérifie au runtime que `logger.*` masque les champs sensibles, y compris
+  imbriqués dans des objets ou des tableaux.
 
 ### Hashage des IP — précisions
 
@@ -150,9 +157,10 @@ Mise en œuvre :
   s'appuierait uniquement sur la vérification au moment de la génération
   de l'URL (voir commentaire dans `modules/media/types.ts`).
 - Test `tests/modules/media/local-storage.test.ts` couvre la signature/
-  expiration des jetons (unitaire, sans DB) ; le test d'invariant complet
-  avec base de données (`tests/invariants/unmoderated-media-inaccessible.test.ts`)
-  reste à écrire à l'étape "tests d'invariants".
+  expiration des jetons (unitaire, sans DB) ; test d'intégration (vraie
+  base) `tests/invariants/unmoderated-media-inaccessible.test.ts` : vérifie
+  que `getPublicPhotoUrl()` renvoie `null` pour un média `PENDING` ou
+  `REJECTED`, et une URL pour un média `APPROVED`.
 
 ## 7. Toute décision automatique passe par un humain
 
@@ -181,6 +189,28 @@ géographique (PostGIS) sert la recherche par ville/distance entre villes,
 pas la géolocalisation individuelle d'une personne.
 
 ---
+
+## Données de test synthétiques uniquement
+
+Aucune vraie donnée personnelle, aucun vrai document, aucune vraie photo
+d'une personne réelle dans le dépôt ou en base — pas même en bêta, pas
+même « juste pour tester ».
+
+Mise en œuvre :
+
+- `prisma/seed.ts` : les profils de démonstration (Léa, Nora, Camille)
+  sont entièrement fictifs — noms, descriptions, coordonnées de contact
+  (domaine `example.test`, réservé aux tests par la RFC 2606, jamais un
+  domaine réel) et mots de passe de démonstration, documentés comme tels
+  et à ne jamais utiliser hors d'une bêta privée non exposée.
+- `scripts/lib/placeholder-png.ts` : les photos de démonstration sont des
+  images générées (aplats de couleur unie), jamais une photo réelle
+  téléchargée ou empruntée. Aucune dépendance externe, aucun fichier
+  binaire versionné.
+- Les comptes de démonstration passent par les mêmes chemins de code que
+  n'importe quel compte réel (attestation, vérification, modération) —
+  aucun raccourci ni contournement spécifique au seed dans le code
+  applicatif.
 
 ## Politique de rétention/purge — vue d'ensemble
 

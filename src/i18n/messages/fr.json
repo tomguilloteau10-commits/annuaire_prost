@@ -122,6 +122,8 @@
     "save": "Enregistrer",
     "saved": "Enregistré.",
     "saveError": "Impossible d'enregistrer pour le moment.",
+    "selectAtLeastOneLanguage": "Sélectionnez au moins une langue parlée.",
+    "invalidFieldsError": "Vérifiez les champs du formulaire (ville, catégorie et langues doivent être valides).",
     "contactTitle": "Contact",
     "contactHint": "Jamais affiché publiquement — visible uniquement via le bouton « Afficher le contact » sur votre page publique.",
     "phoneLabel": "Téléphone",

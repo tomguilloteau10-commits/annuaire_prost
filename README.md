@@ -50,6 +50,36 @@ Prisma · next-intl (FR/EN remplis, DE/IT en structure) · Docker Compose.
    docker compose exec app npm run db:seed
    ```
 
+   Le script est idempotent (relançable sans dupliquer les données) et crée
+   deux choses distinctes :
+   - les données de fondation nécessaires au fonctionnement de l'app (plan
+     "Founder", politiques de rétention, pays autorisés, taxonomies suisses
+     de base) ;
+   - un jeu de démonstration synthétique (voir "Comptes de démonstration"
+     ci-dessous) — aucune donnée réelle, voir ENGINEERING_RULES.md "Données
+     de test synthétiques uniquement".
+
+### Comptes de démonstration
+
+⚠️ **Uniquement pour la bêta privée non exposée publiquement — ne jamais
+utiliser ces identifiants (ni ce mot de passe partagé) dans un
+environnement accessible publiquement.** Après le seed :
+
+| Email                         | Rôle       | Mot de passe        |
+|--------------------------------|------------|----------------------|
+| `admin@example.test`           | ADMIN      | `DemoPassword123!`  |
+| `moderator@example.test`       | MODERATOR  | `DemoPassword123!`  |
+| `lea.demo@example.test`        | PROVIDER (profil publié)                | `DemoPassword123!` |
+| `nora.demo@example.test`       | PROVIDER (publié, 1 photo en attente)   | `DemoPassword123!` |
+| `camille.demo@example.test`    | PROVIDER (profil en attente de modération) | `DemoPassword123!` |
+
+Ces trois profils couvrent les états utiles pour vérifier les flux : un
+profil visible publiquement (Léa), un profil publié avec un média encore
+dans la file de modération (Nora, pour tester `/admin/moderation`), et un
+profil complet mais pas encore approuvé (Camille, pour tester la
+modération de profil). Les comptes admin/modérateur permettent d'accéder
+aux pages `/admin/*`.
+
 ### Développement sans rebuild Docker à chaque changement
 
 Pour itérer rapidement sur le code, ne lancez que la base via Docker et
@@ -112,9 +142,24 @@ manuel.
 npm test
 ```
 
-Les tests d'invariants critiques vivent dans `tests/invariants/` (voir
-ENGINEERING_RULES.md pour la liste des invariants couverts). D'autres
-suivront au fur et à mesure de l'avancement des parcours fonctionnels.
+Deux catégories de tests cohabitent dans `tests/` :
+
+- **Unitaires, sans base de données** (`tests/modules/`, et certains
+  `tests/invariants/*`) : s'exécutent toujours, y compris en CI sans
+  Postgres.
+- **D'intégration, avec une vraie base** (la majorité de
+  `tests/invariants/`) : créent leurs propres fixtures (upsert/create
+  idempotents, indépendants de `prisma/seed.ts`) et nécessitent
+  `DATABASE_URL` pointant vers un Postgres+PostGIS migré. Le plus simple :
+
+  ```bash
+  docker compose up -d db
+  npx prisma migrate deploy
+  DATABASE_URL="postgresql://annuaire:annuaire@localhost:5432/annuaire_prost?schema=public" npm test
+  ```
+
+Voir ENGINEERING_RULES.md pour la liste des invariants couverts et leur
+emplacement exact dans le code.
 
 ## Lint & typecheck
 
@@ -144,7 +189,11 @@ champs sensibles (téléphone, email, adresse, date de naissance, documents).
   de contact à la demande ; côté admin : file de modération (profils +
   médias avec raison obligatoire), gestion des taxonomies, journal
   d'audit, réglage de la géo-restriction.
-- **À venir** : le seed synthétique de démo (2-3 profils fictifs avec
-  images placeholder) et la suite de tests d'invariants avec base de
-  données réelle (voir `tests/invariants/` pour ce qui existe déjà en
-  tests unitaires sans DB).
+- **Seed & tests d'invariants** (fait) : jeu de démonstration synthétique
+  (3 profils fictifs à des stades différents, comptes admin/modérateur,
+  images placeholder générées) et suite de tests d'invariants couvrant les
+  contraintes critiques (#2, #5, #6) contre une vraie base Postgres+PostGIS,
+  en plus des tests unitaires sans DB.
+- **Hors périmètre bêta, volontairement absent** (voir le brief produit) :
+  messagerie/chat, avis/notes, réservation, paiement/abonnement,
+  recommandations IA, statistiques avancées.

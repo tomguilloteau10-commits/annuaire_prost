@@ -64,9 +64,20 @@ export function ProfileEditForm({ locale, categories, services, languages, citie
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     if (!csrfToken) return;
-    setSubmitting(true);
     setError(null);
     setSaved(false);
+
+    // Validation côté client avant l'appel réseau : la case "au moins une
+    // langue" ne peut pas s'exprimer avec l'attribut HTML `required` sur un
+    // groupe de checkboxes, donc on la vérifie explicitement plutôt que de
+    // laisser l'utilisateur découvrir l'erreur seulement après un
+    // aller-retour serveur.
+    if (languageCodes.length === 0) {
+      setError(t("selectAtLeastOneLanguage"));
+      return;
+    }
+
+    setSubmitting(true);
 
     const response = await fetch("/api/provider/profile", {
       method: "PUT",
@@ -84,7 +95,8 @@ export function ProfileEditForm({ locale, categories, services, languages, citie
 
     setSubmitting(false);
     if (!response.ok) {
-      setError(t("saveError"));
+      const body = (await response.json().catch(() => null)) as { error?: string } | null;
+      setError(body?.error === "invalid_input" ? t("invalidFieldsError") : t("saveError"));
       return;
     }
     setSaved(true);

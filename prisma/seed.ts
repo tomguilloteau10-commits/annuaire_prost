@@ -1,23 +1,50 @@
 /**
- * Seed de fondation — pas le seed de démo complet.
+ * Seed complet : données de fondation + jeu de démonstration synthétique.
  *
- * Crée les données de référence sans lesquelles l'app ne peut pas
+ * Fondation : données de référence sans lesquelles l'app ne peut pas
  * fonctionner (ex: ProviderProfile.planId est une clé étrangère
  * obligatoire, donc au moins un Plan doit exister ; une annonceuse ne peut
- * pas choisir une ville/catégorie/langue qui n'existe pas) : Plan founder,
- * politiques de rétention, pays autorisés, et les taxonomies de base
- * (catégories, services, langues, villes suisses) — éditables ensuite
- * depuis l'admin, pas figées.
+ * pas choisir une ville/catégorie/langue qui n'existe pas) — Plan founder,
+ * politiques de rétention, pays autorisés, taxonomies de base.
  *
- * Il n'insère en revanche aucun profil ni photo fictifs — ça arrive dans
- * une étape dédiée ("seed synthétique") avec 2-3 profils fictifs et des
- * images placeholder, voir ENGINEERING_RULES.md et docs/ARCHITECTURE.md.
+ * Démo synthétique : comptes de test (admin/modérateur/annonceuses) et
+ * 3 profils fictifs à différents stades du cycle de vie (publié, publié
+ * avec un média en attente, en attente de modération), avec des images
+ * placeholder générées localement (aucune photo réelle, aucune personne
+ * réelle — voir ENGINEERING_RULES.md "Données de test synthétiques
+ * uniquement" et scripts/lib/placeholder-png.ts).
+ *
+ * ⚠️ Les comptes créés ici utilisent un mot de passe de démonstration
+ * connu (voir DEMO_PASSWORD) : à ne jamais utiliser en dehors d'un
+ * environnement de bêta privée non exposé publiquement.
  */
+import { randomBytes, randomUUID } from "node:crypto";
+import { mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
 import { PrismaClient } from "@prisma/client";
 import { DATA_CATEGORIES } from "../src/modules/retention/retention-policy.service";
-import { slugify } from "../src/lib/slugify";
+import { slugify, slugifyWithSuffix } from "../src/lib/slugify";
+import { hashPassword } from "../src/modules/auth/password";
+import { createPlaceholderPng } from "../scripts/lib/placeholder-png";
 
 const prisma = new PrismaClient();
+
+const DEMO_PASSWORD = "DemoPassword123!";
+const MEDIA_LOCAL_PATH = process.env.MEDIA_LOCAL_PATH ?? "./storage/media";
+
+// Écrit directement le fichier plutôt que de passer par
+// modules/media/local-storage.ts : ce module importe le package
+// "server-only" (qui jette une erreur hors du runtime serveur Next.js —
+// voir tests/stubs/server-only.ts pour le même problème côté tests), donc
+// inutilisable depuis un script exécuté en Node nu. Le seed reste
+// volontairement indépendant de l'abstraction MediaStorage : il crée des
+// fixtures de test, pas une opération métier.
+async function writePlaceholderMediaFile(rgb: [number, number, number]): Promise<string> {
+  await mkdir(MEDIA_LOCAL_PATH, { recursive: true });
+  const storageKey = `${randomBytes(16).toString("hex")}.png`;
+  await writeFile(path.join(MEDIA_LOCAL_PATH, storageKey), createPlaceholderPng(rgb));
+  return storageKey;
+}
 
 async function seedFounderPlan() {
   await prisma.plan.upsert({
@@ -153,6 +180,181 @@ async function seedCities() {
   }
 }
 
+async function seedDemoAccounts() {
+  const passwordHash = await hashPassword(DEMO_PASSWORD);
+
+  const admin = await prisma.user.upsert({
+    where: { email: "admin@example.test" },
+    update: {},
+    create: { email: "admin@example.test", passwordHash, role: "ADMIN" },
+  });
+
+  await prisma.user.upsert({
+    where: { email: "moderator@example.test" },
+    update: {},
+    create: { email: "moderator@example.test", passwordHash, role: "MODERATOR" },
+  });
+
+  return { adminId: admin.id, passwordHash };
+}
+
+interface DemoProfileSpec {
+  email: string;
+  displayName: string;
+  description: string;
+  citySlug: string;
+  categoryKey: string;
+  languageCodes: string[];
+  serviceKeys: string[];
+  onlineStatus: "ONLINE" | "AWAY" | "OFFLINE";
+  profileStatus: "PUBLISHED" | "PENDING_REVIEW";
+  /** Une couleur unie par photo placeholder (RGB) — purement abstrait, aucune photo réelle. */
+  photoColors: [number, number, number][];
+  /** Nombre de photos, parmi photoColors, laissées PENDING (non modérées) plutôt qu'APPROVED. */
+  pendingPhotoCount: number;
+  phone: string;
+  contactEmail: string;
+}
+
+async function seedDemoProfile(spec: DemoProfileSpec, passwordHash: string, moderatorId: string) {
+  const existingUser = await prisma.user.findUnique({ where: { email: spec.email } });
+  if (existingUser) return; // déjà seedé — idempotent
+
+  const user = await prisma.user.create({
+    data: { email: spec.email, passwordHash, role: "PROVIDER" },
+  });
+
+  await prisma.onboardingAttestation.create({
+    data: {
+      providerId: user.id,
+      attestedAdult: true,
+      attestedVoluntary: true,
+      attestedAuthorizedToWorkInSwitzerland: true,
+      attestedCantonalDeclaration: true,
+      attestedAt: new Date(),
+    },
+  });
+
+  await prisma.verificationRecord.create({
+    data: {
+      providerId: user.id,
+      verificationProvider: "mock",
+      externalVerificationId: `mock_seed_${randomUUID()}`,
+      status: "VERIFIED",
+      isAdult: true,
+      documentType: "passport",
+      issuingCountry: "CH",
+      verifiedAt: new Date(),
+      expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+    },
+  });
+
+  const [city, category, languages, services, founderPlan] = await Promise.all([
+    prisma.city.findUniqueOrThrow({ where: { slug: spec.citySlug } }),
+    prisma.category.findUniqueOrThrow({ where: { key: spec.categoryKey } }),
+    prisma.language.findMany({ where: { code: { in: spec.languageCodes } } }),
+    prisma.service.findMany({ where: { key: { in: spec.serviceKeys } } }),
+    prisma.plan.findUniqueOrThrow({ where: { code: "founder" } }),
+  ]);
+
+  const profile = await prisma.providerProfile.create({
+    data: {
+      userId: user.id,
+      slug: slugifyWithSuffix(spec.displayName),
+      displayName: spec.displayName,
+      description: spec.description,
+      cityId: city.id,
+      categoryId: category.id,
+      planId: founderPlan.id,
+      status: spec.profileStatus,
+      publishedAt: spec.profileStatus === "PUBLISHED" ? new Date() : null,
+      onlineStatus: spec.onlineStatus,
+      languages: { create: languages.map((l) => ({ languageId: l.id })) },
+      services: { create: services.map((s) => ({ serviceId: s.id })) },
+    },
+  });
+
+  await prisma.profileContact.create({
+    data: { profileId: profile.id, phone: spec.phone, email: spec.contactEmail },
+  });
+
+  for (let i = 0; i < spec.photoColors.length; i += 1) {
+    const storageKey = await writePlaceholderMediaFile(spec.photoColors[i]!);
+    const isPending = i >= spec.photoColors.length - spec.pendingPhotoCount;
+    await prisma.media.create({
+      data: {
+        profileId: profile.id,
+        storageKey,
+        position: i,
+        status: isPending ? "PENDING" : "APPROVED",
+        moderatedById: isPending ? null : moderatorId,
+        moderatedAt: isPending ? null : new Date(),
+      },
+    });
+  }
+}
+
+const DEMO_PROFILES: DemoProfileSpec[] = [
+  {
+    email: "lea.demo@example.test",
+    displayName: "Léa",
+    description:
+      "Bonjour, je m'appelle Léa. Annonceuse indépendante basée à Genève, je propose des rencontres chaleureuses et respectueuses. N'hésitez pas à me contacter pour plus d'informations.",
+    citySlug: "geneve-ge",
+    categoryKey: "escort",
+    languageCodes: ["fr", "en"],
+    serviceKeys: ["outcall", "incall"],
+    onlineStatus: "ONLINE",
+    profileStatus: "PUBLISHED",
+    photoColors: [
+      [214, 178, 202],
+      [178, 202, 214],
+    ],
+    pendingPhotoCount: 0,
+    phone: "+41 78 000 00 01",
+    contactEmail: "lea.demo@example.test",
+  },
+  {
+    email: "nora.demo@example.test",
+    displayName: "Nora",
+    description:
+      "Nora, masseuse indépendante à Lausanne. Je propose des massages relaxants dans un cadre discret et confortable. Contactez-moi pour convenir d'un rendez-vous.",
+    citySlug: "lausanne-vd",
+    categoryKey: "masseuse",
+    languageCodes: ["fr", "de"],
+    serviceKeys: ["incall", "massage"],
+    onlineStatus: "AWAY",
+    profileStatus: "PUBLISHED",
+    photoColors: [
+      [202, 214, 178],
+      [220, 200, 180],
+    ],
+    // La deuxième photo reste PENDING : permet de tester la file de
+    // modération des médias sur un profil déjà publié.
+    pendingPhotoCount: 1,
+    phone: "+41 78 000 00 02",
+    contactEmail: "nora.demo@example.test",
+  },
+  {
+    email: "camille.demo@example.test",
+    displayName: "Camille",
+    description:
+      "Camille, basée à Zürich. Profil complété et vérifié, en attente de validation par la modération.",
+    citySlug: "zurich-zh",
+    categoryKey: "dominatrice",
+    languageCodes: ["en", "de"],
+    serviceKeys: ["outcall"],
+    onlineStatus: "OFFLINE",
+    // Vérification et attestation complètes, mais pas encore approuvé par
+    // un modérateur : permet de tester la file de modération des profils.
+    profileStatus: "PENDING_REVIEW",
+    photoColors: [[190, 190, 220]],
+    pendingPhotoCount: 1,
+    phone: "+41 78 000 00 03",
+    contactEmail: "camille.demo@example.test",
+  },
+];
+
 async function main() {
   await seedFounderPlan();
   await seedRetentionPolicies();
@@ -164,6 +366,21 @@ async function main() {
   // eslint-disable-next-line no-console
   console.log(
     "Seed de fondation terminé (Plan founder, politiques de rétention, pays autorisés, taxonomies de base).",
+  );
+
+  const { adminId, passwordHash } = await seedDemoAccounts();
+  for (const spec of DEMO_PROFILES) {
+    await seedDemoProfile(spec, passwordHash, adminId);
+  }
+
+  // eslint-disable-next-line no-console
+  console.log(
+    [
+      "Seed de démo terminé.",
+      "Comptes de test (mot de passe unique, bêta uniquement — jamais en production) :",
+      "  admin@example.test / moderator@example.test / lea.demo@example.test / nora.demo@example.test / camille.demo@example.test",
+      `  mot de passe : ${DEMO_PASSWORD}`,
+    ].join("\n"),
   );
 }
 
