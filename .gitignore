@@ -1,0 +1,31 @@
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# env
+.env
+.env.local
+.env.*.local
+
+# local media storage (beta MediaStorage implementation)
+storage/media/
+
+# logs
+*.log
+npm-debug.log*
+
+# os
+.DS_Store
+Thumbs.db
+
+# editors
+.vscode/
+.idea/
+
+# test / coverage
+coverage/
+
+# prisma
+prisma/dev.db

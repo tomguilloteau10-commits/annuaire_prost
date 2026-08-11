@@ -1,0 +1,44 @@
+{
+  "_note": "Stub de structure — traductions minimales non revues professionnellement, à valider avant toute mise en avant de cette langue.",
+  "common": {
+    "siteName": "Verzeichnis",
+    "tagline": "Schweizer Verzeichnis unabhängiger Anbieterinnen",
+    "betaNotice": "Private Beta — nicht öffentlich indexiert."
+  },
+  "nav": {
+    "home": "Startseite",
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "dashboard": "Dashboard",
+    "admin": "Verwaltung",
+    "logout": "Abmelden"
+  },
+  "home": {
+    "title": "Finden Sie eine unabhängige Anbieterin in der Schweiz",
+    "subtitle": "Jedes veröffentlichte Profil ist altersverifiziert und moderiert.",
+    "emptyState": "Noch keine veröffentlichten Profile.",
+    "filters": {
+      "city": "Stadt",
+      "category": "Kategorie",
+      "language": "Sprache",
+      "onlineOnly": "Nur online"
+    }
+  },
+  "profile": {
+    "revealContact": "Kontakt anzeigen",
+    "languagesLabel": "Gesprochene Sprachen",
+    "servicesLabel": "Leistungen",
+    "onlineStatus": {
+      "ONLINE": "Online",
+      "AWAY": "Abwesend",
+      "OFFLINE": "Offline"
+    }
+  },
+  "auth": {
+    "loginTitle": "Anmelden",
+    "registerTitle": "Anbieterkonto erstellen",
+    "emailLabel": "E-Mail",
+    "passwordLabel": "Passwort",
+    "submit": "Bestätigen"
+  }
+}

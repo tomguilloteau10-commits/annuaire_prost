@@ -1,0 +1,44 @@
+{
+  "_note": "Stub di struttura — traduzioni minime non riviste professionalmente, da validare prima di promuovere questa lingua.",
+  "common": {
+    "siteName": "Elenco",
+    "tagline": "Elenco svizzero di fornitrici indipendenti",
+    "betaNotice": "Beta privata — non indicizzata pubblicamente."
+  },
+  "nav": {
+    "home": "Home",
+    "login": "Accedi",
+    "register": "Registrati",
+    "dashboard": "Pannello",
+    "admin": "Amministrazione",
+    "logout": "Esci"
+  },
+  "home": {
+    "title": "Trova una fornitrice indipendente in Svizzera",
+    "subtitle": "Ogni profilo pubblicato è verificato maggiorenne e moderato.",
+    "emptyState": "Nessun profilo pubblicato per ora.",
+    "filters": {
+      "city": "Città",
+      "category": "Categoria",
+      "language": "Lingua",
+      "onlineOnly": "Solo online"
+    }
+  },
+  "profile": {
+    "revealContact": "Mostra contatto",
+    "languagesLabel": "Lingue parlate",
+    "servicesLabel": "Servizi",
+    "onlineStatus": {
+      "ONLINE": "Online",
+      "AWAY": "Assente",
+      "OFFLINE": "Offline"
+    }
+  },
+  "auth": {
+    "loginTitle": "Accedi",
+    "registerTitle": "Crea un account fornitrice",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "submit": "Conferma"
+  }
+}

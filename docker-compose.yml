@@ -1,0 +1,46 @@
+name: annuaire-prost
+
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: annuaire
+      POSTGRES_PASSWORD: annuaire
+      POSTGRES_DB: annuaire_prost
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U annuaire -d annuaire_prost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      # Surcharge : depuis le conteneur app, "db" est le nom d'hôte du
+      # service Postgres (pas "localhost" comme dans .env.example, pensé
+      # pour un usage hors-Docker).
+      DATABASE_URL: "postgresql://annuaire:annuaire@db:5432/annuaire_prost?schema=public"
+    ports:
+      - "3000:3000"
+    volumes:
+      # Stockage média bêta : implémentation locale de l'interface
+      # MediaStorage (src/modules/media). Remplaçable par un backend S3 en
+      # changeant MEDIA_STORAGE_DRIVER, sans toucher au reste du code.
+      - media_storage:/app/storage/media
+
+volumes:
+  db_data:
+  media_storage:

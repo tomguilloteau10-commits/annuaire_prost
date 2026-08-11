@@ -1,0 +1,14 @@
+{
+  "root": true,
+  "extends": ["next/core-web-vitals"],
+  "plugins": ["local-rules"],
+  "rules": {
+    "local-rules/no-sensitive-log-fields": "error"
+  },
+  "ignorePatterns": [
+    "node_modules/",
+    ".next/",
+    "prisma/migrations/",
+    "storage/"
+  ]
+}

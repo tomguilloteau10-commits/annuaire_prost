@@ -1,0 +1,43 @@
+{
+  "common": {
+    "siteName": "Annuaire",
+    "tagline": "Annuaire suisse d'annonceuses indépendantes",
+    "betaNotice": "Version bêta privée — non référencée publiquement."
+  },
+  "nav": {
+    "home": "Accueil",
+    "login": "Connexion",
+    "register": "Inscription",
+    "dashboard": "Tableau de bord",
+    "admin": "Administration",
+    "logout": "Déconnexion"
+  },
+  "home": {
+    "title": "Trouvez une annonceuse indépendante en Suisse",
+    "subtitle": "Tous les profils publiés sont vérifiés majeurs et modérés.",
+    "emptyState": "Aucun profil publié pour le moment.",
+    "filters": {
+      "city": "Ville",
+      "category": "Catégorie",
+      "language": "Langue",
+      "onlineOnly": "En ligne uniquement"
+    }
+  },
+  "profile": {
+    "revealContact": "Afficher le contact",
+    "languagesLabel": "Langues parlées",
+    "servicesLabel": "Services",
+    "onlineStatus": {
+      "ONLINE": "En ligne",
+      "AWAY": "Absente",
+      "OFFLINE": "Hors ligne"
+    }
+  },
+  "auth": {
+    "loginTitle": "Connexion",
+    "registerTitle": "Créer un compte prestataire",
+    "emailLabel": "Email",
+    "passwordLabel": "Mot de passe",
+    "submit": "Valider"
+  }
+}

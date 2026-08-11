@@ -1,0 +1,43 @@
+{
+  "common": {
+    "siteName": "Directory",
+    "tagline": "Swiss directory of independent providers",
+    "betaNotice": "Private beta — not publicly indexed."
+  },
+  "nav": {
+    "home": "Home",
+    "login": "Log in",
+    "register": "Sign up",
+    "dashboard": "Dashboard",
+    "admin": "Admin",
+    "logout": "Log out"
+  },
+  "home": {
+    "title": "Find an independent provider in Switzerland",
+    "subtitle": "Every published profile is age-verified and moderated.",
+    "emptyState": "No published profiles yet.",
+    "filters": {
+      "city": "City",
+      "category": "Category",
+      "language": "Language",
+      "onlineOnly": "Online only"
+    }
+  },
+  "profile": {
+    "revealContact": "Show contact",
+    "languagesLabel": "Languages spoken",
+    "servicesLabel": "Services",
+    "onlineStatus": {
+      "ONLINE": "Online",
+      "AWAY": "Away",
+      "OFFLINE": "Offline"
+    }
+  },
+  "auth": {
+    "loginTitle": "Log in",
+    "registerTitle": "Create a provider account",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "submit": "Submit"
+  }
+}

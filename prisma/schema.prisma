@@ -1,0 +1,380 @@
+// ============================================================================
+// Annuaire Prost — schema de base
+//
+// Ce fichier matérialise deux invariants d'ENGINEERING_RULES.md :
+//
+//   - Contrainte #1 (rétention zéro sur l'identité) : voir le commentaire
+//     sur `model User` et le bloc de commentaires au-dessus de
+//     `model VerificationRecord`. Un test automatisé
+//     (tests/invariants/no-forbidden-fields-in-schema.test.ts) fait échouer
+//     le build si un champ interdit (dateOfBirth, documentNumber,
+//     documentImage, ...) apparaît dans ce fichier.
+//   - Contrainte de rétention/purge (ipHash, médias rejetés, journaux
+//     d'audit de vérification) : voir `model DataRetentionPolicy` et les
+//     champs `purgeAt` / `ipHashPurgeAt` plus bas. La politique est éditable
+//     en base (pas en dur), et un job de purge (scripts/purge-expired-data.ts)
+//     s'appuie dessus. Le job existe dès la bêta même s'il n'est pas encore
+//     branché sur un cron actif.
+// ============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Comptes & rôles ──────────────────────────────────────────────────────
+
+enum UserRole {
+  CLIENT
+  PROVIDER
+  MODERATOR
+  ADMIN
+}
+
+model User {
+  id               String    @id @default(cuid())
+  email            String    @unique
+  passwordHash     String
+  role             UserRole
+  twoFactorEnabled Boolean   @default(false)
+  twoFactorSecret  String? // chiffré au repos par la couche applicative, jamais loggué
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  lastLoginAt      DateTime?
+
+  sessions               Session[]
+  providerProfile        ProviderProfile?
+  verificationRecords    VerificationRecord[]
+  onboardingAttestation  OnboardingAttestation?
+  moderationActionsTaken ModerationAction[]      @relation("ModeratorActions")
+  auditLogs              AuditLog[]
+
+  // ──────────────────────────────────────────────────────────────────────
+  // INTERDIT (contrainte #1, rétention zéro) : n'ajoutez JAMAIS ici (ni
+  // ailleurs dans ce schéma) de champ birthDate / dateOfBirth,
+  // documentNumber, documentImage / idDocumentImage, selfieImage,
+  // biometricData ou équivalent. La preuve de majorité et de vérification
+  // vit exclusivement dans VerificationRecord, sous forme de résultat
+  // opaque — jamais sous forme de document brut.
+  // ──────────────────────────────────────────────────────────────────────
+
+  @@index([role])
+}
+
+model Session {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash     String    @unique // le jeton en clair n'existe que côté cookie client
+  userAgent     String?
+  ipHash        String? // hash salé (secret d'appli), jamais l'IP en clair — voir ENGINEERING_RULES.md
+  ipHashPurgeAt DateTime? // date à laquelle le job de purge doit nullifier ipHash
+  createdAt     DateTime  @default(now())
+  expiresAt     DateTime
+
+  @@index([userId])
+  @@index([ipHashPurgeAt])
+}
+
+// ── Vérification 18+ — RÉTENTION ZÉRO ───────────────────────────────────
+//
+// On ne stocke QUE le résultat normalisé d'une vérification externe.
+// Aucune image, aucun numéro de document, aucune date de naissance,
+// aucune donnée biométrique ne transite ni ne persiste dans ce modèle
+// (ni nulle part ailleurs dans ce schéma). Voir modules/verification/types.ts
+// pour le "contrat de résultat" que tout VerificationProvider doit respecter.
+
+enum VerificationStatus {
+  PENDING
+  IN_PROGRESS
+  VERIFIED
+  FAILED
+  EXPIRED
+}
+
+model VerificationRecord {
+  id                     String              @id @default(cuid())
+  providerId             String // userId de l'annonceuse
+  provider               User                @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  verificationProvider   String // "mock" | "sumsub" | "veriff" | "pxl_vision" | "swiss_eid"
+  externalVerificationId String // identifiant opaque renvoyé par le prestataire externe
+  isAdult                Boolean
+  documentType            String? // ex: "passport", "id_card" — type seulement, jamais le numéro
+  issuingCountry          String? // code ISO du pays émetteur
+  status                  VerificationStatus @default(PENDING)
+  verifiedAt              DateTime? // quand le résultat a été obtenu
+  expiresAt               DateTime? // validité métier du résultat (ex: revérifier après N mois)
+  retentionPurgeAt        DateTime? // rétention d'audit du *journal* — distinct de expiresAt
+  createdAt               DateTime           @default(now())
+  updatedAt               DateTime           @updatedAt
+
+  @@index([providerId, status])
+  @@index([retentionPurgeAt])
+}
+
+model OnboardingAttestation {
+  id                                     String    @id @default(cuid())
+  providerId                             String    @unique
+  provider                               User      @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  attestedAdult                          Boolean
+  attestedVoluntary                      Boolean
+  attestedAuthorizedToWorkInSwitzerland  Boolean
+  attestedCantonalDeclaration            Boolean
+  attestedAt                             DateTime
+  // L'attestation elle-même (booléens + horodatage) est une preuve de
+  // consentement conservée tant que le compte existe : elle n'est PAS
+  // purgée automatiquement. Seul le hash d'IP associé a une durée de vie
+  // courte (anti-abus), d'où le champ de purge dédié ci-dessous.
+  ipHash                                  String?
+  ipHashPurgeAt                           DateTime?
+
+  @@index([ipHashPurgeAt])
+}
+
+// ── Profil prestataire ────────────────────────────────────────────────────
+
+enum ProfileStatus {
+  DRAFT
+  PENDING_REVIEW
+  PUBLISHED
+  REJECTED
+  SUSPENDED
+}
+
+enum OnlineStatus {
+  ONLINE
+  AWAY
+  OFFLINE
+}
+
+model ProviderProfile {
+  id           String        @id @default(cuid())
+  userId       String        @unique
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  slug         String        @unique
+  displayName  String
+  description  String        @db.Text
+  cityId       String
+  city         City          @relation(fields: [cityId], references: [id])
+  categoryId   String
+  category     Category      @relation(fields: [categoryId], references: [id])
+  onlineStatus OnlineStatus  @default(OFFLINE)
+  status       ProfileStatus @default(DRAFT)
+  planId       String
+  plan         Plan          @relation(fields: [planId], references: [id])
+
+  languages ProfileLanguage[]
+  services  ProfileService[]
+  media     Media[]
+  contact   ProfileContact? // 1:1, table séparée à dessein — voir ci-dessous
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  publishedAt DateTime?
+
+  @@index([status, cityId, categoryId])
+}
+
+// Table séparée volontairement (défense en profondeur, cf. ENGINEERING_RULES.md
+// contrainte #5) : rend structurellement impossible une fuite accidentelle du
+// contact via un `select` large sur ProviderProfile. La liste publique et
+// l'API de liste/détail ne joignent jamais ce modèle ; seul
+// modules/profiles/contact-reveal.service.ts y accède.
+model ProfileContact {
+  id        String          @id @default(cuid())
+  profileId String          @unique
+  profile   ProviderProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  phone     String?
+  email     String?
+  updatedAt DateTime        @updatedAt
+}
+
+model ContactRevealLog {
+  id              String   @id @default(cuid())
+  profileId       String
+  requesterIpHash String // hash salé, jamais l'IP en clair
+  createdAt       DateTime @default(now())
+  purgeAt         DateTime // fixé à la création à partir de DataRetentionPolicy
+
+  @@index([profileId, createdAt])
+  @@index([purgeAt])
+}
+
+// ── Médias & modération ───────────────────────────────────────────────────
+
+enum MediaStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Media {
+  id              String          @id @default(cuid())
+  profileId       String
+  profile         ProviderProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  storageKey      String // clé interne au MediaStorage, jamais une URL publique directe
+  status          MediaStatus     @default(PENDING)
+  position        Int             @default(0)
+  moderatedById   String?
+  moderatedAt     DateTime?
+  rejectionReason String?
+  purgeAt         DateTime? // fixé quand status passe à REJECTED — les médias approuvés ne sont pas purgés
+  createdAt       DateTime        @default(now())
+
+  @@index([profileId, status])
+  @@index([purgeAt])
+}
+
+enum ModerationTargetType {
+  PROFILE
+  MEDIA
+}
+
+enum ModerationDecision {
+  APPROVED
+  REJECTED
+}
+
+model ModerationAction {
+  id          String                @id @default(cuid())
+  targetType  ModerationTargetType
+  targetId    String
+  decision    ModerationDecision
+  reason      String
+  moderatorId String
+  moderator   User                  @relation("ModeratorActions", fields: [moderatorId], references: [id])
+  createdAt   DateTime              @default(now())
+
+  @@index([targetType, targetId])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String
+  actor      User     @relation(fields: [actorId], references: [id])
+  action     String // ex: "profile.suspend", "taxonomy.category.update"
+  targetType String
+  targetId   String
+  metadata   Json? // valeurs assainies uniquement — jamais de champ sensible brut (voir lib/logger.ts)
+  createdAt  DateTime @default(now())
+
+  @@index([actorId, createdAt])
+  @@index([targetType, targetId])
+}
+
+// ── Entitlements / feature flags ──────────────────────────────────────────
+
+model Plan {
+  id       String  @id @default(cuid())
+  code     String  @unique // "founder" (bêta, gratuit), "premium" (futur)
+  name     String
+  features Json // ex: { "maxPhotos": 6, "boost": false, "prioritySupport": false }
+  isActive Boolean @default(true)
+
+  profiles ProviderProfile[]
+}
+
+// ── Taxonomies as data ─────────────────────────────────────────────────────
+//
+// Choix délibéré pour la bêta : les libellés multilingues vivent dans un
+// champ Json { fr, en, de, it } plutôt que dans une table de traductions
+// séparée. C'est le bon compromis simplicité/vitesse tant que le nombre de
+// langues est fixe et qu'on n'a pas besoin de recherche full-text par
+// langue. Voir docs/ARCHITECTURE.md pour le chemin de migration vers une
+// table `Translation` (entityType, entityId, locale, field) si ces
+// hypothèses changent.
+
+model Category {
+  id       String  @id @default(cuid())
+  key      String  @unique
+  label    Json // { "fr": "...", "en": "...", "de": "...", "it": "..." }
+  isActive Boolean @default(true)
+
+  profiles ProviderProfile[]
+  services Service[]
+}
+
+model Service {
+  id         String    @id @default(cuid())
+  key        String    @unique
+  label      Json
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
+  isActive   Boolean   @default(true)
+
+  profiles ProfileService[]
+}
+
+model Language {
+  id       String  @id @default(cuid())
+  code     String  @unique // ISO 639-1
+  label    Json
+  isActive Boolean @default(true)
+
+  profiles ProfileLanguage[]
+}
+
+model City {
+  id       String  @id @default(cuid())
+  name     String
+  canton   String
+  country  String  @default("CH")
+  slug     String  @unique
+  lat      Float? // localisation approximative uniquement (jamais d'adresse exacte, contrainte #8)
+  lng      Float?
+  isActive Boolean @default(true)
+
+  profiles ProviderProfile[]
+
+  // Une migration SQL manuelle (prisma/migrations/..._add_postgis_city_geo/)
+  // ajoute une colonne `geo geography(Point,4326)` + un index GIST sur cette
+  // table. Prisma ne modélise pas nativement ce type ; les recherches par
+  // distance passent par $queryRaw. Voir README.md "Migrations & PostGIS".
+}
+
+model ProfileLanguage {
+  profileId  String
+  languageId String
+  profile    ProviderProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  language   Language        @relation(fields: [languageId], references: [id])
+
+  @@id([profileId, languageId])
+}
+
+model ProfileService {
+  profileId String
+  serviceId String
+  profile   ProviderProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  service   Service         @relation(fields: [serviceId], references: [id])
+
+  @@id([profileId, serviceId])
+}
+
+// ── Géo-restriction d'accès au site ────────────────────────────────────────
+
+model AllowedCountry {
+  id          String   @id @default(cuid())
+  countryCode String   @unique
+  isAllowed   Boolean  @default(true)
+  updatedAt   DateTime @updatedAt
+}
+
+// ── Politique de rétention (data-driven, éditable en base) ─────────────────
+//
+// Chaque ligne définit une durée de rétention en jours pour une catégorie de
+// donnée ancillaire (hash d'IP, journal de révélation de contact, médias
+// rejetés, journal d'audit de vérification). scripts/purge-expired-data.ts
+// lit cette table pour calculer les `purgeAt` à l'écriture et pour balayer
+// périodiquement les lignes expirées. Le job existe dès la bêta ; le
+// brancher sur un cron actif est une étape d'exploitation, pas de code.
+model DataRetentionPolicy {
+  id            String   @id @default(cuid())
+  dataCategory  String   @unique // ex: "session_ip_hash", "contact_reveal_log"
+  retentionDays Int
+  description   String
+  updatedAt     DateTime @updatedAt
+}
