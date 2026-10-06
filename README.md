@@ -17,7 +17,36 @@ et où brancher un vrai prestataire de vérification, du stockage cloud, etc.
 Next.js 14 (App Router) + TypeScript + Tailwind · PostgreSQL/PostGIS +
 Prisma · next-intl (FR/EN remplis, DE/IT en structure) · Docker Compose.
 
+## Tester sans rien installer (GitHub Codespaces)
+
+La façon la plus simple de voir l'app tourner : tout se passe dans le
+navigateur, rien à installer sur l'ordinateur.
+
+1. Sur la page GitHub du dépôt, sélectionne la branche
+   `claude/swiss-directory-platform-foundation-6ytxc6`, clique sur le
+   bouton vert **Code** → onglet **Codespaces** → **Create codespace on
+   claude/swiss-directory-platform-foundation-6ytxc6**.
+2. Un onglet s'ouvre avec un environnement de développement complet dans
+   le navigateur. Laisse-le travailler quelques minutes (il construit et
+   démarre automatiquement l'app et la base de données, puis la peuple
+   avec des données de démonstration) — le détail de ce qui tourne est le
+   script `.devcontainer/setup.sh`.
+3. Une notification "port 3000 disponible" apparaît en bas à droite (ou
+   onglet **Ports** du terminal en bas) : clique dessus pour ouvrir l'app.
+
+Comptes de démonstration (mot de passe `DemoPassword123!`) : voir la
+section "Comptes de démonstration" plus bas — mêmes comptes que pour
+l'installation locale.
+
+Pour arrêter : il suffit de fermer l'onglet, ou "Stop codespace" depuis
+github.com/codespaces. GitHub inclut un quota d'heures gratuites par mois ;
+au-delà, pense à arrêter le Codespace quand tu ne t'en sers pas.
+
 ## Démarrer en local (Docker Compose)
+
+Alternative à Codespaces : installer Docker Desktop sur son ordinateur et
+tout faire tourner localement — utile si tu veux modifier le code
+toi-même avec ton éditeur habituel.
 
 1. Copiez le fichier d'environnement et générez de vrais secrets :
 
