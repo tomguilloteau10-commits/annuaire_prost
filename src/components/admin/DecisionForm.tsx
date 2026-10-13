@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useCsrfToken } from "@/lib/use-csrf-token";
+import { TextArea } from "@/components/ui/Field";
+import { Button } from "@/components/ui/Button";
 
 export interface DecisionFormProps {
   /** ex: "/api/admin/moderation/profiles/abc123/decision" */
@@ -45,31 +47,29 @@ export function DecisionForm({ decisionUrl }: DecisionFormProps) {
 
   return (
     <div className="flex flex-col gap-2">
-      <textarea
+      <TextArea
         value={reason}
         onChange={(e) => setReason(e.target.value)}
         placeholder={t("reasonPlaceholder")}
         rows={2}
-        className="rounded-md border border-gray-300 px-2 py-1 text-sm"
+        className="text-sm"
       />
-      {error && <p className="text-xs text-red-600">{error}</p>}
+      {error && <p className="text-xs text-danger">{error}</p>}
       <div className="flex gap-2">
-        <button
-          type="button"
+        <Button
+          variant="success"
           onClick={() => decide("APPROVED")}
           disabled={submitting || !csrfToken || reason.trim().length < 3}
-          className="rounded-md bg-green-600 px-3 py-1 text-sm font-medium text-white disabled:opacity-50"
         >
           {t("approve")}
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="danger"
           onClick={() => decide("REJECTED")}
           disabled={submitting || !csrfToken || reason.trim().length < 3}
-          className="rounded-md bg-red-600 px-3 py-1 text-sm font-medium text-white disabled:opacity-50"
         >
           {t("reject")}
-        </button>
+        </Button>
       </div>
     </div>
   );

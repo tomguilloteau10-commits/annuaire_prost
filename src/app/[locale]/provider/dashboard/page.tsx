@@ -3,6 +3,22 @@ import { requirePageRole } from "@/lib/page-guards";
 import { Link } from "@/i18n/navigation";
 import { getProviderDashboardData } from "@/modules/profiles/profile.service";
 import { SubmitProfileButton } from "@/components/provider/SubmitProfileButton";
+import { Card } from "@/components/ui/Card";
+import { Badge, type BadgeVariant } from "@/components/ui/Badge";
+
+function verificationVariant(status: string | undefined): BadgeVariant {
+  if (status === "VERIFIED") return "success";
+  if (status === "FAILED" || status === "EXPIRED") return "danger";
+  if (status === "PENDING" || status === "IN_PROGRESS") return "warning";
+  return "neutral";
+}
+
+function profileStatusVariant(status: string | undefined): BadgeVariant {
+  if (status === "PUBLISHED") return "success";
+  if (status === "PENDING_REVIEW") return "warning";
+  if (status === "REJECTED" || status === "SUSPENDED") return "danger";
+  return "neutral";
+}
 
 export default async function ProviderDashboardPage({
   params,
@@ -23,43 +39,52 @@ export default async function ProviderDashboardPage({
     verification?.status === "VERIFIED";
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-6 px-4 py-16">
-      <h1 className="text-2xl font-semibold">{t("title")}</h1>
+    <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-8 px-4 py-14 sm:py-20">
+      <h1 className="font-serif text-3xl font-medium text-ink2">{t("title")}</h1>
 
-      <dl className="flex flex-col gap-3 rounded-lg border border-gray-200 p-4 text-sm">
-        <div className="flex items-center justify-between">
-          <dt className="text-gray-600">{t("attestationLabel")}</dt>
-          <dd className="font-medium">{attestationCompleted ? t("done") : t("todo")}</dd>
+      <Card className="flex flex-col divide-y divide-hairline p-0">
+        <div className="flex items-center justify-between px-5 py-4">
+          <span className="text-sm text-ink2-muted">{t("attestationLabel")}</span>
+          <Badge variant={attestationCompleted ? "success" : "warning"}>
+            {attestationCompleted ? t("done") : t("todo")}
+          </Badge>
         </div>
-        <div className="flex items-center justify-between">
-          <dt className="text-gray-600">{t("verificationLabel")}</dt>
-          <dd className="font-medium">{t(`verificationStatus.${verification?.status ?? "NONE"}`)}</dd>
+        <div className="flex items-center justify-between px-5 py-4">
+          <span className="text-sm text-ink2-muted">{t("verificationLabel")}</span>
+          <Badge variant={verificationVariant(verification?.status)}>
+            {t(`verificationStatus.${verification?.status ?? "NONE"}`)}
+          </Badge>
         </div>
-        <div className="flex items-center justify-between">
-          <dt className="text-gray-600">{t("profileStatusLabel")}</dt>
-          <dd className="font-medium">{t(`profileStatus.${profile?.status ?? "NONE"}`)}</dd>
+        <div className="flex items-center justify-between px-5 py-4">
+          <span className="text-sm text-ink2-muted">{t("profileStatusLabel")}</span>
+          <Badge variant={profileStatusVariant(profile?.status)}>
+            {t(`profileStatus.${profile?.status ?? "NONE"}`)}
+          </Badge>
         </div>
-        <div className="flex items-center justify-between">
-          <dt className="text-gray-600">{t("publiclyVisibleLabel")}</dt>
-          <dd className="font-medium">
+        <div className="flex items-center justify-between px-5 py-4">
+          <span className="text-sm text-ink2-muted">{t("publiclyVisibleLabel")}</span>
+          <Badge variant={profile?.status === "PUBLISHED" ? "success" : "neutral"}>
             {profile?.status === "PUBLISHED" ? t("yes") : t("no")}
-          </dd>
+          </Badge>
         </div>
-      </dl>
+      </Card>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col items-start gap-3">
         {!attestationCompleted && (
-          <Link href="/provider/onboarding" className="text-brand underline">
-            {t("goToOnboarding")}
+          <Link href="/provider/onboarding" className="text-accent transition-colors hover:text-accent-hover">
+            {t("goToOnboarding")} →
           </Link>
         )}
         {attestationCompleted && verification?.status !== "VERIFIED" && (
-          <Link href="/provider/verification" className="text-brand underline">
-            {t("goToVerification")}
+          <Link href="/provider/verification" className="text-accent transition-colors hover:text-accent-hover">
+            {t("goToVerification")} →
           </Link>
         )}
-        <Link href="/provider/profile/edit" className="text-brand underline">
-          {profile ? t("editProfile") : t("createProfile")}
+        <Link
+          href="/provider/profile/edit"
+          className="text-accent transition-colors hover:text-accent-hover"
+        >
+          {profile ? t("editProfile") : t("createProfile")} →
         </Link>
         {canSubmit && <SubmitProfileButton />}
       </div>

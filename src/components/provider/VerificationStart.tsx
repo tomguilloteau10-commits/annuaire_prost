@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useCsrfToken } from "@/lib/use-csrf-token";
+import { Button } from "@/components/ui/Button";
 
 /**
  * Simule le parcours de vérification 18+ (MockVerificationProvider) : un
@@ -46,15 +47,10 @@ export function VerificationStart() {
 
   return (
     <div className="flex w-full max-w-xl flex-col items-center gap-3">
-      <button
-        type="button"
-        onClick={handleStart}
-        disabled={status === "running" || !csrfToken}
-        className="rounded-md bg-brand px-4 py-2 text-base font-medium text-white disabled:opacity-50"
-      >
+      <Button onClick={handleStart} disabled={status === "running" || !csrfToken}>
         {status === "running" ? t("running") : t("start")}
-      </button>
-      {status === "error" && <p className="text-sm text-red-600">{t("error")}</p>}
+      </Button>
+      {status === "error" && <p className="text-sm text-danger">{t("error")}</p>}
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useCsrfToken } from "@/lib/use-csrf-token";
+import { Button } from "@/components/ui/Button";
 
 export function SubmitProfileButton() {
   const t = useTranslations("dashboard");
@@ -39,15 +40,10 @@ export function SubmitProfileButton() {
 
   return (
     <div className="flex flex-col gap-2">
-      <button
-        type="button"
-        onClick={handleSubmit}
-        disabled={submitting || !csrfToken}
-        className="rounded-md bg-brand px-4 py-2 text-base font-medium text-white disabled:opacity-50"
-      >
+      <Button onClick={handleSubmit} disabled={submitting || !csrfToken}>
         {t("submitForReview")}
-      </button>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      </Button>
+      {error && <p className="text-sm text-danger">{error}</p>}
     </div>
   );
 }

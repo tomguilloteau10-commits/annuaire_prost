@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { getLocalizedLabel } from "@/modules/taxonomies/types";
+import { Badge } from "@/components/ui/Badge";
 
 export interface ProfileCardData {
   slug: string;
@@ -17,27 +18,35 @@ export function ProfileCard({ profile, locale }: { profile: ProfileCardData; loc
   return (
     <Link
       href={`/profiles/${profile.slug}`}
-      className="flex flex-col overflow-hidden rounded-lg border border-gray-200 transition hover:shadow-md"
+      className="group flex flex-col overflow-hidden rounded-xl3 border border-hairline bg-surface shadow-card transition-colors hover:border-hairline2"
     >
-      <div className="aspect-[4/3] w-full bg-gray-100">
+      <div className="relative aspect-[3/4] w-full bg-surface-raised">
         {profile.thumbnailUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={profile.thumbnailUrl} alt="" className="h-full w-full object-cover" />
+          <img
+            src={profile.thumbnailUrl}
+            alt=""
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+          />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">
+          <div className="flex h-full w-full items-center justify-center text-xs text-ink2-faint">
             {t("noPhoto")}
           </div>
         )}
-      </div>
-      <div className="flex flex-col gap-1 p-3">
-        <div className="flex items-center justify-between">
-          <span className="font-medium">{profile.displayName}</span>
-          <span
-            className={`h-2 w-2 rounded-full ${profile.onlineStatus === "ONLINE" ? "bg-green-500" : "bg-gray-300"}`}
-            title={t(`onlineStatus.${profile.onlineStatus}`)}
-          />
+
+        <div className="absolute inset-x-0 top-0 flex items-start justify-between p-2.5">
+          <Badge variant="success">{t("verifiedBadge")}</Badge>
+          {profile.onlineStatus === "ONLINE" && (
+            <Badge variant="success" dot>
+              {t("onlineStatus.ONLINE")}
+            </Badge>
+          )}
         </div>
-        <span className="text-sm text-gray-500">
+      </div>
+
+      <div className="flex flex-col gap-0.5 p-4">
+        <span className="font-serif text-lg font-medium text-ink2">{profile.displayName}</span>
+        <span className="text-sm text-ink2-muted">
           {profile.city.name} ({profile.city.canton}) · {getLocalizedLabel(profile.category.label, locale)}
         </span>
       </div>

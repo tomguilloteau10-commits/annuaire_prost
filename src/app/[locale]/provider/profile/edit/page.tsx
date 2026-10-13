@@ -40,8 +40,8 @@ export default async function ProfileEditPage({ params }: { params: Promise<{ lo
     : null;
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-8 px-4 py-16">
-      <h1 className="text-2xl font-semibold">{t("title")}</h1>
+    <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-8 px-4 py-14 sm:py-20">
+      <h1 className="font-serif text-3xl font-medium text-ink2">{t("title")}</h1>
 
       <ProfileEditForm
         locale={locale}
@@ -65,7 +65,7 @@ export default async function ProfileEditPage({ params }: { params: Promise<{ lo
           />
         </>
       )}
-      {!profile && <p className="text-sm text-gray-500">{t("saveProfileFirstForPhotos")}</p>}
+      {!profile && <p className="text-sm text-ink2-faint">{t("saveProfileFirstForPhotos")}</p>}
     </main>
   );
 }

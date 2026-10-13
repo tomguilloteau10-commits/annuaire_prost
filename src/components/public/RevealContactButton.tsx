@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useCsrfToken } from "@/lib/use-csrf-token";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 
 /**
  * Le contact n'est jamais dans le HTML initial ni dans une réponse de
@@ -35,24 +37,19 @@ export function RevealContactButton({ slug }: { slug: string }) {
 
   if (contact) {
     return (
-      <div className="flex flex-col gap-1 rounded-md bg-gray-50 p-3 text-sm">
+      <Card className="flex flex-col gap-1 p-4 text-sm text-ink2">
         {contact.phone && <span>{contact.phone}</span>}
         {contact.email && <span>{contact.email}</span>}
-      </div>
+      </Card>
     );
   }
 
   return (
     <div className="flex flex-col gap-2">
-      <button
-        type="button"
-        onClick={handleReveal}
-        disabled={loading || !csrfToken}
-        className="rounded-md bg-brand px-4 py-2 text-base font-medium text-white disabled:opacity-50"
-      >
+      <Button onClick={handleReveal} disabled={loading || !csrfToken} className="w-full sm:w-auto">
         {t("revealContact")}
-      </button>
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      </Button>
+      {error && <p className="text-sm text-danger">{error}</p>}
     </div>
   );
 }

@@ -16,9 +16,9 @@ export default async function OnboardingPage({ params }: { params: Promise<{ loc
   const t = await getTranslations("onboarding");
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col items-center gap-6 px-4 py-16">
-      <h1 className="text-2xl font-semibold">{t("title")}</h1>
-      <p className="max-w-xl text-center text-sm text-gray-600">{t("intro")}</p>
+    <main className="mx-auto flex min-h-screen max-w-3xl flex-col items-center gap-6 px-4 py-14 sm:py-20">
+      <h1 className="font-serif text-3xl font-medium text-ink2">{t("title")}</h1>
+      <p className="max-w-xl text-center text-sm text-ink2-muted">{t("intro")}</p>
       <AttestationForm />
     </main>
   );

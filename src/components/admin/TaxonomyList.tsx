@@ -4,6 +4,10 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useCsrfToken } from "@/lib/use-csrf-token";
 import { getLocalizedLabel } from "@/modules/taxonomies/types";
+import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import { Label, TextInput } from "@/components/ui/Field";
 
 export interface TaxonomyItem {
   id: string;
@@ -70,31 +74,27 @@ export function TaxonomyList({ kind, identifierLabel, items, locale }: TaxonomyL
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-gray-200 p-4">
+    <Card className="flex flex-col gap-3 p-5">
       <table className="w-full text-sm">
         <thead>
-          <tr className="text-left text-gray-500">
-            <th className="pb-2">{identifierLabel}</th>
-            <th className="pb-2">{t("labelFr")}</th>
-            <th className="pb-2">{t("labelEn")}</th>
-            <th className="pb-2">{t("status")}</th>
+          <tr className="text-left text-ink2-faint">
+            <th className="pb-2 font-medium">{identifierLabel}</th>
+            <th className="pb-2 font-medium">{t("labelFr")}</th>
+            <th className="pb-2 font-medium">{t("labelEn")}</th>
+            <th className="pb-2 font-medium">{t("status")}</th>
           </tr>
         </thead>
         <tbody>
           {items.map((item) => (
-            <tr key={item.id} className="border-t border-gray-100">
-              <td className="py-2 font-mono text-xs">{item.identifier}</td>
-              <td className="py-2">{getLocalizedLabel(item.label, "fr")}</td>
-              <td className="py-2">{getLocalizedLabel(item.label, "en")}</td>
+            <tr key={item.id} className="border-t border-hairline">
+              <td className="py-2 font-mono text-xs text-ink2-muted">{item.identifier}</td>
+              <td className="py-2 text-ink2">{getLocalizedLabel(item.label, "fr")}</td>
+              <td className="py-2 text-ink2">{getLocalizedLabel(item.label, "en")}</td>
               <td className="py-2">
-                <button
-                  type="button"
-                  onClick={() => toggleActive(item.id, item.isActive)}
-                  className={`rounded-full px-2 py-0.5 text-xs ${
-                    item.isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-500"
-                  }`}
-                >
-                  {item.isActive ? t("active") : t("inactive")}
+                <button type="button" onClick={() => toggleActive(item.id, item.isActive)}>
+                  <Badge variant={item.isActive ? "success" : "neutral"}>
+                    {item.isActive ? t("active") : t("inactive")}
+                  </Badge>
                 </button>
               </td>
             </tr>
@@ -102,41 +102,24 @@ export function TaxonomyList({ kind, identifierLabel, items, locale }: TaxonomyL
         </tbody>
       </table>
 
-      <div className="flex flex-wrap items-end gap-2 border-t border-gray-100 pt-3">
+      <div className="flex flex-wrap items-end gap-2 border-t border-hairline pt-3">
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-gray-500">{identifierLabel}</label>
-          <input
-            value={identifier}
-            onChange={(e) => setIdentifier(e.target.value)}
-            className="w-28 rounded-md border border-gray-300 px-2 py-1 text-sm"
-          />
+          <Label className="text-xs">{identifierLabel}</Label>
+          <TextInput value={identifier} onChange={(e) => setIdentifier(e.target.value)} className="w-28" />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-gray-500">{t("labelFr")}</label>
-          <input
-            value={labelFr}
-            onChange={(e) => setLabelFr(e.target.value)}
-            className="w-36 rounded-md border border-gray-300 px-2 py-1 text-sm"
-          />
+          <Label className="text-xs">{t("labelFr")}</Label>
+          <TextInput value={labelFr} onChange={(e) => setLabelFr(e.target.value)} className="w-36" />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-gray-500">{t("labelEn")}</label>
-          <input
-            value={labelEn}
-            onChange={(e) => setLabelEn(e.target.value)}
-            className="w-36 rounded-md border border-gray-300 px-2 py-1 text-sm"
-          />
+          <Label className="text-xs">{t("labelEn")}</Label>
+          <TextInput value={labelEn} onChange={(e) => setLabelEn(e.target.value)} className="w-36" />
         </div>
-        <button
-          type="button"
-          onClick={handleCreate}
-          disabled={submitting || !csrfToken}
-          className="rounded-md bg-brand px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50"
-        >
+        <Button onClick={handleCreate} disabled={submitting || !csrfToken}>
           {t("add")}
-        </button>
+        </Button>
       </div>
-      {error && <p className="text-xs text-red-600">{error}</p>}
-    </div>
+      {error && <p className="text-xs text-danger">{error}</p>}
+    </Card>
   );
 }

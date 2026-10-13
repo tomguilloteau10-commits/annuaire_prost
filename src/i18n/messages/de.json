@@ -28,6 +28,7 @@
     }
   },
   "profile": {
+    "verifiedBadge": "Verifiziert",
     "revealContact": "Kontakt anzeigen",
     "languagesLabel": "Gesprochene Sprachen",
     "servicesLabel": "Leistungen",

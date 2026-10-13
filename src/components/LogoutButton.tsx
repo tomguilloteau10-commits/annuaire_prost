@@ -16,7 +16,7 @@ export function LogoutButton() {
   }
 
   return (
-    <button type="button" onClick={handleLogout} className="text-sm text-gray-600 hover:underline">
+    <button type="button" onClick={handleLogout} className="text-ink2-muted transition-colors hover:text-ink2">
       {t("logout")}
     </button>
   );

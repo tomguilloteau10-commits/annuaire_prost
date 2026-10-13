@@ -4,6 +4,7 @@ import { redirect } from "@/i18n/navigation";
 import { hasCompletedOnboardingAttestation } from "@/modules/onboarding/attestation.service";
 import { hasPassedAdultVerification } from "@/modules/verification/verification.service";
 import { VerificationStart } from "@/components/provider/VerificationStart";
+import { Badge } from "@/components/ui/Badge";
 
 export default async function VerificationPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -18,14 +19,10 @@ export default async function VerificationPage({ params }: { params: Promise<{ l
   const verified = await hasPassedAdultVerification(user.id);
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col items-center gap-6 px-4 py-16">
-      <h1 className="text-2xl font-semibold">{t("title")}</h1>
-      <p className="max-w-xl text-center text-sm text-gray-600">{t("intro")}</p>
-      {verified ? (
-        <p className="rounded-md bg-green-50 px-4 py-2 text-sm text-green-800">{t("alreadyVerified")}</p>
-      ) : (
-        <VerificationStart />
-      )}
+    <main className="mx-auto flex min-h-screen max-w-3xl flex-col items-center gap-6 px-4 py-14 sm:py-20">
+      <h1 className="font-serif text-3xl font-medium text-ink2">{t("title")}</h1>
+      <p className="max-w-xl text-center text-sm text-ink2-muted">{t("intro")}</p>
+      {verified ? <Badge variant="success">{t("alreadyVerified")}</Badge> : <VerificationStart />}
     </main>
   );
 }

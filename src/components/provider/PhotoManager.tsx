@@ -3,6 +3,8 @@ import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useCsrfToken } from "@/lib/use-csrf-token";
+import { Card } from "@/components/ui/Card";
+import { Badge, type BadgeVariant } from "@/components/ui/Badge";
 
 export interface PhotoItem {
   id: string;
@@ -15,10 +17,10 @@ export interface PhotoManagerProps {
   maxPhotos: number;
 }
 
-const STATUS_BADGE_CLASS: Record<PhotoItem["status"], string> = {
-  PENDING: "bg-amber-100 text-amber-800",
-  APPROVED: "bg-green-100 text-green-800",
-  REJECTED: "bg-red-100 text-red-800",
+const STATUS_BADGE_VARIANT: Record<PhotoItem["status"], BadgeVariant> = {
+  PENDING: "warning",
+  APPROVED: "success",
+  REJECTED: "danger",
 };
 
 export function PhotoManager({ initialPhotos, maxPhotos }: PhotoManagerProps) {
@@ -78,31 +80,29 @@ export function PhotoManager({ initialPhotos, maxPhotos }: PhotoManagerProps) {
   }
 
   return (
-    <div className="flex w-full max-w-2xl flex-col gap-3 rounded-lg border border-gray-200 p-4">
-      <h2 className="text-base font-medium">{t("photosTitle")}</h2>
-      <p className="text-xs text-gray-500">{t("photosHint")}</p>
+    <Card className="flex w-full max-w-2xl flex-col gap-3 p-5">
+      <h2 className="font-serif text-lg font-medium text-ink2">{t("photosTitle")}</h2>
+      <p className="text-xs text-ink2-faint">{t("photosHint")}</p>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {photos.map((photo) => (
-          <div key={photo.id} className="flex flex-col gap-1">
+          <div key={photo.id} className="flex flex-col gap-1.5">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`/api/provider/profile/photos/${photo.id}/preview`}
               alt=""
-              className="aspect-square w-full rounded-md object-cover"
+              className="aspect-square w-full rounded-xl object-cover"
             />
-            <span
-              className={`self-start rounded-full px-2 py-0.5 text-xs ${STATUS_BADGE_CLASS[photo.status]}`}
-            >
+            <Badge variant={STATUS_BADGE_VARIANT[photo.status]} className="self-start">
               {t(`photoStatus.${photo.status}`)}
-            </span>
+            </Badge>
             {photo.status === "REJECTED" && photo.rejectionReason && (
-              <p className="text-xs text-red-600">{photo.rejectionReason}</p>
+              <p className="text-xs text-danger">{photo.rejectionReason}</p>
             )}
             <button
               type="button"
               onClick={() => handleDelete(photo.id)}
-              className="text-xs text-gray-500 underline"
+              className="text-xs text-ink2-faint underline-offset-2 transition-colors hover:text-ink2-muted hover:underline"
             >
               {t("photoDelete")}
             </button>
@@ -118,12 +118,13 @@ export function PhotoManager({ initialPhotos, maxPhotos }: PhotoManagerProps) {
             accept="image/jpeg,image/png,image/webp"
             onChange={handleFileChange}
             disabled={uploading || !csrfToken}
+            className="text-sm text-ink2-muted file:mr-3 file:cursor-pointer file:rounded-full file:border-0 file:bg-accent file:px-3.5 file:py-2 file:text-sm file:font-medium file:text-accent-foreground file:transition-colors hover:file:bg-accent-hover"
           />
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-danger">{error}</p>}
         </div>
       ) : (
-        <p className="text-xs text-gray-500">{t("photoLimitReached")}</p>
+        <p className="text-xs text-ink2-faint">{t("photoLimitReached")}</p>
       )}
-    </div>
+    </Card>
   );
 }

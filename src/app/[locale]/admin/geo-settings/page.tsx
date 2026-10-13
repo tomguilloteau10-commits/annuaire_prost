@@ -12,8 +12,8 @@ export default async function AdminGeoSettingsPage({ params }: { params: Promise
   const countries = await prisma.allowedCountry.findMany({ orderBy: { countryCode: "asc" } });
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-6 px-4 py-12">
-      <h1 className="text-2xl font-semibold">{t("title")}</h1>
+    <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-6 px-4 py-14 sm:py-20">
+      <h1 className="font-serif text-3xl font-medium text-ink2">{t("title")}</h1>
       <GeoSettingsForm countries={countries} />
     </main>
   );

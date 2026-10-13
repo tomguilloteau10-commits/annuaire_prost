@@ -10,19 +10,22 @@ export async function Nav({ locale }: { locale: string }) {
   const user = await getCurrentUser();
 
   return (
-    <header className="border-b border-gray-200">
-      <nav className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3">
-        <Link href="/" className="text-lg font-semibold">
+    <header className="sticky top-0 z-10 border-b border-hairline bg-ink/85 backdrop-blur-md">
+      <nav className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-4">
+        <Link href="/" className="font-serif text-lg font-semibold tracking-tight text-ink2">
           {common("siteName")}
         </Link>
 
-        <div className="flex flex-wrap items-center gap-4 text-sm">
+        <div className="flex flex-wrap items-center gap-5 text-sm text-ink2-muted">
           {!user && (
             <>
-              <Link href="/login" className="hover:underline">
+              <Link href="/login" className="transition-colors hover:text-ink2">
                 {t("login")}
               </Link>
-              <Link href="/register" className="hover:underline">
+              <Link
+                href="/register"
+                className="rounded-full bg-accent px-4 py-1.5 font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
+              >
                 {t("register")}
               </Link>
             </>
@@ -30,7 +33,7 @@ export async function Nav({ locale }: { locale: string }) {
 
           {user?.role === "PROVIDER" && (
             <>
-              <Link href="/provider/dashboard" className="hover:underline">
+              <Link href="/provider/dashboard" className="transition-colors hover:text-ink2">
                 {t("dashboard")}
               </Link>
               <LogoutButton />
@@ -39,18 +42,18 @@ export async function Nav({ locale }: { locale: string }) {
 
           {(user?.role === "MODERATOR" || user?.role === "ADMIN") && (
             <>
-              <Link href="/admin/moderation" className="hover:underline">
+              <Link href="/admin/moderation" className="transition-colors hover:text-ink2">
                 {t("moderation")}
               </Link>
               {user.role === "ADMIN" && (
                 <>
-                  <Link href="/admin/taxonomies" className="hover:underline">
+                  <Link href="/admin/taxonomies" className="transition-colors hover:text-ink2">
                     {t("taxonomies")}
                   </Link>
-                  <Link href="/admin/audit-log" className="hover:underline">
+                  <Link href="/admin/audit-log" className="transition-colors hover:text-ink2">
                     {t("auditLog")}
                   </Link>
-                  <Link href="/admin/geo-settings" className="hover:underline">
+                  <Link href="/admin/geo-settings" className="transition-colors hover:text-ink2">
                     {t("geoSettings")}
                   </Link>
                 </>
@@ -59,13 +62,17 @@ export async function Nav({ locale }: { locale: string }) {
             </>
           )}
 
-          <div className="flex gap-1 border-l border-gray-200 pl-4">
+          <div className="flex gap-2.5 border-l border-hairline pl-4">
             {routing.locales.map((loc) => (
               <Link
                 key={loc}
                 href="/"
                 locale={loc}
-                className={loc === locale ? "font-semibold underline" : "text-gray-400 hover:underline"}
+                className={
+                  loc === locale
+                    ? "font-semibold text-ink2"
+                    : "text-ink2-faint transition-colors hover:text-ink2-muted"
+                }
               >
                 {loc.toUpperCase()}
               </Link>

@@ -4,6 +4,8 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useCsrfToken } from "@/lib/use-csrf-token";
 import { getLocalizedLabel } from "@/modules/taxonomies/types";
+import { FieldGroup, Label, TextInput, TextArea, Select } from "@/components/ui/Field";
+import { Button } from "@/components/ui/Button";
 
 interface LabeledOption {
   label: unknown;
@@ -105,26 +107,21 @@ export function ProfileEditForm({ locale, categories, services, languages, citie
 
   return (
     <form onSubmit={handleSubmit} className="flex w-full max-w-2xl flex-col gap-5">
-      <div className="flex flex-col gap-1">
-        <label htmlFor="displayName" className="text-sm font-medium text-gray-700">
-          {t("displayNameLabel")}
-        </label>
-        <input
+      <FieldGroup>
+        <Label htmlFor="displayName">{t("displayNameLabel")}</Label>
+        <TextInput
           id="displayName"
           required
           minLength={2}
           maxLength={80}
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-base"
         />
-      </div>
+      </FieldGroup>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="description" className="text-sm font-medium text-gray-700">
-          {t("descriptionLabel")}
-        </label>
-        <textarea
+      <FieldGroup>
+        <Label htmlFor="description">{t("descriptionLabel")}</Label>
+        <TextArea
           id="description"
           required
           minLength={20}
@@ -132,58 +129,43 @@ export function ProfileEditForm({ locale, categories, services, languages, citie
           rows={6}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-base"
         />
-      </div>
+      </FieldGroup>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-1">
-          <label htmlFor="city" className="text-sm font-medium text-gray-700">
-            {t("cityLabel")}
-          </label>
-          <select
-            id="city"
-            value={citySlug}
-            onChange={(e) => setCitySlug(e.target.value)}
-            className="rounded-md border border-gray-300 px-3 py-2 text-base"
-          >
+        <FieldGroup>
+          <Label htmlFor="city">{t("cityLabel")}</Label>
+          <Select id="city" value={citySlug} onChange={(e) => setCitySlug(e.target.value)}>
             {cities.map((city) => (
               <option key={city.slug} value={city.slug}>
                 {city.name} ({city.canton})
               </option>
             ))}
-          </select>
-        </div>
+          </Select>
+        </FieldGroup>
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="category" className="text-sm font-medium text-gray-700">
-            {t("categoryLabel")}
-          </label>
-          <select
-            id="category"
-            value={categoryKey}
-            onChange={(e) => setCategoryKey(e.target.value)}
-            className="rounded-md border border-gray-300 px-3 py-2 text-base"
-          >
+        <FieldGroup>
+          <Label htmlFor="category">{t("categoryLabel")}</Label>
+          <Select id="category" value={categoryKey} onChange={(e) => setCategoryKey(e.target.value)}>
             {categories.map((category) => (
               <option key={category.key} value={category.key}>
                 {getLocalizedLabel(category.label, locale)}
               </option>
             ))}
-          </select>
-        </div>
+          </Select>
+        </FieldGroup>
       </div>
 
       <fieldset className="flex flex-col gap-2">
-        <legend className="text-sm font-medium text-gray-700">{t("languagesLabel")}</legend>
+        <legend className="text-sm font-medium text-ink2-muted">{t("languagesLabel")}</legend>
         <div className="flex flex-wrap gap-2">
           {languages.map((language) => (
             <label
               key={language.code}
-              className={`cursor-pointer rounded-full border px-3 py-1 text-sm ${
+              className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
                 languageCodes.includes(language.code)
-                  ? "border-brand bg-brand text-white"
-                  : "border-gray-300 text-gray-700"
+                  ? "border-accent bg-accent text-accent-foreground"
+                  : "border-hairline2 text-ink2-muted hover:border-hairline2"
               }`}
             >
               <input
@@ -199,15 +181,15 @@ export function ProfileEditForm({ locale, categories, services, languages, citie
       </fieldset>
 
       <fieldset className="flex flex-col gap-2">
-        <legend className="text-sm font-medium text-gray-700">{t("servicesLabel")}</legend>
+        <legend className="text-sm font-medium text-ink2-muted">{t("servicesLabel")}</legend>
         <div className="flex flex-wrap gap-2">
           {services.map((service) => (
             <label
               key={service.key}
-              className={`cursor-pointer rounded-full border px-3 py-1 text-sm ${
+              className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
                 serviceKeys.includes(service.key)
-                  ? "border-brand bg-brand text-white"
-                  : "border-gray-300 text-gray-700"
+                  ? "border-accent bg-accent text-accent-foreground"
+                  : "border-hairline2 text-ink2-muted hover:border-hairline2"
               }`}
             >
               <input
@@ -222,32 +204,25 @@ export function ProfileEditForm({ locale, categories, services, languages, citie
         </div>
       </fieldset>
 
-      <div className="flex flex-col gap-1">
-        <label htmlFor="onlineStatus" className="text-sm font-medium text-gray-700">
-          {t("onlineStatusLabel")}
-        </label>
-        <select
+      <FieldGroup>
+        <Label htmlFor="onlineStatus">{t("onlineStatusLabel")}</Label>
+        <Select
           id="onlineStatus"
           value={onlineStatus}
           onChange={(e) => setOnlineStatus(e.target.value as typeof onlineStatus)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-base"
         >
           <option value="ONLINE">{t("onlineStatusOptions.ONLINE")}</option>
           <option value="AWAY">{t("onlineStatusOptions.AWAY")}</option>
           <option value="OFFLINE">{t("onlineStatusOptions.OFFLINE")}</option>
-        </select>
-      </div>
+        </Select>
+      </FieldGroup>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      {saved && <p className="text-sm text-green-700">{t("saved")}</p>}
+      {error && <p className="text-sm text-danger">{error}</p>}
+      {saved && <p className="text-sm text-success">{t("saved")}</p>}
 
-      <button
-        type="submit"
-        disabled={submitting || !csrfToken}
-        className="rounded-md bg-brand px-4 py-2 text-base font-medium text-white disabled:opacity-50"
-      >
+      <Button type="submit" disabled={submitting || !csrfToken}>
         {t("save")}
-      </button>
+      </Button>
     </form>
   );
 }

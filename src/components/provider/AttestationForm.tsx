@@ -3,6 +3,8 @@ import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useCsrfToken } from "@/lib/use-csrf-token";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 
 const FIELDS = [
   "attestedAdult",
@@ -51,26 +53,26 @@ export function AttestationForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex w-full max-w-xl flex-col gap-4">
+    <form onSubmit={handleSubmit} className="flex w-full max-w-xl flex-col gap-3">
       {FIELDS.map((field) => (
-        <label key={field} className="flex items-start gap-3 rounded-md border border-gray-200 p-3 text-sm">
+        <Card
+          key={field}
+          as="label"
+          className="flex cursor-pointer items-start gap-3 p-4 text-sm text-ink2-muted transition-colors hover:border-hairline2"
+        >
           <input
             type="checkbox"
             checked={checked[field]}
             onChange={(e) => setChecked((prev) => ({ ...prev, [field]: e.target.checked }))}
-            className="mt-0.5 h-4 w-4 shrink-0"
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-hairline2 bg-surface-raised text-accent accent-accent"
           />
           <span>{t(`fields.${field}`)}</span>
-        </label>
+        </Card>
       ))}
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      <button
-        type="submit"
-        disabled={!allChecked || submitting || !csrfToken}
-        className="rounded-md bg-brand px-4 py-2 text-base font-medium text-white disabled:opacity-50"
-      >
+      {error && <p className="text-sm text-danger">{error}</p>}
+      <Button type="submit" disabled={!allChecked || submitting || !csrfToken}>
         {t("submit")}
-      </button>
+      </Button>
     </form>
   );
 }

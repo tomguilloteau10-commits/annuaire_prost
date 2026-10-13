@@ -1,3 +1,35 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    @apply bg-ink;
+  }
+
+  body {
+    @apply bg-ink font-sans text-ink2 antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-serif tracking-tight text-ink2;
+  }
+
+  ::selection {
+    @apply bg-accent/30 text-ink2;
+  }
+
+  /* Champs de formulaire natifs (select, input date, etc.) : on force le
+     rendu sombre pour éviter le flash blanc du thème système. */
+  select,
+  input,
+  textarea {
+    color-scheme: dark;
+  }
+}

@@ -2,6 +2,9 @@
 import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { useCsrfToken } from "@/lib/use-csrf-token";
+import { FieldGroup, Label, TextInput } from "@/components/ui/Field";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 
 export interface ContactFormProps {
   initialPhone: string;
@@ -43,42 +46,22 @@ export function ContactForm({ initialPhone, initialEmail }: ContactFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex w-full max-w-md flex-col gap-3 rounded-lg border border-gray-200 p-4">
-      <h2 className="text-base font-medium">{t("contactTitle")}</h2>
-      <p className="text-xs text-gray-500">{t("contactHint")}</p>
-      <div className="flex flex-col gap-1">
-        <label htmlFor="phone" className="text-sm font-medium text-gray-700">
-          {t("phoneLabel")}
-        </label>
-        <input
-          id="phone"
-          type="tel"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-base"
-        />
-      </div>
-      <div className="flex flex-col gap-1">
-        <label htmlFor="contactEmail" className="text-sm font-medium text-gray-700">
-          {t("contactEmailLabel")}
-        </label>
-        <input
-          id="contactEmail"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-base"
-        />
-      </div>
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      {saved && <p className="text-sm text-green-700">{t("saved")}</p>}
-      <button
-        type="submit"
-        disabled={submitting || !csrfToken}
-        className="self-start rounded-md bg-brand px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
-      >
+    <Card as="form" onSubmit={handleSubmit} className="flex w-full max-w-md flex-col gap-3 p-5">
+      <h2 className="font-serif text-lg font-medium text-ink2">{t("contactTitle")}</h2>
+      <p className="text-xs text-ink2-faint">{t("contactHint")}</p>
+      <FieldGroup>
+        <Label htmlFor="phone">{t("phoneLabel")}</Label>
+        <TextInput id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+      </FieldGroup>
+      <FieldGroup>
+        <Label htmlFor="contactEmail">{t("contactEmailLabel")}</Label>
+        <TextInput id="contactEmail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+      </FieldGroup>
+      {error && <p className="text-sm text-danger">{error}</p>}
+      {saved && <p className="text-sm text-success">{t("saved")}</p>}
+      <Button type="submit" disabled={submitting || !csrfToken} className="self-start">
         {t("save")}
-      </button>
-    </form>
+      </Button>
+    </Card>
   );
 }

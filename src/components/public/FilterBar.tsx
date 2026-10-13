@@ -2,6 +2,7 @@
 import { useTranslations } from "next-intl";
 import { useRouter, usePathname } from "@/i18n/navigation";
 import { getLocalizedLabel } from "@/modules/taxonomies/types";
+import { Select } from "@/components/ui/Field";
 
 export interface FilterBarProps {
   locale: string;
@@ -28,12 +29,12 @@ export function FilterBar({ locale, categories, languages, cities, currentFilter
   }
 
   return (
-    <div className="flex w-full flex-wrap items-center gap-3">
-      <select
+    <div className="flex w-full flex-wrap items-center gap-2.5">
+      <Select
         aria-label={t("city")}
         value={currentFilters.city ?? ""}
         onChange={(e) => navigate({ city: e.target.value || undefined })}
-        className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+        className="w-auto"
       >
         <option value="">{t("city")}</option>
         {cities.map((city) => (
@@ -41,13 +42,13 @@ export function FilterBar({ locale, categories, languages, cities, currentFilter
             {city.name} ({city.canton})
           </option>
         ))}
-      </select>
+      </Select>
 
-      <select
+      <Select
         aria-label={t("category")}
         value={currentFilters.category ?? ""}
         onChange={(e) => navigate({ category: e.target.value || undefined })}
-        className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+        className="w-auto"
       >
         <option value="">{t("category")}</option>
         {categories.map((category) => (
@@ -55,13 +56,13 @@ export function FilterBar({ locale, categories, languages, cities, currentFilter
             {getLocalizedLabel(category.label, locale)}
           </option>
         ))}
-      </select>
+      </Select>
 
-      <select
+      <Select
         aria-label={t("language")}
         value={currentFilters.language ?? ""}
         onChange={(e) => navigate({ language: e.target.value || undefined })}
-        className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+        className="w-auto"
       >
         <option value="">{t("language")}</option>
         {languages.map((language) => (
@@ -69,13 +70,14 @@ export function FilterBar({ locale, categories, languages, cities, currentFilter
             {getLocalizedLabel(language.label, locale)}
           </option>
         ))}
-      </select>
+      </Select>
 
-      <label className="flex items-center gap-2 text-sm text-gray-700">
+      <label className="flex items-center gap-2 rounded-xl border border-hairline2 bg-surface-raised px-3.5 py-2.5 text-sm text-ink2-muted">
         <input
           type="checkbox"
           checked={currentFilters.online ?? false}
           onChange={(e) => navigate({ online: e.target.checked || undefined })}
+          className="h-4 w-4 rounded border-hairline2 bg-surface text-accent accent-accent"
         />
         {t("onlineOnly")}
       </label>

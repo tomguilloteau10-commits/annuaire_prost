@@ -1,10 +1,26 @@
 import type { Metadata } from "next";
+import { Fraunces, Inter } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { Nav } from "@/components/Nav";
 import "../globals.css";
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-fraunces",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -33,8 +49,8 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
-      <body className="min-h-screen bg-white text-gray-900 antialiased">
+    <html lang={locale} className={`${fraunces.variable} ${inter.variable}`}>
+      <body className="min-h-screen bg-ink font-sans text-ink2 antialiased">
         <NextIntlClientProvider messages={messages}>
           <Nav locale={locale} />
           {children}

@@ -18,11 +18,11 @@ export default async function AdminTaxonomiesPage({ params }: { params: Promise<
   ]);
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-10 px-4 py-12">
-      <h1 className="text-2xl font-semibold">{t("title")}</h1>
+    <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-10 px-4 py-14 sm:py-20">
+      <h1 className="font-serif text-3xl font-medium text-ink2">{t("title")}</h1>
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-medium">{t("categories")}</h2>
+        <h2 className="font-serif text-xl font-medium text-ink2">{t("categories")}</h2>
         <TaxonomyList
           kind="categories"
           identifierLabel={t("key")}
@@ -32,7 +32,7 @@ export default async function AdminTaxonomiesPage({ params }: { params: Promise<
       </section>
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-medium">{t("services")}</h2>
+        <h2 className="font-serif text-xl font-medium text-ink2">{t("services")}</h2>
         <TaxonomyList
           kind="services"
           identifierLabel={t("key")}
@@ -42,7 +42,7 @@ export default async function AdminTaxonomiesPage({ params }: { params: Promise<
       </section>
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-medium">{t("languages")}</h2>
+        <h2 className="font-serif text-xl font-medium text-ink2">{t("languages")}</h2>
         <TaxonomyList
           kind="languages"
           identifierLabel={t("code")}
@@ -52,7 +52,7 @@ export default async function AdminTaxonomiesPage({ params }: { params: Promise<
       </section>
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-medium">{t("cities")}</h2>
+        <h2 className="font-serif text-xl font-medium text-ink2">{t("cities")}</h2>
         <CityList items={cities.map((c) => ({ id: c.id, name: c.name, canton: c.canton, isActive: c.isActive }))} />
       </section>
     </main>

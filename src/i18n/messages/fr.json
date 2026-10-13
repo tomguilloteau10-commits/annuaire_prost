@@ -27,6 +27,7 @@
     }
   },
   "profile": {
+    "verifiedBadge": "Vérifiée",
     "revealContact": "Afficher le contact",
     "languagesLabel": "Langues parlées",
     "servicesLabel": "Services",

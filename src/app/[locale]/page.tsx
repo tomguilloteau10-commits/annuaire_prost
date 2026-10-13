@@ -45,11 +45,13 @@ export default async function HomePage({
   );
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-8 px-4 py-12">
-      <div className="flex flex-col items-center gap-2 text-center">
-        <p className="text-xs uppercase tracking-wide text-gray-400">{common("betaNotice")}</p>
-        <h1 className="text-3xl font-semibold sm:text-4xl">{t("title")}</h1>
-        <p className="text-base text-gray-600">{t("subtitle")}</p>
+    <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-10 px-4 py-14 sm:py-20">
+      <div className="flex flex-col items-center gap-3 text-center">
+        <p className="text-xs font-medium uppercase tracking-[0.2em] text-ink2-faint">
+          {common("betaNotice")}
+        </p>
+        <h1 className="max-w-xl text-4xl font-medium leading-[1.1] sm:text-5xl">{t("title")}</h1>
+        <p className="max-w-md text-base text-ink2-muted">{t("subtitle")}</p>
       </div>
 
       <FilterBar
@@ -66,7 +68,7 @@ export default async function HomePage({
       />
 
       {profilesWithThumbnails.length === 0 ? (
-        <p className="py-16 text-center text-sm text-gray-400">{t("emptyState")}</p>
+        <p className="py-16 text-center text-sm text-ink2-faint">{t("emptyState")}</p>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {profilesWithThumbnails.map((profile) => (

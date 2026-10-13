@@ -3,6 +3,7 @@ import { requirePageRole } from "@/lib/page-guards";
 import { listPendingProfiles, listPendingMedia } from "@/modules/moderation/moderation-queue.service";
 import { getLocalizedLabel } from "@/modules/taxonomies/types";
 import { DecisionForm } from "@/components/admin/DecisionForm";
+import { Card } from "@/components/ui/Card";
 
 export default async function AdminModerationPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -13,47 +14,47 @@ export default async function AdminModerationPage({ params }: { params: Promise<
   const [pendingProfiles, pendingMedia] = await Promise.all([listPendingProfiles(), listPendingMedia()]);
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-10 px-4 py-12">
-      <h1 className="text-2xl font-semibold">{t("title")}</h1>
+    <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-10 px-4 py-14 sm:py-20">
+      <h1 className="font-serif text-3xl font-medium text-ink2">{t("title")}</h1>
 
       <section className="flex flex-col gap-4">
-        <h2 className="text-lg font-medium">{t("pendingProfiles")}</h2>
+        <h2 className="font-serif text-xl font-medium text-ink2">{t("pendingProfiles")}</h2>
         {pendingProfiles.length === 0 ? (
-          <p className="text-sm text-gray-400">{t("emptyQueue")}</p>
+          <p className="text-sm text-ink2-faint">{t("emptyQueue")}</p>
         ) : (
           <div className="flex flex-col gap-4">
             {pendingProfiles.map((profile) => (
-              <div key={profile.id} className="flex flex-col gap-2 rounded-lg border border-gray-200 p-4">
+              <Card key={profile.id} className="flex flex-col gap-2 p-5">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium">{profile.displayName}</span>
-                  <span className="text-xs text-gray-500">
+                  <span className="font-medium text-ink2">{profile.displayName}</span>
+                  <span className="text-xs text-ink2-faint">
                     {profile.city.name} · {getLocalizedLabel(profile.category.label, locale)}
                   </span>
                 </div>
-                <p className="whitespace-pre-wrap text-sm text-gray-700">{profile.description}</p>
+                <p className="whitespace-pre-wrap text-sm text-ink2-muted">{profile.description}</p>
                 <DecisionForm decisionUrl={`/api/admin/moderation/profiles/${profile.id}/decision`} />
-              </div>
+              </Card>
             ))}
           </div>
         )}
       </section>
 
       <section className="flex flex-col gap-4">
-        <h2 className="text-lg font-medium">{t("pendingMedia")}</h2>
+        <h2 className="font-serif text-xl font-medium text-ink2">{t("pendingMedia")}</h2>
         {pendingMedia.length === 0 ? (
-          <p className="text-sm text-gray-400">{t("emptyQueue")}</p>
+          <p className="text-sm text-ink2-faint">{t("emptyQueue")}</p>
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {pendingMedia.map((media) => (
-              <div key={media.id} className="flex flex-col gap-2 rounded-lg border border-gray-200 p-4">
+              <Card key={media.id} className="flex flex-col gap-2 p-5">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={`/api/admin/moderation/media/${media.id}/preview`}
                   alt=""
-                  className="aspect-square w-full rounded-md object-cover"
+                  className="aspect-square w-full rounded-xl object-cover"
                 />
                 <DecisionForm decisionUrl={`/api/admin/moderation/media/${media.id}/decision`} />
-              </div>
+              </Card>
             ))}
           </div>
         )}
