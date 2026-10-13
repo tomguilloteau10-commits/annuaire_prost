@@ -178,6 +178,7 @@ model ProviderProfile {
   services  ProfileService[]
   media     Media[]
   contact   ProfileContact? // 1:1, table séparée à dessein — voir ci-dessous
+  reports   ProfileReport[]
 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -211,6 +212,40 @@ model ContactRevealLog {
 
   @@index([profileId, createdAt])
   @@index([purgeAt])
+}
+
+// ── Signalements ──────────────────────────────────────────────────────────
+
+enum ReportReason {
+  UNDERAGE // personne possiblement mineure
+  COERCION // contrainte, exploitation, traite
+  FAKE_PROFILE // photos volées, usurpation d'identité
+  SCAM // arnaque, demande de paiement anticipé
+  OTHER
+}
+
+enum ReportStatus {
+  OPEN
+  RESOLVED
+}
+
+// Signalement d'un profil par un visiteur (ENGINEERING_RULES.md §7) : il
+// alimente une file traitée par un humain, jamais une suspension
+// automatique. Aucune donnée sur l'auteur : ni compte, ni IP, ni hash d'IP
+// (le rate limiting de l'endpoint vit en mémoire, n'est jamais persisté).
+model ProfileReport {
+  id             String          @id @default(cuid())
+  profileId      String
+  profile        ProviderProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  reason         ReportReason
+  details        String?         @db.Text
+  status         ReportStatus    @default(OPEN)
+  resolvedById   String?
+  resolutionNote String?
+  resolvedAt     DateTime?
+  createdAt      DateTime        @default(now())
+
+  @@index([status, createdAt])
 }
 
 // ── Médias & modération ───────────────────────────────────────────────────

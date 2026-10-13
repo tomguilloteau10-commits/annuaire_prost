@@ -69,7 +69,6 @@
     "ageYears": "{age} ans",
     "contactWhatsapp": "Contacter sur WhatsApp",
     "noWhatsapp": "Aucun numéro WhatsApp disponible pour ce profil.",
-    "revealContact": "Autres moyens de contact",
     "languagesLabel": "Langues parlées",
     "servicesLabel": "Services",
     "onlineStatus": {
@@ -80,7 +79,16 @@
     "noPhoto": "Pas de photo",
     "contactRateLimited": "Trop de demandes — réessayez plus tard.",
     "contactError": "Impossible d'afficher le contact pour le moment.",
-    "featuredBadge": "Vedette"
+    "featuredBadge": "Vedette",
+    "backToDirectory": "Retour à l'annuaire",
+    "galleryPhoto": "Photo {index} sur {total}",
+    "aboutTitle": "À propos",
+    "detailsTitle": "Détails",
+    "contactTitle": "Contact",
+    "contactIntro": "Contact direct avec l'annonceuse — sans compte, sans intermédiaire, sans suivi.",
+    "showContact": "Afficher le contact",
+    "reportProfile": "Signaler ce profil",
+    "locationNotice": "Localisation au centre-ville uniquement, jamais l'adresse exacte."
   },
   "auth": {
     "loginTitle": "Connexion",
@@ -208,7 +216,10 @@
     "approve": "Approuver",
     "reject": "Rejeter",
     "decisionError": "Impossible d'enregistrer la décision.",
-    "verificationRequiredError": "La vérification de majorité n'est plus valide : publication impossible."
+    "verificationRequiredError": "La vérification de majorité n'est plus valide : publication impossible.",
+    "openReports": "Signalements ouverts",
+    "reportNotePlaceholder": "Note de traitement (obligatoire)",
+    "resolveReport": "Marquer comme traité"
   },
   "adminTaxonomies": {
     "title": "Taxonomies",
@@ -269,5 +280,26 @@
     "title": "Cam Live",
     "description": "Des sessions en direct avec des annonceuses vérifiées arrivent prochainement. Comme chaque profil, chaque diffusion passera par la vérification de majorité et la modération.",
     "back": "Retour à l'accueil"
+  },
+  "report": {
+    "title": "Signaler le profil de {name}",
+    "intro": "Votre signalement est anonyme : aucun compte requis, aucune donnée vous concernant n'est enregistrée. Il est examiné par un modérateur humain.",
+    "reasonLabel": "Motif",
+    "reasonPlaceholder": "Choisissez un motif",
+    "reasons": {
+      "UNDERAGE": "Personne possiblement mineure",
+      "COERCION": "Contrainte ou exploitation",
+      "FAKE_PROFILE": "Faux profil ou photos volées",
+      "SCAM": "Arnaque ou demande de paiement",
+      "OTHER": "Autre"
+    },
+    "detailsLabel": "Précisions (facultatif)",
+    "detailsHint": "N'indiquez aucune donnée personnelle vous concernant.",
+    "submit": "Envoyer le signalement",
+    "cancel": "Annuler",
+    "thanks": "Merci, votre signalement a été transmis à l'équipe de modération.",
+    "backToProfile": "Retour au profil",
+    "rateLimited": "Trop de signalements envoyés — réessayez plus tard.",
+    "error": "Impossible d'envoyer le signalement pour le moment."
   }
 }

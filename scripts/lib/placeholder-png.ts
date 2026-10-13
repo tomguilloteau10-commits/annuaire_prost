@@ -51,6 +51,8 @@ export function createPlaceholderPng(rgb: [number, number, number], size = 512):
   ]);
 }
 
+export type GradientDirection = "diagonal" | "vertical" | "horizontal";
+
 function lerp(a: number, b: number, t: number): number {
   return Math.round(a + (b - a) * t);
 }
@@ -62,11 +64,13 @@ function lerp(a: number, b: number, t: number): number {
  * pour peupler des profils de démonstration, sans jamais recourir à une
  * banque d'images (même libre de droits), conformément à
  * ENGINEERING_RULES.md "Données de test synthétiques uniquement".
+ * `direction` permet de varier les visuels d'une même galerie.
  */
 export function createGradientPlaceholderPng(
   from: [number, number, number],
   to: [number, number, number],
   size = 512,
+  direction: GradientDirection = "diagonal",
 ): Buffer {
   const signature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 
@@ -81,12 +85,12 @@ export function createGradientPlaceholderPng(
 
   const rowLength = size * 3;
   const raw = Buffer.alloc((rowLength + 1) * size);
-  const maxT = 2 * (size - 1);
+  const maxT = direction === "diagonal" ? 2 * (size - 1) : size - 1;
   for (let y = 0; y < size; y++) {
     const rowStart = y * (rowLength + 1);
     raw[rowStart] = 0;
     for (let x = 0; x < size; x++) {
-      const t = (x + y) / maxT;
+      const t = (direction === "diagonal" ? x + y : direction === "vertical" ? y : x) / maxT;
       const px = rowStart + 1 + x * 3;
       raw[px] = lerp(from[0], to[0], t);
       raw[px + 1] = lerp(from[1], to[1], t);

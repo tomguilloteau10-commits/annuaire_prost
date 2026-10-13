@@ -1,8 +1,12 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { requirePageRole } from "@/lib/page-guards";
 import { listPendingProfiles, listPendingMedia } from "@/modules/moderation/moderation-queue.service";
+import { listOpenReports } from "@/modules/reports/report.service";
 import { getLocalizedLabel } from "@/modules/taxonomies/types";
+import { Link } from "@/i18n/navigation";
 import { DecisionForm } from "@/components/admin/DecisionForm";
+import { ResolveReportForm } from "@/components/admin/ResolveReportForm";
+import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 
 export default async function AdminModerationPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -10,12 +14,54 @@ export default async function AdminModerationPage({ params }: { params: Promise<
   setRequestLocale(locale);
   await requirePageRole(locale, ["MODERATOR", "ADMIN"]);
   const t = await getTranslations("moderation");
+  const tReport = await getTranslations("report");
 
-  const [pendingProfiles, pendingMedia] = await Promise.all([listPendingProfiles(), listPendingMedia()]);
+  const [pendingProfiles, pendingMedia, openReports] = await Promise.all([
+    listPendingProfiles(),
+    listPendingMedia(),
+    listOpenReports(),
+  ]);
+  const dateFormatter = new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" });
 
   return (
     <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-10 px-4 py-14 sm:py-20">
       <h1 className="font-serif text-3xl font-medium text-ink2">{t("title")}</h1>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="font-serif text-xl font-medium text-ink2">{t("openReports")}</h2>
+        {openReports.length === 0 ? (
+          <p className="text-sm text-ink2-faint">{t("emptyQueue")}</p>
+        ) : (
+          <div className="flex flex-col gap-4">
+            {openReports.map((report) => (
+              <Card key={report.id} className="flex flex-col gap-3 p-5">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge variant={report.reason === "UNDERAGE" || report.reason === "COERCION" ? "danger" : "warning"}>
+                      {tReport(`reasons.${report.reason}`)}
+                    </Badge>
+                    {report.profile.status === "PUBLISHED" ? (
+                      <Link
+                        href={`/profiles/${report.profile.slug}`}
+                        className="font-medium text-ink2 underline-offset-4 hover:underline"
+                      >
+                        {report.profile.displayName}
+                      </Link>
+                    ) : (
+                      <span className="font-medium text-ink2">{report.profile.displayName}</span>
+                    )}
+                  </div>
+                  <span className="text-xs text-ink2-faint">{dateFormatter.format(report.createdAt)}</span>
+                </div>
+                {report.details && (
+                  <p className="whitespace-pre-wrap text-sm text-ink2-muted">{report.details}</p>
+                )}
+                <ResolveReportForm reportId={report.id} />
+              </Card>
+            ))}
+          </div>
+        )}
+      </section>
 
       <section className="flex flex-col gap-4">
         <h2 className="font-serif text-xl font-medium text-ink2">{t("pendingProfiles")}</h2>

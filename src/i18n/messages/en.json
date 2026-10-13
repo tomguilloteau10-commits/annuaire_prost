@@ -69,7 +69,6 @@
     "ageYears": "{age} years old",
     "contactWhatsapp": "Contact on WhatsApp",
     "noWhatsapp": "No WhatsApp number available for this profile.",
-    "revealContact": "Other contact options",
     "languagesLabel": "Languages spoken",
     "servicesLabel": "Services",
     "onlineStatus": {
@@ -80,7 +79,16 @@
     "noPhoto": "No photo",
     "contactRateLimited": "Too many requests — try again later.",
     "contactError": "Could not load the contact right now.",
-    "featuredBadge": "Featured"
+    "featuredBadge": "Featured",
+    "backToDirectory": "Back to directory",
+    "galleryPhoto": "Photo {index} of {total}",
+    "aboutTitle": "About",
+    "detailsTitle": "Details",
+    "contactTitle": "Contact",
+    "contactIntro": "Contact the advertiser directly — no account, no middleman, no tracking.",
+    "showContact": "Show contact",
+    "reportProfile": "Report this profile",
+    "locationNotice": "Location shown at city-centre level only, never the exact address."
   },
   "auth": {
     "loginTitle": "Log in",
@@ -208,7 +216,10 @@
     "approve": "Approve",
     "reject": "Reject",
     "decisionError": "Could not save the decision.",
-    "verificationRequiredError": "Age verification is no longer valid: cannot publish."
+    "verificationRequiredError": "Age verification is no longer valid: cannot publish.",
+    "openReports": "Open reports",
+    "reportNotePlaceholder": "Resolution note (required)",
+    "resolveReport": "Mark as handled"
   },
   "adminTaxonomies": {
     "title": "Taxonomies",
@@ -269,5 +280,26 @@
     "title": "Cam Live",
     "description": "Live sessions with verified providers are coming soon. Like every profile, every stream will go through age verification and moderation.",
     "back": "Back to home"
+  },
+  "report": {
+    "title": "Report {name}'s profile",
+    "intro": "Your report is anonymous: no account needed, no data about you is stored. It is reviewed by a human moderator.",
+    "reasonLabel": "Reason",
+    "reasonPlaceholder": "Choose a reason",
+    "reasons": {
+      "UNDERAGE": "Person may be underage",
+      "COERCION": "Coercion or exploitation",
+      "FAKE_PROFILE": "Fake profile or stolen photos",
+      "SCAM": "Scam or payment request",
+      "OTHER": "Other"
+    },
+    "detailsLabel": "Details (optional)",
+    "detailsHint": "Do not include any personal data about yourself.",
+    "submit": "Send report",
+    "cancel": "Cancel",
+    "thanks": "Thank you, your report has been sent to the moderation team.",
+    "backToProfile": "Back to profile",
+    "rateLimited": "Too many reports sent — please try again later.",
+    "error": "Unable to send the report right now."
   }
 }

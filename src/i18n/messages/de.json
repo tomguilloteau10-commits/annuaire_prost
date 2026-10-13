@@ -70,7 +70,6 @@
     "ageYears": "{age} Jahre",
     "contactWhatsapp": "Auf WhatsApp kontaktieren",
     "noWhatsapp": "Für dieses Profil ist keine WhatsApp-Nummer verfügbar.",
-    "revealContact": "Weitere Kontaktmöglichkeiten",
     "languagesLabel": "Gesprochene Sprachen",
     "servicesLabel": "Leistungen",
     "onlineStatus": {
@@ -81,7 +80,16 @@
     "noPhoto": "Kein Foto",
     "contactRateLimited": "Zu viele Anfragen — später erneut versuchen.",
     "contactError": "Kontakt kann derzeit nicht angezeigt werden.",
-    "featuredBadge": "Empfohlen"
+    "featuredBadge": "Empfohlen",
+    "backToDirectory": "Zurück zum Verzeichnis",
+    "galleryPhoto": "Foto {index} von {total}",
+    "aboutTitle": "Über mich",
+    "detailsTitle": "Details",
+    "contactTitle": "Kontakt",
+    "contactIntro": "Direkter Kontakt zur Anbieterin — ohne Konto, ohne Vermittler, ohne Tracking.",
+    "showContact": "Kontakt anzeigen",
+    "reportProfile": "Dieses Profil melden",
+    "locationNotice": "Standort nur auf Ebene des Stadtzentrums, nie die genaue Adresse."
   },
   "auth": {
     "loginTitle": "Anmelden",
@@ -209,7 +217,10 @@
     "approve": "Genehmigen",
     "reject": "Ablehnen",
     "decisionError": "Entscheidung konnte nicht gespeichert werden.",
-    "verificationRequiredError": "Die Altersverifizierung ist nicht mehr gültig: Veröffentlichung nicht möglich."
+    "verificationRequiredError": "Die Altersverifizierung ist nicht mehr gültig: Veröffentlichung nicht möglich.",
+    "openReports": "Offene Meldungen",
+    "reportNotePlaceholder": "Bearbeitungsnotiz (Pflichtfeld)",
+    "resolveReport": "Als erledigt markieren"
   },
   "adminTaxonomies": {
     "title": "Taxonomien",
@@ -270,5 +281,26 @@
     "title": "Cam Live",
     "description": "Live-Sessions mit verifizierten Anbieterinnen folgen in Kürze. Wie jedes Profil durchläuft jede Übertragung die Altersverifikation und die Moderation.",
     "back": "Zurück zur Startseite"
+  },
+  "report": {
+    "title": "Profil von {name} melden",
+    "intro": "Ihre Meldung ist anonym: kein Konto nötig, es werden keine Daten über Sie gespeichert. Sie wird von einem Menschen geprüft.",
+    "reasonLabel": "Grund",
+    "reasonPlaceholder": "Grund auswählen",
+    "reasons": {
+      "UNDERAGE": "Person möglicherweise minderjährig",
+      "COERCION": "Zwang oder Ausbeutung",
+      "FAKE_PROFILE": "Falsches Profil oder gestohlene Fotos",
+      "SCAM": "Betrug oder Zahlungsaufforderung",
+      "OTHER": "Sonstiges"
+    },
+    "detailsLabel": "Details (optional)",
+    "detailsHint": "Geben Sie keine persönlichen Daten über sich an.",
+    "submit": "Meldung senden",
+    "cancel": "Abbrechen",
+    "thanks": "Danke, Ihre Meldung wurde an das Moderationsteam weitergeleitet.",
+    "backToProfile": "Zurück zum Profil",
+    "rateLimited": "Zu viele Meldungen — bitte später erneut versuchen.",
+    "error": "Meldung kann derzeit nicht gesendet werden."
   }
 }

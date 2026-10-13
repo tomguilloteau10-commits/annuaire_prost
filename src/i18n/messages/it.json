@@ -70,7 +70,6 @@
     "ageYears": "{age} anni",
     "contactWhatsapp": "Contatta su WhatsApp",
     "noWhatsapp": "Nessun numero WhatsApp disponibile per questo profilo.",
-    "revealContact": "Altri modi per contattare",
     "languagesLabel": "Lingue parlate",
     "servicesLabel": "Servizi",
     "onlineStatus": {
@@ -81,7 +80,16 @@
     "noPhoto": "Nessuna foto",
     "contactRateLimited": "Troppe richieste — riprova più tardi.",
     "contactError": "Impossibile mostrare il contatto al momento.",
-    "featuredBadge": "In evidenza"
+    "featuredBadge": "In evidenza",
+    "backToDirectory": "Torna all'elenco",
+    "galleryPhoto": "Foto {index} di {total}",
+    "aboutTitle": "Chi sono",
+    "detailsTitle": "Dettagli",
+    "contactTitle": "Contatto",
+    "contactIntro": "Contatto diretto con l'inserzionista — senza account, senza intermediari, senza tracciamento.",
+    "showContact": "Mostra contatto",
+    "reportProfile": "Segnala questo profilo",
+    "locationNotice": "Posizione limitata al centro città, mai l'indirizzo esatto."
   },
   "auth": {
     "loginTitle": "Accedi",
@@ -209,7 +217,10 @@
     "approve": "Approva",
     "reject": "Rifiuta",
     "decisionError": "Impossibile salvare la decisione.",
-    "verificationRequiredError": "La verifica della maggiore età non è più valida: pubblicazione impossibile."
+    "verificationRequiredError": "La verifica della maggiore età non è più valida: pubblicazione impossibile.",
+    "openReports": "Segnalazioni aperte",
+    "reportNotePlaceholder": "Nota di gestione (obbligatoria)",
+    "resolveReport": "Segna come gestita"
   },
   "adminTaxonomies": {
     "title": "Tassonomie",
@@ -270,5 +281,26 @@
     "title": "Cam Live",
     "description": "Le sessioni dal vivo con fornitrici verificate arriveranno presto. Come ogni profilo, ogni diretta passerà dalla verifica della maggiore età e dalla moderazione.",
     "back": "Torna alla home"
+  },
+  "report": {
+    "title": "Segnala il profilo di {name}",
+    "intro": "La segnalazione è anonima: nessun account richiesto, nessun dato su di te viene salvato. Viene esaminata da un moderatore umano.",
+    "reasonLabel": "Motivo",
+    "reasonPlaceholder": "Scegli un motivo",
+    "reasons": {
+      "UNDERAGE": "Persona possibilmente minorenne",
+      "COERCION": "Costrizione o sfruttamento",
+      "FAKE_PROFILE": "Profilo falso o foto rubate",
+      "SCAM": "Truffa o richiesta di pagamento",
+      "OTHER": "Altro"
+    },
+    "detailsLabel": "Dettagli (facoltativo)",
+    "detailsHint": "Non indicare dati personali che ti riguardano.",
+    "submit": "Invia segnalazione",
+    "cancel": "Annulla",
+    "thanks": "Grazie, la segnalazione è stata inviata al team di moderazione.",
+    "backToProfile": "Torna al profilo",
+    "rateLimited": "Troppe segnalazioni — riprova più tardi.",
+    "error": "Impossibile inviare la segnalazione al momento."
   }
 }

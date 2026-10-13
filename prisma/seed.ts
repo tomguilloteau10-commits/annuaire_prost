@@ -24,7 +24,11 @@ import { PrismaClient } from "@prisma/client";
 import { DATA_CATEGORIES } from "../src/modules/retention/retention-policy.service";
 import { slugify, slugifyWithSuffix } from "../src/lib/slugify";
 import { hashPassword } from "../src/modules/auth/password";
-import { createPlaceholderPng, createGradientPlaceholderPng } from "../scripts/lib/placeholder-png";
+import {
+  createPlaceholderPng,
+  createGradientPlaceholderPng,
+  type GradientDirection,
+} from "../scripts/lib/placeholder-png";
 
 const prisma = new PrismaClient();
 
@@ -48,10 +52,14 @@ async function writePlaceholderMediaFile(rgb: [number, number, number]): Promise
 async function writeGradientPlaceholderMediaFile(
   from: [number, number, number],
   to: [number, number, number],
+  direction: GradientDirection = "diagonal",
 ): Promise<string> {
   await mkdir(MEDIA_LOCAL_PATH, { recursive: true });
   const storageKey = `${randomBytes(16).toString("hex")}.png`;
-  await writeFile(path.join(MEDIA_LOCAL_PATH, storageKey), createGradientPlaceholderPng(from, to));
+  await writeFile(
+    path.join(MEDIA_LOCAL_PATH, storageKey),
+    createGradientPlaceholderPng(from, to, 512, direction),
+  );
   return storageKey;
 }
 
@@ -340,6 +348,62 @@ async function seedDemoProfile(spec: DemoProfileSpec, passwordHash: string, mode
         moderatedAt: isPending ? null : new Date(),
       },
     });
+  }
+}
+
+type Rgb = [number, number, number];
+
+function mix(color: Rgb, target: Rgb, amount: number): Rgb {
+  return color.map((c, i) => Math.round(c + (target[i]! - c) * amount)) as Rgb;
+}
+
+/** Nombre de visuels approuvés visés par profil de démo (galerie de la page profil). */
+const DEMO_GALLERY_SIZE = 4;
+
+/**
+ * Complète la galerie d'un profil de démo avec des variantes de son dégradé
+ * (sens inversé, plus sombre, plus clair) jusqu'à DEMO_GALLERY_SIZE visuels
+ * approuvés. Séparé de seedDemoProfile() pour s'appliquer aussi aux profils
+ * déjà seedés (sans les recréer) : idempotent, ne fait rien si la galerie
+ * est déjà complète. Toujours des dégradés synthétiques, aucune photo.
+ */
+async function seedDemoGallery(spec: DemoProfileSpec, moderatorId: string) {
+  const base = spec.photoGradients?.[0];
+  if (!base) return;
+
+  const profile = await prisma.providerProfile.findFirst({
+    where: { user: { email: spec.email } },
+    select: { id: true, media: { select: { status: true, position: true } } },
+  });
+  if (!profile) return;
+
+  const approvedCount = profile.media.filter((m) => m.status === "APPROVED").length;
+  const missing = DEMO_GALLERY_SIZE - approvedCount;
+  if (missing <= 0) return;
+
+  const [from, to] = base;
+  const black: Rgb = [14, 17, 22];
+  const cream: Rgb = [237, 235, 230];
+  const variants: [Rgb, Rgb, GradientDirection][] = [
+    [to, from, "vertical"],
+    [mix(to, black, 0.45), from, "horizontal"],
+    [mix(from, cream, 0.35), mix(to, black, 0.2), "diagonal"],
+  ];
+
+  let position = Math.max(-1, ...profile.media.map((m) => m.position)) + 1;
+  for (const [variantFrom, variantTo, direction] of variants.slice(0, missing)) {
+    const storageKey = await writeGradientPlaceholderMediaFile(variantFrom, variantTo, direction);
+    await prisma.media.create({
+      data: {
+        profileId: profile.id,
+        storageKey,
+        position,
+        status: "APPROVED",
+        moderatedById: moderatorId,
+        moderatedAt: new Date(),
+      },
+    });
+    position += 1;
   }
 }
 
@@ -801,6 +865,7 @@ async function main() {
   const { adminId, passwordHash } = await seedDemoAccounts();
   for (const spec of DEMO_PROFILES) {
     await seedDemoProfile(spec, passwordHash, adminId);
+    await seedDemoGallery(spec, adminId);
   }
 
   // eslint-disable-next-line no-console

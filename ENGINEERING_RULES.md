@@ -184,6 +184,12 @@ que des profils déjà vérifiés. `audit-log.service.ts` assainit
 `metadata` avec la même liste de champs sensibles que `lib/logger.ts`
 avant d'écrire dans `AuditLog`.
 
+Les signalements de visiteurs (`ProfileReport`, lien « Signaler ce
+profil ») suivent la même règle : `src/modules/reports/report.service.ts`
+les met en file sans jamais toucher au profil signalé ; `resolveReport()`
+exige une note et journalise la clôture. Aucune donnée sur l'auteur du
+signalement n'est stockée (pas de compte, pas d'IP ni de hash d'IP).
+
 ## 8. Localisation approximative
 
 On stocke et affiche la ville (`City`), jamais l'adresse exacte d'une
