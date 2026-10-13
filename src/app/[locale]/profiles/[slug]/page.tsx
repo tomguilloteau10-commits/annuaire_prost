@@ -4,6 +4,7 @@ import { getPublishedProfileBySlug } from "@/modules/profiles/profile.service";
 import { getPublicPhotoUrl } from "@/modules/media/media.service";
 import { getLocalizedLabel } from "@/modules/taxonomies/types";
 import { RevealContactButton } from "@/components/public/RevealContactButton";
+import { WhatsAppButton } from "@/components/public/WhatsAppButton";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 
@@ -121,7 +122,10 @@ export default async function PublicProfilePage({
         </Card>
       )}
 
-      <RevealContactButton slug={profile.slug} />
+      <div className="flex flex-col gap-3">
+        <WhatsAppButton slug={profile.slug} />
+        <RevealContactButton slug={profile.slug} />
+      </div>
     </main>
   );
 }

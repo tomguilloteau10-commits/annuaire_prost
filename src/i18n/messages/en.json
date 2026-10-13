@@ -29,7 +29,9 @@
   "profile": {
     "verifiedBadge": "Verified",
     "ageYears": "{age} years old",
-    "revealContact": "Show contact",
+    "contactWhatsapp": "Contact on WhatsApp",
+    "noWhatsapp": "No WhatsApp number available for this profile.",
+    "revealContact": "Other contact options",
     "languagesLabel": "Languages spoken",
     "servicesLabel": "Services",
     "onlineStatus": {

@@ -80,7 +80,12 @@ export function RevealContactButton({ slug }: { slug: string }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <Button onClick={handleReveal} disabled={loading || !csrfToken} className="w-full sm:w-auto">
+      <Button
+        variant="secondary"
+        onClick={handleReveal}
+        disabled={loading || !csrfToken}
+        className="w-full sm:w-auto"
+      >
         {t("revealContact")}
       </Button>
       {error && <p className="text-sm text-danger">{error}</p>}
