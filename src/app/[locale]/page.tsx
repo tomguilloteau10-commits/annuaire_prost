@@ -1,12 +1,15 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { listPublishedProfiles, listPublishedProfileCityCounts } from "@/modules/profiles/profile.service";
-import { getPublicPhotoUrl } from "@/modules/media/media.service";
+import { withThumbnails } from "@/modules/profiles/profile-thumbnails";
 import { listCategories, listCities, listLanguages } from "@/modules/taxonomies/taxonomy.service";
 import { groupCitiesByCanton } from "@/lib/group-cities";
+import { Link } from "@/i18n/navigation";
 import { FilterBar } from "@/components/public/FilterBar";
 import { ProfileCard } from "@/components/public/ProfileCard";
 import { ProfileMapLoader } from "@/components/public/ProfileMapLoader";
 import { WhyUsSection } from "@/components/public/WhyUsSection";
+import { HorizontalScroller } from "@/components/public/HorizontalScroller";
+import { StoryThumb } from "@/components/public/StoryThumb";
 
 interface HomeSearchParams {
   city?: string;
@@ -16,6 +19,7 @@ interface HomeSearchParams {
 }
 
 const FEATURED_COUNT = 6;
+const STORIES_COUNT = 8;
 
 export default async function HomePage({
   params,
@@ -37,7 +41,7 @@ export default async function HomePage({
       languageCode: filters.language,
       onlineOnly: filters.online === "true",
     }),
-    // Bande "profils en vedette" : toujours issue de l'ensemble complet,
+    // Vedette et Stories : toujours issues de l'ensemble complet,
     // indépendamment des filtres actifs sur la liste principale ci-dessous.
     listPublishedProfiles({}),
     listCategories(),
@@ -49,26 +53,22 @@ export default async function HomePage({
   const totalProfiles = cityCounts.reduce((sum, c) => sum + c.count, 0);
   const totalCities = cityCounts.length;
 
-  const profilesWithThumbnails = await Promise.all(
-    profiles.map(async (profile) => ({
-      ...profile,
-      thumbnailUrl: profile.media[0] ? await getPublicPhotoUrl(profile.media[0].id) : null,
-    })),
-  );
+  const [profilesWithThumbnails, allWithThumbnails] = await Promise.all([
+    withThumbnails(profiles),
+    withThumbnails(featuredSource),
+  ]);
 
-  const featuredProfiles = await Promise.all(
-    [...featuredSource]
-      .sort((a, b) => {
-        if (a.onlineStatus === "ONLINE" && b.onlineStatus !== "ONLINE") return -1;
-        if (b.onlineStatus === "ONLINE" && a.onlineStatus !== "ONLINE") return 1;
-        return (b.publishedAt?.getTime() ?? 0) - (a.publishedAt?.getTime() ?? 0);
-      })
-      .slice(0, FEATURED_COUNT)
-      .map(async (profile) => ({
-        ...profile,
-        thumbnailUrl: profile.media[0] ? await getPublicPhotoUrl(profile.media[0].id) : null,
-      })),
-  );
+  // Vedette : en ligne d'abord, puis les plus récents.
+  const featuredProfiles = [...allWithThumbnails]
+    .sort((a, b) => {
+      if (a.onlineStatus === "ONLINE" && b.onlineStatus !== "ONLINE") return -1;
+      if (b.onlineStatus === "ONLINE" && a.onlineStatus !== "ONLINE") return 1;
+      return (b.publishedAt?.getTime() ?? 0) - (a.publishedAt?.getTime() ?? 0);
+    })
+    .slice(0, FEATURED_COUNT);
+
+  // Stories : les plus récemment publiés (ordre natif de listPublishedProfiles).
+  const stories = allWithThumbnails.slice(0, STORIES_COUNT);
 
   return (
     <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-14 px-4 py-14 sm:py-20">
@@ -131,13 +131,29 @@ export default async function HomePage({
       {featuredProfiles.length > 0 && (
         <section className="flex flex-col gap-4">
           <h2 className="font-serif text-2xl font-medium text-ink2">{t("featuredTitle")}</h2>
-          <div className="flex gap-4 overflow-x-auto pb-2">
+          <HorizontalScroller label={t("featuredTitle")}>
             {featuredProfiles.map((profile) => (
-              <div key={profile.slug} className="w-48 shrink-0 sm:w-56">
-                <ProfileCard profile={profile} locale={locale} />
+              <div key={profile.slug} className="w-44 shrink-0 snap-start sm:w-52">
+                <ProfileCard profile={profile} locale={locale} featured />
               </div>
             ))}
+          </HorizontalScroller>
+        </section>
+      )}
+
+      {stories.length > 0 && (
+        <section className="flex flex-col gap-4">
+          <div className="flex items-baseline justify-between gap-4">
+            <h2 className="font-serif text-2xl font-medium text-ink2">{t("storiesTitle")}</h2>
+            <Link href="/stories" className="text-sm text-accent transition-colors hover:text-accent-hover">
+              {t("seeAll")} →
+            </Link>
           </div>
+          <HorizontalScroller label={t("storiesTitle")}>
+            {stories.map((story) => (
+              <StoryThumb key={story.slug} story={story} className="w-24 shrink-0 snap-start sm:w-28" />
+            ))}
+          </HorizontalScroller>
         </section>
       )}
 

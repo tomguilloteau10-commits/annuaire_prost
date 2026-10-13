@@ -2,7 +2,9 @@
   "common": {
     "siteName": "Annuaire",
     "tagline": "Annuaire suisse d'annonceuses indépendantes",
-    "betaNotice": "Version bêta privée — non référencée publiquement."
+    "betaNotice": "Version bêta privée — non référencée publiquement.",
+    "previous": "Précédent",
+    "next": "Suivant"
   },
   "nav": {
     "home": "Accueil",
@@ -13,7 +15,16 @@
     "taxonomies": "Taxonomies",
     "auditLog": "Journal d'audit",
     "geoSettings": "Géo-restriction",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "mainNavLabel": "Navigation principale",
+    "escorts": "Escortes",
+    "masseuses": "Masseuses",
+    "bdsm": "BDSM/Domina",
+    "striptease": "Striptease",
+    "salons": "Salons",
+    "stories": "Stories",
+    "camLive": "Cam Live",
+    "soon": "Bientôt"
   },
   "home": {
     "title": "Trouvez une annonceuse indépendante en Suisse",
@@ -32,7 +43,9 @@
       "category": "Catégorie",
       "language": "Langue",
       "onlineOnly": "En ligne uniquement"
-    }
+    },
+    "storiesTitle": "Stories",
+    "seeAll": "Voir tout"
   },
   "whyUs": {
     "title": "Pourquoi nous choisir",
@@ -66,7 +79,8 @@
     },
     "noPhoto": "Pas de photo",
     "contactRateLimited": "Trop de demandes — réessayez plus tard.",
-    "contactError": "Impossible d'afficher le contact pour le moment."
+    "contactError": "Impossible d'afficher le contact pour le moment.",
+    "featuredBadge": "Vedette"
   },
   "auth": {
     "loginTitle": "Connexion",
@@ -231,5 +245,29 @@
     "blocked": "Bloqué",
     "addAllowed": "Autoriser",
     "saveError": "Impossible d'enregistrer."
+  },
+  "categoryPage": {
+    "count": "{count, plural, =0 {Aucun profil publié} one {# profil vérifié} other {# profils vérifiés}}"
+  },
+  "salons": {
+    "title": "Salons",
+    "subtitle": "Établissements de Suisse romande, présentés séparément des annonceuses indépendantes.",
+    "demoNote": "Établissements fictifs de démonstration — bêta privée.",
+    "types": {
+      "massage": "Salon de massage",
+      "studio": "Studio privé",
+      "club": "Club",
+      "wellness": "Institut bien-être"
+    }
+  },
+  "stories": {
+    "title": "Stories",
+    "subtitle": "Les annonceuses du moment, en un coup d'œil."
+  },
+  "camLive": {
+    "badge": "Bientôt disponible",
+    "title": "Cam Live",
+    "description": "Des sessions en direct avec des annonceuses vérifiées arrivent prochainement. Comme chaque profil, chaque diffusion passera par la vérification de majorité et la modération.",
+    "back": "Retour à l'accueil"
   }
 }

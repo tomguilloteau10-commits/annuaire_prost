@@ -1,6 +1,6 @@
 import type { HTMLAttributes } from "react";
 
-export type BadgeVariant = "success" | "warning" | "danger" | "neutral" | "accent";
+export type BadgeVariant = "success" | "warning" | "danger" | "neutral" | "accent" | "featured";
 
 const VARIANT_CLASSES: Record<BadgeVariant, string> = {
   success: "bg-success-soft text-success",
@@ -8,6 +8,8 @@ const VARIANT_CLASSES: Record<BadgeVariant, string> = {
   danger: "bg-danger-soft text-danger",
   neutral: "bg-white/[0.06] text-ink2-muted",
   accent: "bg-accent-soft text-accent",
+  // Plein (pas "soft") : reste lisible posé sur une photo claire.
+  featured: "bg-accent text-accent-foreground",
 };
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {

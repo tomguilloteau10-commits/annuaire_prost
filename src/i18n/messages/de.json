@@ -3,7 +3,9 @@
   "common": {
     "siteName": "Verzeichnis",
     "tagline": "Schweizer Verzeichnis unabhängiger Anbieterinnen",
-    "betaNotice": "Private Beta — nicht öffentlich indexiert."
+    "betaNotice": "Private Beta — nicht öffentlich indexiert.",
+    "previous": "Zurück",
+    "next": "Weiter"
   },
   "nav": {
     "home": "Startseite",
@@ -14,7 +16,16 @@
     "taxonomies": "Taxonomien",
     "auditLog": "Prüfprotokoll",
     "geoSettings": "Geo-Einschränkung",
-    "logout": "Abmelden"
+    "logout": "Abmelden",
+    "mainNavLabel": "Hauptnavigation",
+    "escorts": "Escorts",
+    "masseuses": "Masseurinnen",
+    "bdsm": "BDSM/Domina",
+    "striptease": "Striptease",
+    "salons": "Salons",
+    "stories": "Stories",
+    "camLive": "Cam Live",
+    "soon": "Demnächst"
   },
   "home": {
     "title": "Finden Sie eine unabhängige Anbieterin in der Schweiz",
@@ -33,7 +44,9 @@
       "category": "Kategorie",
       "language": "Sprache",
       "onlineOnly": "Nur online"
-    }
+    },
+    "storiesTitle": "Stories",
+    "seeAll": "Alle ansehen"
   },
   "whyUs": {
     "title": "Warum uns wählen",
@@ -67,7 +80,8 @@
     },
     "noPhoto": "Kein Foto",
     "contactRateLimited": "Zu viele Anfragen — später erneut versuchen.",
-    "contactError": "Kontakt kann derzeit nicht angezeigt werden."
+    "contactError": "Kontakt kann derzeit nicht angezeigt werden.",
+    "featuredBadge": "Empfohlen"
   },
   "auth": {
     "loginTitle": "Anmelden",
@@ -232,5 +246,29 @@
     "blocked": "Gesperrt",
     "addAllowed": "Erlauben",
     "saveError": "Konnte nicht gespeichert werden."
+  },
+  "categoryPage": {
+    "count": "{count, plural, =0 {Keine veröffentlichten Profile} one {# verifiziertes Profil} other {# verifizierte Profile}}"
+  },
+  "salons": {
+    "title": "Salons",
+    "subtitle": "Etablissements in der Westschweiz, getrennt von unabhängigen Anbieterinnen aufgeführt.",
+    "demoNote": "Fiktive Demo-Etablissements — private Beta.",
+    "types": {
+      "massage": "Massagesalon",
+      "studio": "Privatstudio",
+      "club": "Club",
+      "wellness": "Wellness-Institut"
+    }
+  },
+  "stories": {
+    "title": "Stories",
+    "subtitle": "Die Anbieterinnen von heute, auf einen Blick."
+  },
+  "camLive": {
+    "badge": "Demnächst verfügbar",
+    "title": "Cam Live",
+    "description": "Live-Sessions mit verifizierten Anbieterinnen folgen in Kürze. Wie jedes Profil durchläuft jede Übertragung die Altersverifikation und die Moderation.",
+    "back": "Zurück zur Startseite"
   }
 }

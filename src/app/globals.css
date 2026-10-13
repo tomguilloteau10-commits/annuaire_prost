@@ -33,3 +33,14 @@
     color-scheme: dark;
   }
 }
+
+@layer utilities {
+  /* Rangées défilantes horizontales (navigation, stories, carrousels) :
+     défilement conservé au doigt/trackpad, barre masquée. */
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}

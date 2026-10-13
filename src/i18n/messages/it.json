@@ -3,7 +3,9 @@
   "common": {
     "siteName": "Elenco",
     "tagline": "Elenco svizzero di fornitrici indipendenti",
-    "betaNotice": "Beta privata — non indicizzata pubblicamente."
+    "betaNotice": "Beta privata — non indicizzata pubblicamente.",
+    "previous": "Precedente",
+    "next": "Successivo"
   },
   "nav": {
     "home": "Home",
@@ -14,7 +16,16 @@
     "taxonomies": "Tassonomie",
     "auditLog": "Registro di controllo",
     "geoSettings": "Restrizione geografica",
-    "logout": "Esci"
+    "logout": "Esci",
+    "mainNavLabel": "Navigazione principale",
+    "escorts": "Escort",
+    "masseuses": "Massaggiatrici",
+    "bdsm": "BDSM/Domina",
+    "striptease": "Spogliarello",
+    "salons": "Saloni",
+    "stories": "Stories",
+    "camLive": "Cam Live",
+    "soon": "Presto"
   },
   "home": {
     "title": "Trova una fornitrice indipendente in Svizzera",
@@ -33,7 +44,9 @@
       "category": "Categoria",
       "language": "Lingua",
       "onlineOnly": "Solo online"
-    }
+    },
+    "storiesTitle": "Stories",
+    "seeAll": "Vedi tutto"
   },
   "whyUs": {
     "title": "Perché sceglierci",
@@ -67,7 +80,8 @@
     },
     "noPhoto": "Nessuna foto",
     "contactRateLimited": "Troppe richieste — riprova più tardi.",
-    "contactError": "Impossibile mostrare il contatto al momento."
+    "contactError": "Impossibile mostrare il contatto al momento.",
+    "featuredBadge": "In evidenza"
   },
   "auth": {
     "loginTitle": "Accedi",
@@ -232,5 +246,29 @@
     "blocked": "Bloccato",
     "addAllowed": "Consenti",
     "saveError": "Impossibile salvare."
+  },
+  "categoryPage": {
+    "count": "{count, plural, =0 {Nessun profilo pubblicato} one {# profilo verificato} other {# profili verificati}}"
+  },
+  "salons": {
+    "title": "Saloni",
+    "subtitle": "Strutture della Svizzera romanda, presentate separatamente dalle fornitrici indipendenti.",
+    "demoNote": "Strutture fittizie dimostrative — beta privata.",
+    "types": {
+      "massage": "Salone di massaggi",
+      "studio": "Studio privato",
+      "club": "Club",
+      "wellness": "Istituto benessere"
+    }
+  },
+  "stories": {
+    "title": "Stories",
+    "subtitle": "Le fornitrici del momento, a colpo d'occhio."
+  },
+  "camLive": {
+    "badge": "Presto disponibile",
+    "title": "Cam Live",
+    "description": "Le sessioni dal vivo con fornitrici verificate arriveranno presto. Come ogni profilo, ogni diretta passerà dalla verifica della maggiore età e dalla moderazione.",
+    "back": "Torna alla home"
   }
 }

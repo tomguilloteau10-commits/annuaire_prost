@@ -2,7 +2,9 @@
   "common": {
     "siteName": "Directory",
     "tagline": "Swiss directory of independent providers",
-    "betaNotice": "Private beta — not publicly indexed."
+    "betaNotice": "Private beta — not publicly indexed.",
+    "previous": "Previous",
+    "next": "Next"
   },
   "nav": {
     "home": "Home",
@@ -13,7 +15,16 @@
     "taxonomies": "Taxonomies",
     "auditLog": "Audit log",
     "geoSettings": "Geo-restriction",
-    "logout": "Log out"
+    "logout": "Log out",
+    "mainNavLabel": "Main navigation",
+    "escorts": "Escorts",
+    "masseuses": "Masseuses",
+    "bdsm": "BDSM/Domina",
+    "striptease": "Striptease",
+    "salons": "Salons",
+    "stories": "Stories",
+    "camLive": "Cam Live",
+    "soon": "Coming soon"
   },
   "home": {
     "title": "Find an independent provider in Switzerland",
@@ -32,7 +43,9 @@
       "category": "Category",
       "language": "Language",
       "onlineOnly": "Online only"
-    }
+    },
+    "storiesTitle": "Stories",
+    "seeAll": "See all"
   },
   "whyUs": {
     "title": "Why choose us",
@@ -66,7 +79,8 @@
     },
     "noPhoto": "No photo",
     "contactRateLimited": "Too many requests — try again later.",
-    "contactError": "Could not load the contact right now."
+    "contactError": "Could not load the contact right now.",
+    "featuredBadge": "Featured"
   },
   "auth": {
     "loginTitle": "Log in",
@@ -231,5 +245,29 @@
     "blocked": "Blocked",
     "addAllowed": "Allow",
     "saveError": "Could not save."
+  },
+  "categoryPage": {
+    "count": "{count, plural, =0 {No published profiles} one {# verified profile} other {# verified profiles}}"
+  },
+  "salons": {
+    "title": "Salons",
+    "subtitle": "Establishments in French-speaking Switzerland, listed separately from independent providers.",
+    "demoNote": "Fictional demo establishments — private beta.",
+    "types": {
+      "massage": "Massage salon",
+      "studio": "Private studio",
+      "club": "Club",
+      "wellness": "Wellness institute"
+    }
+  },
+  "stories": {
+    "title": "Stories",
+    "subtitle": "Today's providers, at a glance."
+  },
+  "camLive": {
+    "badge": "Coming soon",
+    "title": "Cam Live",
+    "description": "Live sessions with verified providers are coming soon. Like every profile, every stream will go through age verification and moderation.",
+    "back": "Back to home"
   }
 }

@@ -13,7 +13,15 @@ export interface ProfileCardData {
   thumbnailUrl: string | null;
 }
 
-export function ProfileCard({ profile, locale }: { profile: ProfileCardData; locale: string }) {
+export function ProfileCard({
+  profile,
+  locale,
+  featured = false,
+}: {
+  profile: ProfileCardData;
+  locale: string;
+  featured?: boolean;
+}) {
   const t = useTranslations("profile");
 
   return (
@@ -43,6 +51,12 @@ export function ProfileCard({ profile, locale }: { profile: ProfileCardData; loc
             </Badge>
           )}
         </div>
+
+        {featured && (
+          <div className="absolute bottom-2 left-2">
+            <Badge variant="featured">★ {t("featuredBadge")}</Badge>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col gap-0.5 p-2.5">
