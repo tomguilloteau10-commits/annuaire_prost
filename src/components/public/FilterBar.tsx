@@ -2,6 +2,7 @@
 import { useTranslations } from "next-intl";
 import { useRouter, usePathname } from "@/i18n/navigation";
 import { getLocalizedLabel } from "@/modules/taxonomies/types";
+import { groupCitiesByCanton } from "@/lib/group-cities";
 import { Select } from "@/components/ui/Field";
 
 export interface FilterBarProps {
@@ -37,10 +38,14 @@ export function FilterBar({ locale, categories, languages, cities, currentFilter
         className="w-auto"
       >
         <option value="">{t("city")}</option>
-        {cities.map((city) => (
-          <option key={city.slug} value={city.slug}>
-            {city.name} ({city.canton})
-          </option>
+        {groupCitiesByCanton(cities).map((group) => (
+          <optgroup key={group.canton} label={group.canton}>
+            {group.cities.map((city) => (
+              <option key={city.slug} value={city.slug}>
+                {city.name}
+              </option>
+            ))}
+          </optgroup>
         ))}
       </Select>
 

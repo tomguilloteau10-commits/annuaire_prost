@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useCsrfToken } from "@/lib/use-csrf-token";
 import { getLocalizedLabel } from "@/modules/taxonomies/types";
+import { groupCitiesByCanton } from "@/lib/group-cities";
 import { FieldGroup, Label, TextInput, TextArea, Select } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -232,10 +233,14 @@ export function ProfileWizard({
             <FieldGroup>
               <Label htmlFor="city">{t("cityLabel")}</Label>
               <Select id="city" value={citySlug} onChange={(e) => setCitySlug(e.target.value)}>
-                {cities.map((city) => (
-                  <option key={city.slug} value={city.slug}>
-                    {city.name} ({city.canton})
-                  </option>
+                {groupCitiesByCanton(cities).map((group) => (
+                  <optgroup key={group.canton} label={group.canton}>
+                    {group.cities.map((city) => (
+                      <option key={city.slug} value={city.slug}>
+                        {city.name}
+                      </option>
+                    ))}
+                  </optgroup>
                 ))}
               </Select>
             </FieldGroup>

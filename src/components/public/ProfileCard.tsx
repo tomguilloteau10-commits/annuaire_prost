@@ -21,7 +21,7 @@ export function ProfileCard({ profile, locale }: { profile: ProfileCardData; loc
       href={`/profiles/${profile.slug}`}
       className="group flex flex-col overflow-hidden rounded-xl3 border border-hairline bg-surface shadow-card transition-colors hover:border-hairline2"
     >
-      <div className="relative aspect-[3/4] w-full bg-surface-raised">
+      <div className="relative aspect-[4/5] w-full bg-surface-raised">
         {profile.thumbnailUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -35,7 +35,7 @@ export function ProfileCard({ profile, locale }: { profile: ProfileCardData; loc
           </div>
         )}
 
-        <div className="absolute inset-x-0 top-0 flex items-start justify-between p-2.5">
+        <div className="absolute inset-x-0 top-0 flex items-start justify-between p-2">
           <Badge variant="success">{t("verifiedBadge")}</Badge>
           {profile.onlineStatus === "ONLINE" && (
             <Badge variant="success" dot>
@@ -45,13 +45,13 @@ export function ProfileCard({ profile, locale }: { profile: ProfileCardData; loc
         </div>
       </div>
 
-      <div className="flex flex-col gap-0.5 p-4">
-        <span className="font-serif text-lg font-medium text-ink2">
+      <div className="flex flex-col gap-0.5 p-2.5">
+        <span className="truncate font-serif text-sm font-medium text-ink2">
           {profile.displayName}
-          {profile.age && <span className="text-ink2-muted">, {t("ageYears", { age: profile.age })}</span>}
+          {profile.age && <span className="text-ink2-muted">, {profile.age}</span>}
         </span>
-        <span className="text-sm text-ink2-muted">
-          {profile.city.name} ({profile.city.canton}) · {getLocalizedLabel(profile.category.label, locale)}
+        <span className="truncate text-xs text-ink2-muted">
+          {profile.city.name} · {getLocalizedLabel(profile.category.label, locale)}
         </span>
       </div>
     </Link>

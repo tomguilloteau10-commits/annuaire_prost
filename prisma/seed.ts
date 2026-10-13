@@ -8,11 +8,10 @@
  * politiques de rétention, pays autorisés, taxonomies de base.
  *
  * Démo synthétique : comptes de test (admin/modérateur/annonceuses) et
- * 3 profils fictifs à différents stades du cycle de vie (publié, publié
- * avec un média en attente, en attente de modération), avec des images
- * placeholder générées localement (aucune photo réelle, aucune personne
- * réelle — voir ENGINEERING_RULES.md "Données de test synthétiques
- * uniquement" et scripts/lib/placeholder-png.ts).
+ * 18 profils fictifs publiés, répartis sur 18 villes de Suisse romande
+ * (GE/VD/VS), avec des images placeholder générées localement (aucune
+ * photo réelle, aucune personne réelle — voir ENGINEERING_RULES.md
+ * "Données de test synthétiques uniquement" et scripts/lib/placeholder-png.ts).
  *
  * ⚠️ Les comptes créés ici utilisent un mot de passe de démonstration
  * connu (voir DEMO_PASSWORD) : à ne jamais utiliser en dehors d'un
@@ -117,10 +116,14 @@ async function seedAllowedCountries() {
 
 async function seedCategories() {
   const categories: { key: string; label: Record<string, string> }[] = [
-    { key: "escort", label: { fr: "Escort", en: "Escort", de: "Escort", it: "Escort" } },
-    { key: "masseuse", label: { fr: "Masseuse", en: "Masseuse", de: "Masseurin", it: "Massaggiatrice" } },
-    { key: "dominatrice", label: { fr: "Dominatrice", en: "Dominatrix", de: "Dominatrix", it: "Dominatrice" } },
+    { key: "escort", label: { fr: "Escorte", en: "Escort", de: "Escort", it: "Escort" } },
+    {
+      key: "masseuse",
+      label: { fr: "Masseuse érotique", en: "Erotic masseuse", de: "Erotische Masseurin", it: "Massaggiatrice erotica" },
+    },
     { key: "striptease", label: { fr: "Striptease", en: "Striptease", de: "Striptease", it: "Spogliarello" } },
+    { key: "dominatrice", label: { fr: "BDSM/Domina", en: "BDSM/Domina", de: "BDSM/Domina", it: "BDSM/Domina" } },
+    { key: "trans", label: { fr: "Trans", en: "Trans", de: "Trans", it: "Trans" } },
   ];
   for (const category of categories) {
     await prisma.category.upsert({
@@ -173,22 +176,33 @@ async function seedLanguages() {
 
 async function seedCities() {
   // Coordonnées de centre-ville (donnée publique généraliste), jamais
-  // liées à une adresse individuelle (contrainte #8).
+  // liées à une adresse individuelle (contrainte #8). Limité à trois
+  // cantons romands (GE, VD, VS), villes principales uniquement — même
+  // liste utilisée par le sélecteur de ville du formulaire prestataire et
+  // par le filtre de recherche public (groupés par canton, voir
+  // src/lib/group-cities.ts).
   const cities: { name: string; canton: string; lat: number; lng: number }[] = [
+    // Genève
     { name: "Genève", canton: "GE", lat: 46.2044, lng: 6.1432 },
+    { name: "Carouge", canton: "GE", lat: 46.1817, lng: 6.1389 },
+    { name: "Vernier", canton: "GE", lat: 46.2167, lng: 6.0833 },
+    { name: "Meyrin", canton: "GE", lat: 46.2333, lng: 6.0667 },
+    { name: "Lancy", canton: "GE", lat: 46.1833, lng: 6.1167 },
+    // Vaud
     { name: "Lausanne", canton: "VD", lat: 46.5197, lng: 6.6323 },
-    { name: "Zürich", canton: "ZH", lat: 47.3769, lng: 8.5417 },
-    { name: "Berne", canton: "BE", lat: 46.948, lng: 7.4474 },
-    { name: "Bâle", canton: "BS", lat: 47.5596, lng: 7.5886 },
-    { name: "Sion", canton: "VS", lat: 46.2331, lng: 7.3604 },
-    { name: "Neuchâtel", canton: "NE", lat: 46.99, lng: 6.9293 },
-    { name: "Sierre", canton: "VS", lat: 46.2919, lng: 7.5354 },
-    { name: "Brig", canton: "VS", lat: 46.3182, lng: 7.9876 },
-    { name: "Vevey", canton: "VD", lat: 46.4628, lng: 6.8419 },
-    { name: "Martigny", canton: "VS", lat: 46.1025, lng: 7.0729 },
     { name: "Montreux", canton: "VD", lat: 46.4312, lng: 6.9107 },
-    { name: "Saint-Maurice", canton: "VS", lat: 46.2158, lng: 6.9989 },
-    { name: "Fribourg", canton: "FR", lat: 46.8065, lng: 7.1619 },
+    { name: "Vevey", canton: "VD", lat: 46.4628, lng: 6.8419 },
+    { name: "Nyon", canton: "VD", lat: 46.3833, lng: 6.2333 },
+    { name: "Morges", canton: "VD", lat: 46.5089, lng: 6.4983 },
+    { name: "Yverdon-les-Bains", canton: "VD", lat: 46.7785, lng: 6.641 },
+    { name: "Renens", canton: "VD", lat: 46.5378, lng: 6.5906 },
+    // Valais
+    { name: "Sion", canton: "VS", lat: 46.2331, lng: 7.3604 },
+    { name: "Sierre", canton: "VS", lat: 46.2919, lng: 7.5354 },
+    { name: "Martigny", canton: "VS", lat: 46.1025, lng: 7.0729 },
+    { name: "Monthey", canton: "VS", lat: 46.2547, lng: 6.9556 },
+    { name: "Brig", canton: "VS", lat: 46.3182, lng: 7.9876 },
+    { name: "Viège", canton: "VS", lat: 46.2926, lng: 7.8824 },
   ];
   for (const city of cities) {
     const slug = slugify(`${city.name}-${city.canton}`);
@@ -329,84 +343,20 @@ async function seedDemoProfile(spec: DemoProfileSpec, passwordHash: string, mode
   }
 }
 
+// 18 profils fictifs, un par ville de la liste ci-dessus (seedCities), pour
+// une répartition géographique maximale — jamais tous à Genève. Catégories
+// réparties entre les 5 taxonomies (escort/masseuse/striptease/dominatrice/
+// trans), âges 19-39, 2-3 langues chacun, statut en ligne varié, et un
+// dégradé de couleurs distinct par profil (createGradientPlaceholderPng) —
+// toujours sans la moindre photo réelle, voir ENGINEERING_RULES.md "Données
+// de test synthétiques uniquement".
 const DEMO_PROFILES: DemoProfileSpec[] = [
   {
     email: "lea.demo@example.test",
     displayName: "Léa",
     age: 27,
     description:
-      "Bonjour, je m'appelle Léa. Annonceuse indépendante basée à Genève, je propose des rencontres chaleureuses et respectueuses. N'hésitez pas à me contacter pour plus d'informations.",
-    citySlug: "geneve-ge",
-    categoryKey: "escort",
-    languageCodes: ["fr", "en"],
-    serviceKeys: ["outcall", "incall"],
-    onlineStatus: "ONLINE",
-    profileStatus: "PUBLISHED",
-    photoColors: [
-      [214, 178, 202],
-      [178, 202, 214],
-    ],
-    pendingPhotoCount: 0,
-    phone: "+41 78 000 00 01",
-    contactEmail: "lea.demo@example.test",
-    whatsapp: "+41 78 000 00 01",
-    instagram: "@lea.demo",
-  },
-  {
-    email: "nora.demo@example.test",
-    displayName: "Nora",
-    age: 34,
-    description:
-      "Nora, masseuse indépendante à Lausanne. Je propose des massages relaxants dans un cadre discret et confortable. Contactez-moi pour convenir d'un rendez-vous.",
-    citySlug: "lausanne-vd",
-    categoryKey: "masseuse",
-    languageCodes: ["fr", "de"],
-    serviceKeys: ["incall", "massage"],
-    onlineStatus: "AWAY",
-    profileStatus: "PUBLISHED",
-    photoColors: [
-      [202, 214, 178],
-      [220, 200, 180],
-    ],
-    // La deuxième photo reste PENDING : permet de tester la file de
-    // modération des médias sur un profil déjà publié.
-    pendingPhotoCount: 1,
-    phone: "+41 78 000 00 02",
-    contactEmail: "nora.demo@example.test",
-    whatsapp: "+41 78 000 00 02",
-  },
-  {
-    email: "camille.demo@example.test",
-    displayName: "Camille",
-    age: 29,
-    description:
-      "Camille, basée à Zürich. Profil complété et vérifié, en attente de validation par la modération.",
-    citySlug: "zurich-zh",
-    categoryKey: "dominatrice",
-    languageCodes: ["en", "de"],
-    serviceKeys: ["outcall"],
-    onlineStatus: "OFFLINE",
-    // Vérification et attestation complètes, mais pas encore approuvé par
-    // un modérateur : permet de tester la file de modération des profils.
-    profileStatus: "PENDING_REVIEW",
-    photoColors: [[190, 190, 220]],
-    pendingPhotoCount: 1,
-    phone: "+41 78 000 00 03",
-    contactEmail: "camille.demo@example.test",
-    whatsapp: "+41 78 000 00 03",
-    instagram: "@camille.demo",
-  },
-  // Jeu de démonstration étendu : couvre la Suisse romande (contexte de la
-  // carte interactive, modules/profiles) avec des catégories variées et des
-  // photos en dégradé (createGradientPlaceholderPng) plutôt qu'en aplat,
-  // toujours sans la moindre photo réelle (voir le commentaire au-dessus de
-  // writeGradientPlaceholderMediaFile).
-  {
-    email: "ines.demo@example.test",
-    displayName: "Inès",
-    age: 26,
-    description:
-      "Inès, annonceuse indépendante basée à Genève. Rencontres chaleureuses et respectueuses, sur rendez-vous uniquement.",
+      "Léa, annonceuse indépendante basée à Genève. Rencontres chaleureuses et respectueuses, sur rendez-vous uniquement.",
     citySlug: "geneve-ge",
     categoryKey: "escort",
     languageCodes: ["fr", "en"],
@@ -416,136 +366,215 @@ const DEMO_PROFILES: DemoProfileSpec[] = [
     photoGradients: [
       [
         [214, 178, 202],
-        [160, 120, 150],
+        [150, 90, 120],
       ],
     ],
     pendingPhotoCount: 0,
-    phone: "+41 78 000 00 04",
-    contactEmail: "ines.demo@example.test",
-    whatsapp: "+41 78 000 00 04",
-    instagram: "@ines.demo",
+    phone: "+41 78 200 00 01",
+    contactEmail: "lea.demo@example.test",
+    whatsapp: "+41 78 200 00 01",
+    instagram: "@lea.demo",
   },
   {
-    email: "manon.demo@example.test",
-    displayName: "Manon",
-    age: 31,
+    email: "ines.demo@example.test",
+    displayName: "Inès",
+    age: 23,
     description:
-      "Manon, masseuse indépendante à Genève. Massages relaxants dans un cadre discret et soigné, sur rendez-vous.",
-    citySlug: "geneve-ge",
-    categoryKey: "masseuse",
-    languageCodes: ["fr", "it"],
-    serviceKeys: ["incall", "massage"],
-    onlineStatus: "OFFLINE",
-    profileStatus: "PUBLISHED",
-    photoGradients: [
-      [
-        [178, 202, 190],
-        [100, 150, 150],
-      ],
-    ],
-    pendingPhotoCount: 0,
-    phone: "+41 78 000 00 05",
-    contactEmail: "manon.demo@example.test",
-    whatsapp: "+41 78 000 00 05",
-  },
-  {
-    email: "chloe.demo@example.test",
-    displayName: "Chloé",
-    age: 28,
-    description:
-      "Chloé, artiste indépendante basée à Lausanne. Spectacles de striptease privés, élégants et sur rendez-vous, dans la discrétion.",
-    citySlug: "lausanne-vd",
-    categoryKey: "striptease",
-    languageCodes: ["fr"],
-    serviceKeys: ["evenements", "outcall"],
-    onlineStatus: "ONLINE",
-    profileStatus: "PUBLISHED",
-    photoGradients: [
-      [
-        [150, 110, 140],
-        [40, 35, 60],
-      ],
-    ],
-    pendingPhotoCount: 0,
-    phone: "+41 78 000 00 06",
-    contactEmail: "chloe.demo@example.test",
-    whatsapp: "+41 78 000 00 06",
-    instagram: "@chloe.demo",
-  },
-  {
-    email: "elena.demo@example.test",
-    displayName: "Elena",
-    age: 33,
-    description:
-      "Elena, annonceuse indépendante à Lausanne. Rencontres chaleureuses dans un cadre élégant et respectueux.",
-    citySlug: "lausanne-vd",
+      "Inès, annonceuse indépendante basée à Carouge. Rencontres chaleureuses et respectueuses, sur rendez-vous.",
+    citySlug: "carouge-ge",
     categoryKey: "escort",
     languageCodes: ["fr", "en", "it"],
     serviceKeys: ["outcall", "incall"],
-    onlineStatus: "AWAY",
-    profileStatus: "PUBLISHED",
-    photoGradients: [
-      [
-        [230, 190, 170],
-        [200, 140, 150],
-      ],
-    ],
-    pendingPhotoCount: 0,
-    phone: "+41 78 000 00 07",
-    contactEmail: "elena.demo@example.test",
-    whatsapp: "+41 78 000 00 07",
-  },
-  {
-    email: "sofia.demo@example.test",
-    displayName: "Sofia",
-    age: 30,
-    description:
-      "Sofia, masseuse indépendante à Sion. Massages relaxants dans un cadre discret et confortable, sur rendez-vous.",
-    citySlug: "sion-vs",
-    categoryKey: "masseuse",
-    languageCodes: ["fr", "de"],
-    serviceKeys: ["incall", "massage"],
     onlineStatus: "ONLINE",
     profileStatus: "PUBLISHED",
     photoGradients: [
       [
-        [220, 190, 150],
-        [180, 110, 80],
+        [230, 160, 140],
+        [120, 50, 60],
       ],
     ],
     pendingPhotoCount: 0,
-    phone: "+41 78 000 00 08",
-    contactEmail: "sofia.demo@example.test",
-    whatsapp: "+41 78 000 00 08",
-    instagram: "@sofia.demo",
+    phone: "+41 78 200 00 02",
+    contactEmail: "ines.demo@example.test",
+    whatsapp: "+41 78 200 00 02",
+    instagram: "@ines.demo",
   },
   {
     email: "jade.demo@example.test",
     displayName: "Jade",
     age: 25,
     description:
-      "Jade, annonceuse indépendante basée à Neuchâtel. Rencontres chaleureuses et respectueuses, sur rendez-vous.",
-    citySlug: "neuchatel-ne",
+      "Jade, annonceuse indépendante basée à Nyon. Rencontres chaleureuses dans un cadre élégant et respectueux.",
+    citySlug: "nyon-vd",
     categoryKey: "escort",
     languageCodes: ["fr", "en"],
+    serviceKeys: ["outcall", "incall"],
+    onlineStatus: "AWAY",
+    profileStatus: "PUBLISHED",
+    photoGradients: [
+      [
+        [150, 200, 190],
+        [50, 80, 140],
+      ],
+    ],
+    pendingPhotoCount: 0,
+    phone: "+41 78 200 00 03",
+    contactEmail: "jade.demo@example.test",
+    whatsapp: "+41 78 200 00 03",
+  },
+  {
+    email: "emma.demo@example.test",
+    displayName: "Emma",
+    age: 36,
+    description:
+      "Emma, annonceuse indépendante basée à Brig. Rencontres chaleureuses et respectueuses, sur rendez-vous.",
+    citySlug: "brig-vs",
+    categoryKey: "escort",
+    languageCodes: ["fr", "de"],
     serviceKeys: ["outcall", "incall"],
     onlineStatus: "OFFLINE",
     profileStatus: "PUBLISHED",
     photoGradients: [
       [
-        [150, 190, 190],
-        [60, 90, 140],
+        [235, 205, 215],
+        [140, 90, 130],
       ],
     ],
     pendingPhotoCount: 0,
-    phone: "+41 78 000 00 09",
-    contactEmail: "jade.demo@example.test",
-    whatsapp: "+41 78 000 00 09",
+    phone: "+41 78 200 00 04",
+    contactEmail: "emma.demo@example.test",
+    whatsapp: "+41 78 200 00 04",
+    instagram: "@emma.demo",
+  },
+  {
+    email: "nora.demo@example.test",
+    displayName: "Nora",
+    age: 34,
+    description:
+      "Nora, masseuse indépendante à Lausanne. Massages relaxants dans un cadre discret et confortable, sur rendez-vous.",
+    citySlug: "lausanne-vd",
+    categoryKey: "masseuse",
+    languageCodes: ["fr", "de"],
+    serviceKeys: ["incall", "massage"],
+    onlineStatus: "AWAY",
+    profileStatus: "PUBLISHED",
+    // Deux photos : la première approuvée (toujours un visuel public,
+    // jamais de profil sans photo), la seconde laissée PENDING à dessein
+    // pour exercer la file de modération des médias sur un profil déjà
+    // publié.
+    photoGradients: [
+      [
+        [190, 210, 180],
+        [60, 100, 70],
+      ],
+      [
+        [160, 190, 150],
+        [40, 80, 50],
+      ],
+    ],
+    pendingPhotoCount: 1,
+    phone: "+41 78 200 00 05",
+    contactEmail: "nora.demo@example.test",
+    whatsapp: "+41 78 200 00 05",
+  },
+  {
+    email: "manon.demo@example.test",
+    displayName: "Manon",
+    age: 22,
+    description:
+      "Manon, masseuse indépendante à Vernier. Massages relaxants dans un cadre soigné, sur rendez-vous.",
+    citySlug: "vernier-ge",
+    categoryKey: "masseuse",
+    languageCodes: ["fr", "it"],
+    serviceKeys: ["incall", "massage"],
+    onlineStatus: "ONLINE",
+    profileStatus: "PUBLISHED",
+    photoGradients: [
+      [
+        [225, 200, 160],
+        [170, 100, 70],
+      ],
+    ],
+    pendingPhotoCount: 0,
+    phone: "+41 78 200 00 06",
+    contactEmail: "manon.demo@example.test",
+    whatsapp: "+41 78 200 00 06",
+  },
+  {
+    email: "sofia.demo@example.test",
+    displayName: "Sofia",
+    age: 31,
+    description:
+      "Sofia, masseuse indépendante à Meyrin. Massages relaxants dans un cadre discret et confortable.",
+    citySlug: "meyrin-ge",
+    categoryKey: "masseuse",
+    languageCodes: ["fr", "de"],
+    serviceKeys: ["incall", "massage"],
+    onlineStatus: "OFFLINE",
+    profileStatus: "PUBLISHED",
+    photoGradients: [
+      [
+        [230, 200, 140],
+        [180, 120, 40],
+      ],
+    ],
+    pendingPhotoCount: 0,
+    phone: "+41 78 200 00 07",
+    contactEmail: "sofia.demo@example.test",
+    whatsapp: "+41 78 200 00 07",
+    instagram: "@sofia.demo",
+  },
+  {
+    email: "alice.demo@example.test",
+    displayName: "Alice",
+    age: 38,
+    description:
+      "Alice, masseuse indépendante basée à Morges. Massages relaxants dans un cadre chaleureux et confortable.",
+    citySlug: "morges-vd",
+    categoryKey: "masseuse",
+    languageCodes: ["fr", "de", "en"],
+    serviceKeys: ["incall", "massage"],
+    onlineStatus: "ONLINE",
+    profileStatus: "PUBLISHED",
+    photoGradients: [
+      [
+        [190, 220, 210],
+        [70, 100, 110],
+      ],
+    ],
+    pendingPhotoCount: 0,
+    phone: "+41 78 200 00 08",
+    contactEmail: "alice.demo@example.test",
+    whatsapp: "+41 78 200 00 08",
+  },
+  {
+    email: "chloe.demo@example.test",
+    displayName: "Chloé",
+    age: 28,
+    description:
+      "Chloé, artiste indépendante basée à Montreux. Spectacles de striptease privés et élégants, sur rendez-vous, dans la discrétion.",
+    citySlug: "montreux-vd",
+    categoryKey: "striptease",
+    languageCodes: ["fr", "en"],
+    serviceKeys: ["evenements", "outcall"],
+    onlineStatus: "ONLINE",
+    profileStatus: "PUBLISHED",
+    photoGradients: [
+      [
+        [170, 130, 190],
+        [40, 30, 70],
+      ],
+    ],
+    pendingPhotoCount: 0,
+    phone: "+41 78 200 00 09",
+    contactEmail: "chloe.demo@example.test",
+    whatsapp: "+41 78 200 00 09",
+    instagram: "@chloe.demo",
   },
   {
     email: "leonie.demo@example.test",
     displayName: "Léonie",
-    age: 29,
+    age: 33,
     description:
       "Léonie, artiste indépendante basée à Sierre. Spectacles de striptease privés et sur mesure, dans le respect et la discrétion.",
     citySlug: "sierre-vs",
@@ -557,178 +586,202 @@ const DEMO_PROFILES: DemoProfileSpec[] = [
     photoGradients: [
       [
         [140, 70, 80],
-        [40, 30, 35],
+        [35, 25, 30],
       ],
     ],
     pendingPhotoCount: 0,
-    phone: "+41 78 000 00 10",
+    phone: "+41 78 200 00 10",
     contactEmail: "leonie.demo@example.test",
-    whatsapp: "+41 78 000 00 10",
+    whatsapp: "+41 78 200 00 10",
     instagram: "@leonie.demo",
   },
   {
-    email: "alice.demo@example.test",
-    displayName: "Alice",
-    age: 35,
+    email: "lina.demo@example.test",
+    displayName: "Lina",
+    age: 21,
     description:
-      "Alice, masseuse indépendante basée à Brig. Massages relaxants dans un cadre discret et confortable, sur rendez-vous.",
-    citySlug: "brig-vs",
-    categoryKey: "masseuse",
-    languageCodes: ["de", "fr"],
-    serviceKeys: ["incall", "massage"],
+      "Lina, artiste indépendante basée à Martigny. Spectacles de striptease privés, élégants et sur rendez-vous.",
+    citySlug: "martigny-vs",
+    categoryKey: "striptease",
+    languageCodes: ["fr", "it"],
+    serviceKeys: ["evenements", "outcall"],
+    onlineStatus: "OFFLINE",
+    profileStatus: "PUBLISHED",
+    photoGradients: [
+      [
+        [210, 160, 90],
+        [110, 50, 50],
+      ],
+    ],
+    pendingPhotoCount: 0,
+    phone: "+41 78 200 00 11",
+    contactEmail: "lina.demo@example.test",
+    whatsapp: "+41 78 200 00 11",
+  },
+  {
+    email: "sarah.demo@example.test",
+    displayName: "Sarah",
+    age: 29,
+    description:
+      "Sarah, artiste indépendante basée à Viège. Spectacles de striptease privés et sur mesure, dans le respect et la discrétion.",
+    citySlug: "viege-vs",
+    categoryKey: "striptease",
+    languageCodes: ["fr", "de"],
+    serviceKeys: ["evenements", "outcall"],
     onlineStatus: "ONLINE",
     profileStatus: "PUBLISHED",
     photoGradients: [
       [
-        [180, 210, 200],
-        [90, 110, 120],
+        [180, 160, 210],
+        [35, 30, 55],
       ],
     ],
     pendingPhotoCount: 0,
-    phone: "+41 78 000 00 11",
-    contactEmail: "alice.demo@example.test",
-    whatsapp: "+41 78 000 00 11",
+    phone: "+41 78 200 00 12",
+    contactEmail: "sarah.demo@example.test",
+    whatsapp: "+41 78 200 00 12",
+  },
+  {
+    email: "camille.demo@example.test",
+    displayName: "Camille",
+    age: 30,
+    description:
+      "Camille, praticienne BDSM indépendante basée à Sion. Séances de domination sur rendez-vous, dans le respect des limites de chacun.",
+    citySlug: "sion-vs",
+    categoryKey: "dominatrice",
+    languageCodes: ["fr", "en", "de"],
+    serviceKeys: ["outcall", "incall"],
+    onlineStatus: "OFFLINE",
+    profileStatus: "PUBLISHED",
+    photoGradients: [
+      [
+        [150, 170, 210],
+        [30, 45, 90],
+      ],
+    ],
+    pendingPhotoCount: 0,
+    phone: "+41 78 200 00 13",
+    contactEmail: "camille.demo@example.test",
+    whatsapp: "+41 78 200 00 13",
+    instagram: "@camille.demo",
+  },
+  {
+    email: "elena.demo@example.test",
+    displayName: "Elena",
+    age: 35,
+    description:
+      "Elena, praticienne BDSM indépendante basée à Vevey. Séances de domination sur rendez-vous, dans un cadre sécurisé et respectueux.",
+    citySlug: "vevey-vd",
+    categoryKey: "dominatrice",
+    languageCodes: ["fr", "en", "it"],
+    serviceKeys: ["outcall", "incall"],
+    onlineStatus: "AWAY",
+    profileStatus: "PUBLISHED",
+    photoGradients: [
+      [
+        [235, 195, 175],
+        [190, 110, 130],
+      ],
+    ],
+    pendingPhotoCount: 0,
+    phone: "+41 78 200 00 14",
+    contactEmail: "elena.demo@example.test",
+    whatsapp: "+41 78 200 00 14",
   },
   {
     email: "clara.demo@example.test",
     displayName: "Clara",
     age: 24,
     description:
-      "Clara, annonceuse indépendante basée à Vevey. Rencontres chaleureuses et respectueuses, sur rendez-vous uniquement.",
-    citySlug: "vevey-vd",
-    categoryKey: "escort",
+      "Clara, praticienne BDSM indépendante basée à Yverdon-les-Bains. Séances sur rendez-vous, dans le respect des limites de chacun.",
+    citySlug: "yverdon-les-bains-vd",
+    categoryKey: "dominatrice",
     languageCodes: ["fr", "en"],
     serviceKeys: ["outcall", "incall"],
     onlineStatus: "ONLINE",
     profileStatus: "PUBLISHED",
     photoGradients: [
       [
-        [230, 160, 140],
-        [150, 90, 120],
+        [210, 180, 220],
+        [110, 70, 130],
       ],
     ],
     pendingPhotoCount: 0,
-    phone: "+41 78 000 00 12",
+    phone: "+41 78 200 00 15",
     contactEmail: "clara.demo@example.test",
-    whatsapp: "+41 78 000 00 12",
+    whatsapp: "+41 78 200 00 15",
     instagram: "@clara.demo",
-  },
-  {
-    email: "lina.demo@example.test",
-    displayName: "Lina",
-    age: 27,
-    description:
-      "Lina, artiste indépendante basée à Martigny. Spectacles de striptease privés, élégants et sur rendez-vous.",
-    citySlug: "martigny-vs",
-    categoryKey: "striptease",
-    languageCodes: ["fr"],
-    serviceKeys: ["evenements", "outcall"],
-    onlineStatus: "OFFLINE",
-    profileStatus: "PUBLISHED",
-    photoGradients: [
-      [
-        [200, 150, 90],
-        [110, 50, 50],
-      ],
-    ],
-    pendingPhotoCount: 0,
-    phone: "+41 78 000 00 13",
-    contactEmail: "lina.demo@example.test",
-    whatsapp: "+41 78 000 00 13",
   },
   {
     email: "maya.demo@example.test",
     displayName: "Maya",
-    age: 32,
+    age: 27,
     description:
-      "Maya, annonceuse indépendante basée à Montreux. Rencontres chaleureuses dans un cadre élégant et respectueux.",
-    citySlug: "montreux-vd",
-    categoryKey: "escort",
+      "Maya, annonceuse trans indépendante basée à Renens. Rencontres chaleureuses et respectueuses, sur rendez-vous.",
+    citySlug: "renens-vd",
+    categoryKey: "trans",
     languageCodes: ["fr", "en", "de"],
     serviceKeys: ["outcall", "incall"],
     onlineStatus: "AWAY",
     profileStatus: "PUBLISHED",
     photoGradients: [
       [
-        [190, 180, 220],
-        [60, 70, 110],
+        [180, 185, 230],
+        [55, 60, 120],
       ],
     ],
     pendingPhotoCount: 0,
-    phone: "+41 78 000 00 14",
+    phone: "+41 78 200 00 16",
     contactEmail: "maya.demo@example.test",
-    whatsapp: "+41 78 000 00 14",
+    whatsapp: "+41 78 200 00 16",
     instagram: "@maya.demo",
   },
   {
     email: "zoe.demo@example.test",
     displayName: "Zoé",
-    age: 26,
+    age: 32,
     description:
-      "Zoé, masseuse indépendante basée à Saint-Maurice. Massages relaxants dans un cadre discret et confortable.",
-    citySlug: "saint-maurice-vs",
-    categoryKey: "masseuse",
-    languageCodes: ["fr"],
-    serviceKeys: ["incall", "massage"],
-    onlineStatus: "ONLINE",
-    profileStatus: "PUBLISHED",
-    photoGradients: [
-      [
-        [200, 215, 180],
-        [230, 220, 190],
-      ],
-    ],
-    pendingPhotoCount: 0,
-    phone: "+41 78 000 00 15",
-    contactEmail: "zoe.demo@example.test",
-    whatsapp: "+41 78 000 00 15",
-  },
-  {
-    email: "emma.demo@example.test",
-    displayName: "Emma",
-    age: 30,
-    description:
-      "Emma, annonceuse indépendante basée à Fribourg. Rencontres chaleureuses et respectueuses, sur rendez-vous.",
-    citySlug: "fribourg-fr",
-    categoryKey: "escort",
-    languageCodes: ["fr", "de"],
+      "Zoé, annonceuse trans indépendante basée à Monthey. Rencontres chaleureuses dans un cadre élégant et respectueux.",
+    citySlug: "monthey-vs",
+    categoryKey: "trans",
+    languageCodes: ["fr", "it"],
     serviceKeys: ["outcall", "incall"],
     onlineStatus: "ONLINE",
     profileStatus: "PUBLISHED",
     photoGradients: [
       [
-        [230, 200, 210],
-        [170, 130, 150],
+        [175, 215, 205],
+        [50, 120, 120],
       ],
     ],
     pendingPhotoCount: 0,
-    phone: "+41 78 000 00 16",
-    contactEmail: "emma.demo@example.test",
-    whatsapp: "+41 78 000 00 16",
-    instagram: "@emma.demo",
+    phone: "+41 78 200 00 17",
+    contactEmail: "zoe.demo@example.test",
+    whatsapp: "+41 78 200 00 17",
   },
   {
-    email: "sarah.demo@example.test",
-    displayName: "Sarah",
-    age: 28,
+    email: "nina.demo@example.test",
+    displayName: "Nina",
+    age: 26,
     description:
-      "Sarah, artiste indépendante basée à Fribourg. Spectacles de striptease privés et sur mesure, dans le respect et la discrétion.",
-    citySlug: "fribourg-fr",
-    categoryKey: "striptease",
-    languageCodes: ["fr", "de"],
-    serviceKeys: ["evenements", "outcall"],
+      "Nina, annonceuse trans indépendante basée à Lancy. Rencontres chaleureuses et respectueuses, sur rendez-vous uniquement.",
+    citySlug: "lancy-ge",
+    categoryKey: "trans",
+    languageCodes: ["fr", "en"],
+    serviceKeys: ["outcall", "incall"],
     onlineStatus: "OFFLINE",
     profileStatus: "PUBLISHED",
     photoGradients: [
       [
-        [120, 90, 160],
-        [25, 20, 30],
+        [235, 200, 165],
+        [190, 130, 70],
       ],
     ],
     pendingPhotoCount: 0,
-    phone: "+41 78 000 00 17",
-    contactEmail: "sarah.demo@example.test",
-    whatsapp: "+41 78 000 00 17",
+    phone: "+41 78 200 00 18",
+    contactEmail: "nina.demo@example.test",
+    whatsapp: "+41 78 200 00 18",
+    instagram: "@nina.demo",
   },
 ];
 
@@ -753,9 +806,9 @@ async function main() {
   // eslint-disable-next-line no-console
   console.log(
     [
-      "Seed de démo terminé.",
+      `Seed de démo terminé (${DEMO_PROFILES.length} profils fictifs).`,
       "Comptes de test (mot de passe unique, bêta uniquement — jamais en production) :",
-      "  admin@example.test / moderator@example.test / lea.demo@example.test / nora.demo@example.test / camille.demo@example.test",
+      "  admin@example.test / moderator@example.test / <prenom>.demo@example.test (voir DEMO_PROFILES)",
       `  mot de passe : ${DEMO_PASSWORD}`,
     ].join("\n"),
   );

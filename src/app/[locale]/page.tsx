@@ -2,6 +2,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { listPublishedProfiles, listPublishedProfileCityCounts } from "@/modules/profiles/profile.service";
 import { getPublicPhotoUrl } from "@/modules/media/media.service";
 import { listCategories, listCities, listLanguages } from "@/modules/taxonomies/taxonomy.service";
+import { groupCitiesByCanton } from "@/lib/group-cities";
 import { FilterBar } from "@/components/public/FilterBar";
 import { ProfileCard } from "@/components/public/ProfileCard";
 import { ProfileMapLoader } from "@/components/public/ProfileMapLoader";
@@ -108,10 +109,14 @@ export default async function HomePage({
             className="w-full rounded-xl border border-hairline2 bg-surface-raised px-3.5 py-2.5 text-sm text-ink2 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
           >
             <option value="">{t("heroSearchLabel")}</option>
-            {cities.map((city) => (
-              <option key={city.slug} value={city.slug}>
-                {city.name} ({city.canton})
-              </option>
+            {groupCitiesByCanton(cities).map((group) => (
+              <optgroup key={group.canton} label={group.canton}>
+                {group.cities.map((city) => (
+                  <option key={city.slug} value={city.slug}>
+                    {city.name}
+                  </option>
+                ))}
+              </optgroup>
             ))}
           </select>
           <button
@@ -160,7 +165,7 @@ export default async function HomePage({
         {profilesWithThumbnails.length === 0 ? (
           <p className="py-16 text-center text-sm text-ink2-faint">{t("emptyState")}</p>
         ) : (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {profilesWithThumbnails.map((profile) => (
               <ProfileCard key={profile.slug} profile={profile} locale={locale} />
             ))}
