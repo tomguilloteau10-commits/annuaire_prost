@@ -23,12 +23,29 @@
     "mapCaption": "Nur Stadtzentrum als Standort — nie eine genaue Adresse.",
     "statsProfiles": "Profile",
     "statsCities": "Städte",
+    "statsVerified": "verifiziert",
+    "heroSearchLabel": "Nach Stadt suchen",
+    "heroSearchCta": "Suchen",
+    "featuredTitle": "Ausgewählte Profile",
+    "resultsTitle": "Alle Profile",
     "filters": {
       "city": "Stadt",
       "category": "Kategorie",
       "language": "Sprache",
       "onlineOnly": "Nur online"
     }
+  },
+  "whyUs": {
+    "title": "Warum uns wählen",
+    "verifiedTitle": "Verifizierte Profile",
+    "verifiedBody": "Jedes veröffentlichte Profil hat eine Altersverifikation und eine menschliche Moderation durchlaufen — ohne Ausnahme.",
+    "discretionTitle": "Diskretion",
+    "discretionBody": "Kontaktdaten werden nie öffentlich angezeigt oder in unseren Protokollen gespeichert: nur auf Anfrage, anonym, ohne Konto.",
+    "directContactTitle": "Direkter Kontakt",
+    "directContactBody": "Sie kontaktieren die Anbieterin direkt, ohne Vermittler und ohne Provision. Wir sind ein Inserate-Herausgeber, keine Agentur."
+  },
+  "footer": {
+    "disclaimer": "Herausgeber unabhängiger Inserate, nur für Erwachsene (18 Jahre und älter)."
   },
   "map": {
     "profileCount": "Profile",

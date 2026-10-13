@@ -22,12 +22,29 @@
     "mapCaption": "Located to the city centre only — never an exact address.",
     "statsProfiles": "profiles",
     "statsCities": "cities",
+    "statsVerified": "verified",
+    "heroSearchLabel": "Search by city",
+    "heroSearchCta": "Search",
+    "featuredTitle": "Featured profiles",
+    "resultsTitle": "All profiles",
     "filters": {
       "city": "City",
       "category": "Category",
       "language": "Language",
       "onlineOnly": "Online only"
     }
+  },
+  "whyUs": {
+    "title": "Why choose us",
+    "verifiedTitle": "Verified profiles",
+    "verifiedBody": "Every published profile has passed age verification and human moderation before going live — no exceptions.",
+    "discretionTitle": "Discretion",
+    "discretionBody": "Contact details are never shown publicly or kept in our logs: revealed on request only, anonymously, no account needed.",
+    "directContactTitle": "Direct contact",
+    "directContactBody": "You contact the provider directly, with no middleman and no commission. We're a listings publisher, not an agency."
+  },
+  "footer": {
+    "disclaimer": "Independent listings publisher, for adults only (18 and over)."
   },
   "map": {
     "profileCount": "profiles",

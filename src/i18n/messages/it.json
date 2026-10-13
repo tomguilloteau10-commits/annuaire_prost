@@ -23,12 +23,29 @@
     "mapCaption": "Posizione limitata al centro città — mai un indirizzo esatto.",
     "statsProfiles": "profili",
     "statsCities": "città",
+    "statsVerified": "verificate",
+    "heroSearchLabel": "Cerca per città",
+    "heroSearchCta": "Cerca",
+    "featuredTitle": "Profili in evidenza",
+    "resultsTitle": "Tutti i profili",
     "filters": {
       "city": "Città",
       "category": "Categoria",
       "language": "Lingua",
       "onlineOnly": "Solo online"
     }
+  },
+  "whyUs": {
+    "title": "Perché sceglierci",
+    "verifiedTitle": "Profili verificati",
+    "verifiedBody": "Ogni profilo pubblicato ha superato una verifica di maggiore età e una moderazione umana prima della pubblicazione — senza eccezioni.",
+    "discretionTitle": "Discrezione",
+    "discretionBody": "Il contatto non è mai mostrato pubblicamente né conservato nei nostri log: viene rivelato solo su richiesta, in modo anonimo, senza bisogno di un account.",
+    "directContactTitle": "Contatto diretto",
+    "directContactBody": "Contatti direttamente la fornitrice, senza intermediari né commissioni. Siamo un editore di annunci, non un'agenzia."
+  },
+  "footer": {
+    "disclaimer": "Editore di annunci indipendenti, riservato ai maggiorenni (18 anni e oltre)."
   },
   "map": {
     "profileCount": "profili",
