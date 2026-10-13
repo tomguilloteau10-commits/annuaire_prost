@@ -3,6 +3,11 @@ import { listPublishedProfiles } from "@/modules/profiles/profile.service";
 import { withThumbnails } from "@/modules/profiles/profile-thumbnails";
 import { StoryThumb } from "@/components/public/StoryThumb";
 
+// La page ne lit ni searchParams ni cookies : sans ceci, Next.js tente de la
+// pré-rendre au build, où la base n'existe pas (build Docker sans
+// DATABASE_URL) — échec du build, et contenu figé s'il réussissait.
+export const dynamic = "force-dynamic";
+
 export default async function StoriesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
