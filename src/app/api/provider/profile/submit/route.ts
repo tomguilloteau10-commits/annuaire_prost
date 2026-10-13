@@ -5,6 +5,7 @@ import { submitProfileForReview } from "@/modules/profiles/profile.service";
 import {
   ProfileNotFoundError,
   OnboardingIncompleteError,
+  ProfileIncompleteError,
   VerificationIncompleteError,
 } from "@/modules/profiles/types";
 import { checkCsrf } from "@/lib/route-helpers";
@@ -31,6 +32,9 @@ export async function POST(request: Request) {
     }
     if (error instanceof OnboardingIncompleteError) {
       return NextResponse.json({ error: "onboarding_incomplete" }, { status: 409 });
+    }
+    if (error instanceof ProfileIncompleteError) {
+      return NextResponse.json({ error: `missing_${error.missing}` }, { status: 409 });
     }
     if (error instanceof VerificationIncompleteError) {
       return NextResponse.json({ error: "verification_incomplete" }, { status: 409 });

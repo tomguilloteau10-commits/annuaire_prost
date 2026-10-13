@@ -18,20 +18,22 @@ export function ProfileCard({
   locale,
   featured = false,
   compact = false,
+  preview = false,
 }: {
   profile: ProfileCardData;
   locale: string;
   featured?: boolean;
   /** Format carré et badges empilés, pour les carrousels. */
   compact?: boolean;
+  /** Aperçu non cliquable (tableau de bord prestataire, profil pas forcément publié). */
+  preview?: boolean;
 }) {
   const t = useTranslations("profile");
+  const cardClasses =
+    "group flex h-full flex-col overflow-hidden rounded-xl3 border border-hairline bg-surface shadow-card transition-colors";
 
-  return (
-    <Link
-      href={`/profiles/${profile.slug}`}
-      className="group flex h-full flex-col overflow-hidden rounded-xl3 border border-hairline bg-surface shadow-card transition-colors hover:border-hairline2"
-    >
+  const content = (
+    <>
       {/* Image en position absolue : la hauteur du cadre vient uniquement du
           ratio, jamais de la taille d'origine de l'image (sinon certains
           moteurs, dont Safari, peuvent donner des cartes de hauteurs
@@ -83,6 +85,13 @@ export function ProfileCard({
           {profile.city.name} · {getLocalizedLabel(profile.category.label, locale)}
         </span>
       </div>
+    </>
+  );
+
+  if (preview) return <div className={cardClasses}>{content}</div>;
+  return (
+    <Link href={`/profiles/${profile.slug}`} className={`${cardClasses} hover:border-hairline2`}>
+      {content}
     </Link>
   );
 }

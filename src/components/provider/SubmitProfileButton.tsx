@@ -5,7 +5,7 @@ import { useRouter } from "@/i18n/navigation";
 import { useCsrfToken } from "@/lib/use-csrf-token";
 import { Button } from "@/components/ui/Button";
 
-export function SubmitProfileButton() {
+export function SubmitProfileButton({ label, className = "" }: { label?: string; className?: string }) {
   const t = useTranslations("dashboard");
   const router = useRouter();
   const csrfToken = useCsrfToken();
@@ -30,7 +30,11 @@ export function SubmitProfileButton() {
           ? t("submitErrorOnboarding")
           : body?.error === "verification_incomplete"
             ? t("submitErrorVerification")
-            : t("submitErrorGeneric"),
+            : body?.error === "missing_photo"
+              ? t("submitErrorPhoto")
+              : body?.error === "missing_whatsapp"
+                ? t("submitErrorWhatsapp")
+                : t("submitErrorGeneric"),
       );
       return;
     }
@@ -40,8 +44,8 @@ export function SubmitProfileButton() {
 
   return (
     <div className="flex flex-col gap-2">
-      <Button onClick={handleSubmit} disabled={submitting || !csrfToken}>
-        {t("submitForReview")}
+      <Button onClick={handleSubmit} disabled={submitting || !csrfToken} size="lg" className={className}>
+        {label ?? t("submitForReview")}
       </Button>
       {error && <p className="text-sm text-danger">{error}</p>}
     </div>

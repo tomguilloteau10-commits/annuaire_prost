@@ -52,3 +52,14 @@ export class VerificationIncompleteError extends Error {
     this.name = "VerificationIncompleteError";
   }
 }
+
+export class ProfileIncompleteError extends Error {
+  constructor(public readonly missing: "photo" | "whatsapp") {
+    super(
+      missing === "photo"
+        ? "Au moins une photo est nécessaire avant de soumettre le profil"
+        : "Un numéro WhatsApp est nécessaire avant de soumettre le profil",
+    );
+    this.name = "ProfileIncompleteError";
+  }
+}

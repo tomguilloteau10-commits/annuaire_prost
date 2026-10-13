@@ -10,7 +10,7 @@
     "home": "Accueil",
     "login": "Connexion",
     "register": "Inscription",
-    "dashboard": "Tableau de bord",
+    "dashboard": "Mon espace",
     "moderation": "Modération",
     "taxonomies": "Taxonomies",
     "auditLog": "Journal d'audit",
@@ -122,42 +122,65 @@
     "error": "La vérification a échoué. Réessayez."
   },
   "dashboard": {
-    "title": "Tableau de bord",
-    "attestationLabel": "Attestation d'onboarding",
-    "verificationLabel": "Vérification de majorité",
-    "profileStatusLabel": "Statut du profil",
-    "publiclyVisibleLabel": "Profil visible publiquement",
-    "done": "Complétée",
-    "todo": "À faire",
-    "yes": "Oui",
-    "no": "Non",
-    "verificationStatus": {
-      "NONE": "Non démarrée",
-      "PENDING": "En attente",
-      "IN_PROGRESS": "En cours",
-      "VERIFIED": "Validée",
-      "FAILED": "Échouée",
-      "EXPIRED": "Expirée"
+    "title": "Mon espace",
+    "greeting": "Bonjour {name}.",
+    "status": {
+      "onlineTitle": "Votre profil est EN LIGNE",
+      "pendingTitle": "Votre profil est en attente de vérification",
+      "actionTitle": "Action requise",
+      "published": "Les clients peuvent le voir et vous contacter. Vous n'avez rien à faire.",
+      "pendingReview": "Notre équipe le relit avant de le mettre en ligne. Vous n'avez rien à faire : il apparaîtra dès qu'il sera validé.",
+      "verificationPending": "Votre vérification de majorité est en cours. Vous n'avez rien à faire pour l'instant.",
+      "incomplete": "{count, plural, one {Il vous reste # étape avant que votre profil soit visible.} other {Il vous reste # étapes avant que votre profil soit visible.}}",
+      "readyToSubmit": "Votre profil est prêt : envoyez-le à notre équipe pour qu'il soit vérifié et mis en ligne.",
+      "rejected": "Votre profil n'a pas été accepté. Corrigez-le, puis renvoyez-le.",
+      "rejectedWithReason": "Votre profil n'a pas été accepté. Motif : « {reason} ». Corrigez-le, puis renvoyez-le.",
+      "suspended": "Votre profil a été masqué par notre équipe de modération : il n'est plus visible pour le moment.",
+      "continue": "Continuer",
+      "submit": "Envoyer mon profil",
+      "resubmit": "Renvoyer mon profil",
+      "fixProfile": "Corriger mon profil"
     },
-    "profileStatus": {
-      "NONE": "Aucun profil créé",
-      "DRAFT": "Brouillon",
-      "PENDING_REVIEW": "En attente de modération",
-      "PUBLISHED": "Publié",
-      "REJECTED": "Rejeté",
-      "SUSPENDED": "Suspendu"
+    "preview": {
+      "title": "Mon profil vu par les clients",
+      "viewPublic": "Voir mon profil public",
+      "notPublicYet": "Votre page publique sera visible une fois votre profil en ligne.",
+      "edit": "Modifier mon profil",
+      "noProfile": "Vous n'avez pas encore créé votre profil. Cela prend environ 5 minutes.",
+      "create": "Créer mon profil"
     },
-    "goToOnboarding": "Compléter l'attestation d'onboarding",
-    "goToVerification": "Démarrer la vérification de majorité",
-    "editProfile": "Modifier mon profil",
-    "createProfile": "Créer mon profil",
-    "submitForReview": "Soumettre à la modération",
-    "submitErrorOnboarding": "L'attestation d'onboarding doit être complétée avant de soumettre.",
-    "submitErrorVerification": "La vérification de majorité doit être validée avant de soumettre.",
-    "submitErrorGeneric": "Impossible de soumettre le profil pour le moment."
+    "checklist": {
+      "title": "Pour être visible",
+      "progress": "{done} sur {total} terminées",
+      "todo": "À faire",
+      "items": {
+        "ageVerification": "Vérification de majorité (18+)",
+        "photo": "Au moins une photo ajoutée",
+        "cityCategory": "Ville et catégorie renseignées",
+        "whatsapp": "Moyen de contact (WhatsApp) ajouté"
+      }
+    },
+    "availability": {
+      "title": "Disponible maintenant",
+      "on": "Oui — les clients voient « En ligne » sur votre profil.",
+      "off": "Non — votre profil affiche « Hors ligne ».",
+      "needsProfile": "Créez d'abord votre profil.",
+      "error": "Le changement n'a pas pu être enregistré. Réessayez."
+    },
+    "plan": {
+      "title": "Mon abonnement",
+      "name": "Offre de lancement — gratuit",
+      "body": "Votre annonce est gratuite pendant le lancement, avec jusqu'à {maxPhotos} photos. Aucun paiement ne vous est demandé."
+    },
+    "submitForReview": "Envoyer mon profil pour vérification",
+    "submitErrorOnboarding": "Il manque l'attestation de départ. Complétez-la depuis votre espace.",
+    "submitErrorVerification": "Votre vérification de majorité n'est pas encore validée.",
+    "submitErrorPhoto": "Ajoutez au moins une photo avant d'envoyer votre profil.",
+    "submitErrorWhatsapp": "Ajoutez votre numéro WhatsApp avant d'envoyer votre profil.",
+    "submitErrorGeneric": "L'envoi n'a pas fonctionné. Réessayez dans un instant."
   },
   "profileEdit": {
-    "title": "Mon profil",
+    "title": "Modifier mon profil",
     "wizard": {
       "stepIdentity": "Identité",
       "stepPresentation": "Présentation",
@@ -167,7 +190,7 @@
       "next": "Suivant",
       "back": "Précédent",
       "saveAndContinue": "Enregistrer et continuer",
-      "readyToSubmitHint": "Votre profil est prêt. Vous pouvez le soumettre à la modération dès maintenant, ou continuer à le modifier."
+      "progress": "Étape {current} sur {total}"
     },
     "displayNameLabel": "Nom d'affichage",
     "ageLabel": "Âge",
@@ -194,18 +217,25 @@
     "instagramLabel": "Instagram (optionnel)",
     "phoneLabel": "Téléphone (optionnel)",
     "contactEmailLabel": "Email de contact (optionnel)",
-    "photosTitle": "Photos",
-    "photosHint": "Chaque photo passe par la modération avant d'être visible publiquement.",
+    "photosTitle": "Vos photos",
+    "photosHint": "Chaque photo est vérifiée par notre équipe avant d'être visible.",
     "photoStatus": {
-      "PENDING": "En attente",
-      "APPROVED": "Approuvée",
-      "REJECTED": "Rejetée"
+      "PENDING": "En cours de vérification",
+      "APPROVED": "Visible",
+      "REJECTED": "Refusée"
     },
     "photoDelete": "Supprimer",
-    "photoLimitReached": "Limite de photos de votre plan atteinte.",
+    "photoLimitReached": "Vous avez atteint le nombre maximum de photos. Supprimez-en une pour en ajouter une autre.",
     "photoUnsupportedType": "Format d'image non pris en charge (JPEG, PNG, WebP uniquement).",
     "photoUploadError": "Échec de l'envoi de la photo.",
-    "saveProfileFirstForPhotos": "Enregistrez d'abord votre profil pour pouvoir ajouter des photos."
+    "saveProfileFirstForPhotos": "Enregistrez d'abord votre profil pour pouvoir ajouter des photos.",
+    "createTitle": "Créer mon profil",
+    "backToDashboard": "Retour à mon espace",
+    "contactSave": "Enregistrer et terminer",
+    "photoAdd": "Ajouter une photo",
+    "photoAddHint": "Depuis votre téléphone ou votre ordinateur · {count} sur {max} photos",
+    "photoUploading": "Envoi en cours…",
+    "photoDeleteError": "La photo n'a pas pu être supprimée. Réessayez."
   },
   "moderation": {
     "title": "Modération",

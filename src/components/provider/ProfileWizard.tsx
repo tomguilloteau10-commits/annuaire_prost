@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { PhotoManager, type PhotoItem } from "@/components/provider/PhotoManager";
 import { ContactForm } from "@/components/provider/ContactForm";
-import { SubmitProfileButton } from "@/components/provider/SubmitProfileButton";
 
 interface LabeledOption {
   label: unknown;
@@ -50,9 +49,8 @@ export interface ProfileWizardProps {
   initialContact: { phone: string; email: string; whatsapp: string; instagram: string };
   initialPhotos: PhotoItem[];
   maxPhotos: number;
-  /** Attestation complétée ET vérification 18+ validée — indépendant de l'existence du profil. */
-  readyToSubmit: boolean;
-  initialProfileStatus?: "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | "REJECTED" | "SUSPENDED";
+  /** Étape ouverte à l'arrivée (lien direct depuis la checklist du tableau de bord). */
+  initialStep?: string;
 }
 
 function toggle(list: string[], value: string): string[] {
@@ -70,6 +68,10 @@ type StepId = (typeof STEP_IDS)[number];
  * qui crée le profil DRAFT. Les étapes Photos et Contact exigent un profil
  * déjà créé (les deux API sous-jacentes le vérifient), donc elles restent
  * verrouillées tant que l'étape 3 n'a pas été validée au moins une fois.
+ *
+ * En modification (profil existant, formulaire pré-rempli), chaque
+ * "Enregistrer et continuer" enregistre immédiatement : on peut arriver
+ * directement sur une étape (`initialStep`) et repartir sans tout refaire.
  */
 export function ProfileWizard({
   locale,
@@ -81,16 +83,18 @@ export function ProfileWizard({
   initialContact,
   initialPhotos,
   maxPhotos,
-  readyToSubmit,
-  initialProfileStatus,
+  initialStep,
 }: ProfileWizardProps) {
   const t = useTranslations("profileEdit");
   const router = useRouter();
   const csrfToken = useCsrfToken();
 
   const [profileExists, setProfileExists] = useState(initialValues !== null);
-  const [profileStatus, setProfileStatus] = useState(initialProfileStatus);
-  const [stepIndex, setStepIndex] = useState(0);
+  const [stepIndex, setStepIndex] = useState(() => {
+    const requested = STEP_IDS.indexOf(initialStep as StepId);
+    const maxIndex = initialValues !== null ? STEP_IDS.length - 1 : 2;
+    return requested >= 0 && requested <= maxIndex ? requested : 0;
+  });
 
   const [displayName, setDisplayName] = useState(initialValues?.displayName ?? "");
   const [age, setAge] = useState(initialValues?.age ? String(initialValues.age) : "");
@@ -105,7 +109,6 @@ export function ProfileWizard({
 
   const step = STEP_IDS[stepIndex]!;
   const maxUnlockedIndex = profileExists ? STEP_IDS.length - 1 : 2;
-  const canSubmitNow = profileExists && readyToSubmit && (profileStatus === "DRAFT" || profileStatus === "REJECTED");
 
   function isStepValid(id: StepId): boolean {
     if (id === "identity") {
@@ -157,20 +160,28 @@ export function ProfileWizard({
       setError(body?.error === "invalid_input" ? t("invalidFieldsError") : t("saveError"));
       return false;
     }
-    const data = (await response.json()) as { status: typeof profileStatus };
     setProfileExists(true);
-    setProfileStatus(data.status);
     router.refresh();
     return true;
   }
 
-  async function handleSaveAndContinue() {
+  async function handleSaveAndContinue(nextIndex = 3) {
     if (languageCodes.length === 0) {
       setError(t("selectAtLeastOneLanguage"));
       return;
     }
     const ok = await saveCoreProfile();
-    if (ok) goToStep(3);
+    // Pas goToStep() : son verrou (maxUnlockedIndex) date d'avant la
+    // création du profil et bloquerait le passage à l'étape Photos.
+    if (ok) setStepIndex(nextIndex);
+  }
+
+  // Étapes 1 et 2 : simple passage à la suite à la création (le profil
+  // n'est créé qu'à l'étape 3, quand tout est rempli) ; enregistrement
+  // immédiat en modification.
+  function handleNext(fromIndex: number) {
+    if (profileExists) void handleSaveAndContinue(fromIndex + 1);
+    else goToStep(fromIndex + 1);
   }
 
   const steps: { id: StepId; label: string }[] = [
@@ -183,6 +194,19 @@ export function ProfileWizard({
 
   return (
     <div className="flex w-full max-w-2xl flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-medium text-ink2-muted">
+          {t("wizard.progress", { current: stepIndex + 1, total: steps.length })} ·{" "}
+          <span className="text-ink2">{steps[stepIndex]!.label}</span>
+        </p>
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-raised">
+          <div
+            className="h-full rounded-full bg-accent transition-all"
+            style={{ width: `${((stepIndex + 1) / steps.length) * 100}%` }}
+          />
+        </div>
+      </div>
+
       <div className="flex flex-wrap gap-2">
         {steps.map((s, index) => (
           <button
@@ -257,8 +281,15 @@ export function ProfileWizard({
             </FieldGroup>
           </div>
 
-          <Button onClick={() => goToStep(1)} disabled={!isStepValid("identity")} className="self-start">
-            {t("wizard.next")}
+          {error && <p className="text-sm text-danger">{error}</p>}
+
+          <Button
+            onClick={() => handleNext(0)}
+            disabled={!isStepValid("identity") || submitting}
+            size="lg"
+            className="w-full sm:w-auto sm:self-start"
+          >
+            {profileExists ? t("wizard.saveAndContinue") : t("wizard.next")}
           </Button>
         </Card>
       )}
@@ -305,11 +336,16 @@ export function ProfileWizard({
           {error && <p className="text-sm text-danger">{error}</p>}
 
           <div className="flex gap-2">
-            <Button variant="secondary" onClick={() => goToStep(0)}>
+            <Button variant="secondary" onClick={() => goToStep(0)} size="lg">
               {t("wizard.back")}
             </Button>
-            <Button onClick={() => goToStep(2)} disabled={!isStepValid("presentation")}>
-              {t("wizard.next")}
+            <Button
+              onClick={() => handleNext(1)}
+              disabled={!isStepValid("presentation") || submitting}
+              size="lg"
+              className="flex-1 sm:flex-none"
+            >
+              {profileExists ? t("wizard.saveAndContinue") : t("wizard.next")}
             </Button>
           </div>
         </Card>
@@ -357,10 +393,15 @@ export function ProfileWizard({
           {error && <p className="text-sm text-danger">{error}</p>}
 
           <div className="flex gap-2">
-            <Button variant="secondary" onClick={() => goToStep(1)}>
+            <Button variant="secondary" onClick={() => goToStep(1)} size="lg">
               {t("wizard.back")}
             </Button>
-            <Button onClick={handleSaveAndContinue} disabled={submitting || !csrfToken}>
+            <Button
+              onClick={() => handleSaveAndContinue()}
+              disabled={submitting || !csrfToken}
+              size="lg"
+              className="flex-1 sm:flex-none"
+            >
               {t("wizard.saveAndContinue")}
             </Button>
           </div>
@@ -371,10 +412,12 @@ export function ProfileWizard({
         <div className="flex flex-col gap-4">
           <PhotoManager initialPhotos={initialPhotos} maxPhotos={maxPhotos} />
           <div className="flex gap-2">
-            <Button variant="secondary" onClick={() => goToStep(2)}>
+            <Button variant="secondary" onClick={() => goToStep(2)} size="lg">
               {t("wizard.back")}
             </Button>
-            <Button onClick={() => goToStep(4)}>{t("wizard.next")}</Button>
+            <Button onClick={() => goToStep(4)} size="lg" className="flex-1 sm:flex-none">
+              {t("wizard.next")}
+            </Button>
           </div>
         </div>
       )}
@@ -386,19 +429,14 @@ export function ProfileWizard({
             initialEmail={initialContact.email}
             initialWhatsapp={initialContact.whatsapp}
             initialInstagram={initialContact.instagram}
+            onSaved={() => router.push("/provider/dashboard")}
           />
-          <Button variant="secondary" onClick={() => goToStep(3)} className="self-start">
+          <Button variant="secondary" onClick={() => goToStep(3)} size="lg" className="self-start">
             {t("wizard.back")}
           </Button>
         </div>
       )}
 
-      {canSubmitNow && (
-        <Card className="flex flex-col gap-3 p-5">
-          <p className="text-sm text-ink2-muted">{t("wizard.readyToSubmitHint")}</p>
-          <SubmitProfileButton />
-        </Card>
-      )}
     </div>
   );
 }

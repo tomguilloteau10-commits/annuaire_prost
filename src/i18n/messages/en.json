@@ -10,7 +10,7 @@
     "home": "Home",
     "login": "Log in",
     "register": "Sign up",
-    "dashboard": "Dashboard",
+    "dashboard": "My space",
     "moderation": "Moderation",
     "taxonomies": "Taxonomies",
     "auditLog": "Audit log",
@@ -122,42 +122,65 @@
     "error": "Verification failed. Please try again."
   },
   "dashboard": {
-    "title": "Dashboard",
-    "attestationLabel": "Onboarding attestation",
-    "verificationLabel": "Age verification",
-    "profileStatusLabel": "Profile status",
-    "publiclyVisibleLabel": "Publicly visible profile",
-    "done": "Completed",
-    "todo": "To do",
-    "yes": "Yes",
-    "no": "No",
-    "verificationStatus": {
-      "NONE": "Not started",
-      "PENDING": "Pending",
-      "IN_PROGRESS": "In progress",
-      "VERIFIED": "Verified",
-      "FAILED": "Failed",
-      "EXPIRED": "Expired"
+    "title": "My space",
+    "greeting": "Hello {name}.",
+    "status": {
+      "onlineTitle": "Your profile is LIVE",
+      "pendingTitle": "Your profile is waiting for review",
+      "actionTitle": "Action needed",
+      "published": "Clients can see it and contact you. There is nothing for you to do.",
+      "pendingReview": "Our team is checking it before it goes live. There is nothing for you to do: it will appear as soon as it is approved.",
+      "verificationPending": "Your age check is in progress. There is nothing for you to do for now.",
+      "incomplete": "{count, plural, one {# step left before your profile is visible.} other {# steps left before your profile is visible.}}",
+      "readyToSubmit": "Your profile is ready: send it to our team so it can be checked and published.",
+      "rejected": "Your profile was not accepted. Fix it, then send it again.",
+      "rejectedWithReason": "Your profile was not accepted. Reason: “{reason}”. Fix it, then send it again.",
+      "suspended": "Your profile has been hidden by our moderation team: it is not visible for now.",
+      "continue": "Continue",
+      "submit": "Send my profile",
+      "resubmit": "Send my profile again",
+      "fixProfile": "Fix my profile"
     },
-    "profileStatus": {
-      "NONE": "No profile yet",
-      "DRAFT": "Draft",
-      "PENDING_REVIEW": "Pending moderation",
-      "PUBLISHED": "Published",
-      "REJECTED": "Rejected",
-      "SUSPENDED": "Suspended"
+    "preview": {
+      "title": "My profile as clients see it",
+      "viewPublic": "View my public profile",
+      "notPublicYet": "Your public page will be visible once your profile is live.",
+      "edit": "Edit my profile",
+      "noProfile": "You have not created your profile yet. It takes about 5 minutes.",
+      "create": "Create my profile"
     },
-    "goToOnboarding": "Complete the onboarding attestation",
-    "goToVerification": "Start age verification",
-    "editProfile": "Edit my profile",
-    "createProfile": "Create my profile",
-    "submitForReview": "Submit for moderation",
-    "submitErrorOnboarding": "The onboarding attestation must be completed before submitting.",
-    "submitErrorVerification": "Age verification must be passed before submitting.",
-    "submitErrorGeneric": "Could not submit the profile right now."
+    "checklist": {
+      "title": "To be visible",
+      "progress": "{done} of {total} done",
+      "todo": "To do",
+      "items": {
+        "ageVerification": "Age check (18+)",
+        "photo": "At least one photo added",
+        "cityCategory": "City and category filled in",
+        "whatsapp": "Contact method (WhatsApp) added"
+      }
+    },
+    "availability": {
+      "title": "Available now",
+      "on": "Yes — clients see “Online” on your profile.",
+      "off": "No — your profile shows “Offline”.",
+      "needsProfile": "Create your profile first.",
+      "error": "The change could not be saved. Please try again."
+    },
+    "plan": {
+      "title": "My plan",
+      "name": "Launch offer — free",
+      "body": "Your listing is free during the launch, with up to {maxPhotos} photos. No payment is requested."
+    },
+    "submitForReview": "Send my profile for review",
+    "submitErrorOnboarding": "The starting declaration is missing. Complete it from your space.",
+    "submitErrorVerification": "Your age check is not approved yet.",
+    "submitErrorPhoto": "Add at least one photo before sending your profile.",
+    "submitErrorWhatsapp": "Add your WhatsApp number before sending your profile.",
+    "submitErrorGeneric": "Sending did not work. Please try again in a moment."
   },
   "profileEdit": {
-    "title": "My profile",
+    "title": "Edit my profile",
     "wizard": {
       "stepIdentity": "Identity",
       "stepPresentation": "Presentation",
@@ -167,7 +190,7 @@
       "next": "Next",
       "back": "Back",
       "saveAndContinue": "Save and continue",
-      "readyToSubmitHint": "Your profile is ready. You can submit it for moderation now, or keep editing it."
+      "progress": "Step {current} of {total}"
     },
     "displayNameLabel": "Display name",
     "ageLabel": "Age",
@@ -194,18 +217,25 @@
     "instagramLabel": "Instagram (optional)",
     "phoneLabel": "Phone (optional)",
     "contactEmailLabel": "Contact email (optional)",
-    "photosTitle": "Photos",
-    "photosHint": "Every photo goes through moderation before becoming publicly visible.",
+    "photosTitle": "Your photos",
+    "photosHint": "Each photo is checked by our team before it becomes visible.",
     "photoStatus": {
-      "PENDING": "Pending",
-      "APPROVED": "Approved",
+      "PENDING": "Being checked",
+      "APPROVED": "Visible",
       "REJECTED": "Rejected"
     },
     "photoDelete": "Delete",
-    "photoLimitReached": "Your plan's photo limit has been reached.",
+    "photoLimitReached": "You have reached the maximum number of photos. Delete one to add another.",
     "photoUnsupportedType": "Unsupported image format (JPEG, PNG, WebP only).",
     "photoUploadError": "Photo upload failed.",
-    "saveProfileFirstForPhotos": "Save your profile first to add photos."
+    "saveProfileFirstForPhotos": "Save your profile first to add photos.",
+    "createTitle": "Create my profile",
+    "backToDashboard": "Back to my space",
+    "contactSave": "Save and finish",
+    "photoAdd": "Add a photo",
+    "photoAddHint": "From your phone or computer · {count} of {max} photos",
+    "photoUploading": "Uploading…",
+    "photoDeleteError": "The photo could not be deleted. Please try again."
   },
   "moderation": {
     "title": "Moderation",

@@ -4,15 +4,23 @@ import { getProviderDashboardData, getOwnContact } from "@/modules/profiles/prof
 import { listCategories, listCities, listLanguages, listServices } from "@/modules/taxonomies/taxonomy.service";
 import { getProviderEntitlements, getPlanFeatures } from "@/modules/entitlements/entitlements.service";
 import { prisma } from "@/lib/prisma";
+import { Link } from "@/i18n/navigation";
 import { ProfileWizard } from "@/components/provider/ProfileWizard";
 
-export default async function ProfileEditPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function ProfileEditPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ step?: string }>;
+}) {
   const { locale } = await params;
+  const { step } = await searchParams;
   setRequestLocale(locale);
   const user = await requirePageRole(locale, ["PROVIDER"]);
   const t = await getTranslations("profileEdit");
 
-  const [{ profile, verification, attestationCompleted }, contact, categories, services, languages, cities] =
+  const [{ profile }, contact, categories, services, languages, cities] =
     await Promise.all([
       getProviderDashboardData(user.id),
       getOwnContact(user.id),
@@ -40,8 +48,13 @@ export default async function ProfileEditPage({ params }: { params: Promise<{ lo
     : null;
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-8 px-4 py-14 sm:py-20">
-      <h1 className="font-serif text-3xl font-medium text-ink2">{t("title")}</h1>
+    <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-6 px-4 py-10 sm:py-14">
+      <div className="flex flex-col gap-3">
+        <Link href="/provider/dashboard" className="self-start text-sm text-ink2-muted transition-colors hover:text-ink2">
+          ← {t("backToDashboard")}
+        </Link>
+        <h1 className="font-serif text-3xl font-medium text-ink2">{profile ? t("title") : t("createTitle")}</h1>
+      </div>
 
       <ProfileWizard
         locale={locale}
@@ -64,8 +77,7 @@ export default async function ProfileEditPage({ params }: { params: Promise<{ lo
           })) ?? []
         }
         maxPhotos={entitlements.maxPhotos}
-        readyToSubmit={attestationCompleted && verification?.status === "VERIFIED"}
-        initialProfileStatus={profile?.status}
+        initialStep={step}
       />
     </main>
   );

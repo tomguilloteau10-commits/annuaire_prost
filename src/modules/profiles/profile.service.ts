@@ -5,6 +5,7 @@ import { hasPassedAdultVerification } from "@/modules/verification/verification.
 import {
   ProfileNotFoundError,
   OnboardingIncompleteError,
+  ProfileIncompleteError,
   UnknownTaxonomyReferenceError,
   VerificationIncompleteError,
   type ListPublishedProfilesFilters,
@@ -119,6 +120,16 @@ export async function submitProfileForReview(userId: string) {
   if (!attested) throw new OnboardingIncompleteError();
   if (!verified) throw new VerificationIncompleteError();
 
+  // Même checklist que le tableau de bord ("Pour être visible") : au moins
+  // une photo non refusée et un WhatsApp, sinon le profil publié serait vide
+  // ou injoignable.
+  const [photoCount, contact] = await Promise.all([
+    prisma.media.count({ where: { profileId: profile.id, status: { not: "REJECTED" } } }),
+    prisma.profileContact.findUnique({ where: { profileId: profile.id }, select: { whatsapp: true } }),
+  ]);
+  if (photoCount === 0) throw new ProfileIncompleteError("photo");
+  if (!contact?.whatsapp) throw new ProfileIncompleteError("whatsapp");
+
   if (profile.status !== "DRAFT" && profile.status !== "REJECTED") {
     return profile; // déjà soumis/publié : idempotent.
   }
@@ -149,6 +160,35 @@ export async function getProviderDashboardData(userId: string) {
   ]);
 
   return { profile, verification: latestVerification, attestationCompleted };
+}
+
+/**
+ * Données propres au tableau de bord, en plus de getProviderDashboardData :
+ * présence d'un WhatsApp (booléen seulement, jamais la valeur) et raison
+ * du dernier refus de modération, à montrer à la prestataire.
+ */
+export async function getProviderDashboardExtras(profileId: string) {
+  const [contact, lastRejection] = await Promise.all([
+    prisma.profileContact.findUnique({ where: { profileId }, select: { whatsapp: true } }),
+    prisma.moderationAction.findFirst({
+      where: { targetType: "PROFILE", targetId: profileId, decision: "REJECTED" },
+      orderBy: { createdAt: "desc" },
+      select: { reason: true },
+    }),
+  ]);
+  return { hasWhatsapp: !!contact?.whatsapp, rejectionReason: lastRejection?.reason ?? null };
+}
+
+/**
+ * Interrupteur "Disponible maintenant" : ne change que onlineStatus, jamais
+ * le contenu ni le statut de modération du profil.
+ */
+export async function setOwnAvailability(userId: string, available: boolean) {
+  return prisma.providerProfile.update({
+    where: { userId },
+    data: { onlineStatus: available ? "ONLINE" : "OFFLINE" },
+    select: { onlineStatus: true },
+  });
 }
 
 // ── Lecture publique ───────────────────────────────────────────────────

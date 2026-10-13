@@ -11,7 +11,7 @@
     "home": "Startseite",
     "login": "Anmelden",
     "register": "Registrieren",
-    "dashboard": "Dashboard",
+    "dashboard": "Mein Bereich",
     "moderation": "Moderation",
     "taxonomies": "Taxonomien",
     "auditLog": "Prüfprotokoll",
@@ -123,42 +123,65 @@
     "error": "Verifizierung fehlgeschlagen. Bitte erneut versuchen."
   },
   "dashboard": {
-    "title": "Dashboard",
-    "attestationLabel": "Onboarding-Erklärung",
-    "verificationLabel": "Altersverifizierung",
-    "profileStatusLabel": "Profilstatus",
-    "publiclyVisibleLabel": "Öffentlich sichtbares Profil",
-    "done": "Abgeschlossen",
-    "todo": "Ausstehend",
-    "yes": "Ja",
-    "no": "Nein",
-    "verificationStatus": {
-      "NONE": "Nicht gestartet",
-      "PENDING": "Ausstehend",
-      "IN_PROGRESS": "In Bearbeitung",
-      "VERIFIED": "Verifiziert",
-      "FAILED": "Fehlgeschlagen",
-      "EXPIRED": "Abgelaufen"
+    "title": "Mein Bereich",
+    "greeting": "Hallo {name}.",
+    "status": {
+      "onlineTitle": "Ihr Profil ist ONLINE",
+      "pendingTitle": "Ihr Profil wartet auf Prüfung",
+      "actionTitle": "Handlung erforderlich",
+      "published": "Kunden können es sehen und Sie kontaktieren. Sie müssen nichts tun.",
+      "pendingReview": "Unser Team prüft es vor der Veröffentlichung. Sie müssen nichts tun: Es erscheint, sobald es freigegeben ist.",
+      "verificationPending": "Ihre Altersprüfung läuft. Sie müssen im Moment nichts tun.",
+      "incomplete": "{count, plural, one {Noch # Schritt, bis Ihr Profil sichtbar ist.} other {Noch # Schritte, bis Ihr Profil sichtbar ist.}}",
+      "readyToSubmit": "Ihr Profil ist bereit: Senden Sie es an unser Team zur Prüfung und Veröffentlichung.",
+      "rejected": "Ihr Profil wurde nicht angenommen. Korrigieren Sie es und senden Sie es erneut.",
+      "rejectedWithReason": "Ihr Profil wurde nicht angenommen. Grund: „{reason}“. Korrigieren Sie es und senden Sie es erneut.",
+      "suspended": "Ihr Profil wurde von unserem Moderationsteam ausgeblendet: Es ist derzeit nicht sichtbar.",
+      "continue": "Weiter",
+      "submit": "Profil senden",
+      "resubmit": "Profil erneut senden",
+      "fixProfile": "Profil korrigieren"
     },
-    "profileStatus": {
-      "NONE": "Noch kein Profil",
-      "DRAFT": "Entwurf",
-      "PENDING_REVIEW": "Ausstehende Moderation",
-      "PUBLISHED": "Veröffentlicht",
-      "REJECTED": "Abgelehnt",
-      "SUSPENDED": "Gesperrt"
+    "preview": {
+      "title": "Mein Profil aus Kundensicht",
+      "viewPublic": "Mein öffentliches Profil ansehen",
+      "notPublicYet": "Ihre öffentliche Seite ist sichtbar, sobald Ihr Profil online ist.",
+      "edit": "Profil bearbeiten",
+      "noProfile": "Sie haben noch kein Profil erstellt. Das dauert etwa 5 Minuten.",
+      "create": "Profil erstellen"
     },
-    "goToOnboarding": "Onboarding-Erklärung abschliessen",
-    "goToVerification": "Altersverifizierung starten",
-    "editProfile": "Profil bearbeiten",
-    "createProfile": "Profil erstellen",
-    "submitForReview": "Zur Moderation einreichen",
-    "submitErrorOnboarding": "Die Onboarding-Erklärung muss vor dem Einreichen abgeschlossen sein.",
-    "submitErrorVerification": "Die Altersverifizierung muss vor dem Einreichen bestanden sein.",
-    "submitErrorGeneric": "Profil kann derzeit nicht eingereicht werden."
+    "checklist": {
+      "title": "Um sichtbar zu sein",
+      "progress": "{done} von {total} erledigt",
+      "todo": "Zu erledigen",
+      "items": {
+        "ageVerification": "Altersprüfung (18+)",
+        "photo": "Mindestens ein Foto hinzugefügt",
+        "cityCategory": "Stadt und Kategorie angegeben",
+        "whatsapp": "Kontaktweg (WhatsApp) hinzugefügt"
+      }
+    },
+    "availability": {
+      "title": "Jetzt verfügbar",
+      "on": "Ja — Kunden sehen „Online“ auf Ihrem Profil.",
+      "off": "Nein — Ihr Profil zeigt „Offline“.",
+      "needsProfile": "Erstellen Sie zuerst Ihr Profil.",
+      "error": "Die Änderung konnte nicht gespeichert werden. Bitte erneut versuchen."
+    },
+    "plan": {
+      "title": "Mein Abo",
+      "name": "Startangebot — kostenlos",
+      "body": "Ihre Anzeige ist während des Starts kostenlos, mit bis zu {maxPhotos} Fotos. Es wird keine Zahlung verlangt."
+    },
+    "submitForReview": "Profil zur Prüfung senden",
+    "submitErrorOnboarding": "Die Startbestätigung fehlt. Füllen Sie sie in Ihrem Bereich aus.",
+    "submitErrorVerification": "Ihre Altersprüfung ist noch nicht bestätigt.",
+    "submitErrorPhoto": "Fügen Sie mindestens ein Foto hinzu, bevor Sie Ihr Profil senden.",
+    "submitErrorWhatsapp": "Fügen Sie Ihre WhatsApp-Nummer hinzu, bevor Sie Ihr Profil senden.",
+    "submitErrorGeneric": "Das Senden hat nicht funktioniert. Bitte gleich erneut versuchen."
   },
   "profileEdit": {
-    "title": "Mein Profil",
+    "title": "Profil bearbeiten",
     "wizard": {
       "stepIdentity": "Identität",
       "stepPresentation": "Präsentation",
@@ -168,7 +191,7 @@
       "next": "Weiter",
       "back": "Zurück",
       "saveAndContinue": "Speichern und weiter",
-      "readyToSubmitHint": "Ihr Profil ist bereit. Sie können es jetzt zur Moderation einreichen oder weiter bearbeiten."
+      "progress": "Schritt {current} von {total}"
     },
     "displayNameLabel": "Anzeigename",
     "ageLabel": "Alter",
@@ -195,18 +218,25 @@
     "instagramLabel": "Instagram (optional)",
     "phoneLabel": "Telefon (optional)",
     "contactEmailLabel": "Kontakt-E-Mail (optional)",
-    "photosTitle": "Fotos",
-    "photosHint": "Jedes Foto durchläuft die Moderation, bevor es öffentlich sichtbar wird.",
+    "photosTitle": "Ihre Fotos",
+    "photosHint": "Jedes Foto wird von unserem Team geprüft, bevor es sichtbar wird.",
     "photoStatus": {
-      "PENDING": "Ausstehend",
-      "APPROVED": "Genehmigt",
+      "PENDING": "Wird geprüft",
+      "APPROVED": "Sichtbar",
       "REJECTED": "Abgelehnt"
     },
     "photoDelete": "Löschen",
-    "photoLimitReached": "Fotolimit Ihres Plans erreicht.",
+    "photoLimitReached": "Sie haben die maximale Anzahl Fotos erreicht. Löschen Sie eines, um ein neues hinzuzufügen.",
     "photoUnsupportedType": "Nicht unterstütztes Bildformat (nur JPEG, PNG, WebP).",
     "photoUploadError": "Foto-Upload fehlgeschlagen.",
-    "saveProfileFirstForPhotos": "Speichern Sie zuerst Ihr Profil, um Fotos hinzuzufügen."
+    "saveProfileFirstForPhotos": "Speichern Sie zuerst Ihr Profil, um Fotos hinzuzufügen.",
+    "createTitle": "Profil erstellen",
+    "backToDashboard": "Zurück zu meinem Bereich",
+    "contactSave": "Speichern und abschliessen",
+    "photoAdd": "Foto hinzufügen",
+    "photoAddHint": "Vom Telefon oder Computer · {count} von {max} Fotos",
+    "photoUploading": "Wird hochgeladen…",
+    "photoDeleteError": "Das Foto konnte nicht gelöscht werden. Bitte erneut versuchen."
   },
   "moderation": {
     "title": "Moderation",

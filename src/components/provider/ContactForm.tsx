@@ -95,8 +95,13 @@ export function ContactForm({
       </FieldGroup>
       {error && <p className="text-sm text-danger">{error}</p>}
       {saved && <p className="text-sm text-success">{t("saved")}</p>}
-      <Button type="submit" disabled={submitting || !csrfToken || whatsapp.trim().length < 6} className="self-start">
-        {t("save")}
+      <Button
+        type="submit"
+        disabled={submitting || !csrfToken || whatsapp.trim().length < 6}
+        size="lg"
+        className="w-full sm:w-auto sm:self-start"
+      >
+        {t("contactSave")}
       </Button>
     </Card>
   );
