@@ -17,7 +17,15 @@ export function buildContentSecurityPolicy(nonce: string): string {
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob:",
     "font-src 'self'",
-    "connect-src 'self'",
+    // tiles.openfreemap.org : fournisseur de tuiles/style gratuit sans clé
+    // pour la carte interactive (ProfileMap) — seul hôte externe autorisé,
+    // sert le style, les tuiles, les glyphes et le sprite depuis un seul
+    // domaine. worker-src 'blob:' : MapLibre GL décode les tuiles dans un
+    // Web Worker créé depuis une URL blob:, que script-src seul n'autorise
+    // pas (pas de fallback implicite fiable vers script-src sur tous les
+    // navigateurs).
+    "connect-src 'self' https://tiles.openfreemap.org",
+    "worker-src 'self' blob:",
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",

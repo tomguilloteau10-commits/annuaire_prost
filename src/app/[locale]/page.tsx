@@ -1,9 +1,10 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { listPublishedProfiles } from "@/modules/profiles/profile.service";
+import { listPublishedProfiles, listPublishedProfileCityCounts } from "@/modules/profiles/profile.service";
 import { getPublicPhotoUrl } from "@/modules/media/media.service";
 import { listCategories, listCities, listLanguages } from "@/modules/taxonomies/taxonomy.service";
 import { FilterBar } from "@/components/public/FilterBar";
 import { ProfileCard } from "@/components/public/ProfileCard";
+import { ProfileMapLoader } from "@/components/public/ProfileMapLoader";
 
 interface HomeSearchParams {
   city?: string;
@@ -25,7 +26,7 @@ export default async function HomePage({
   const t = await getTranslations("home");
   const common = await getTranslations("common");
 
-  const [profiles, categories, languages, cities] = await Promise.all([
+  const [profiles, categories, languages, cities, cityCounts] = await Promise.all([
     listPublishedProfiles({
       citySlug: filters.city,
       categoryKey: filters.category,
@@ -35,7 +36,11 @@ export default async function HomePage({
     listCategories(),
     listLanguages(),
     listCities(),
+    listPublishedProfileCityCounts(),
   ]);
+
+  const totalProfiles = cityCounts.reduce((sum, c) => sum + c.count, 0);
+  const totalCities = cityCounts.length;
 
   const profilesWithThumbnails = await Promise.all(
     profiles.map(async (profile) => ({
@@ -52,6 +57,18 @@ export default async function HomePage({
         </p>
         <h1 className="max-w-xl text-4xl font-medium leading-[1.1] sm:text-5xl">{t("title")}</h1>
         <p className="max-w-md text-base text-ink2-muted">{t("subtitle")}</p>
+
+        {totalProfiles > 0 && (
+          <div className="flex items-center gap-4 text-sm text-ink2-muted">
+            <span>
+              <span className="font-serif text-lg text-ink2">{totalProfiles}</span> {t("statsProfiles")}
+            </span>
+            <span className="h-4 w-px bg-hairline2" />
+            <span>
+              <span className="font-serif text-lg text-ink2">{totalCities}</span> {t("statsCities")}
+            </span>
+          </div>
+        )}
       </div>
 
       <FilterBar
@@ -66,6 +83,11 @@ export default async function HomePage({
           online: filters.online === "true",
         }}
       />
+
+      <div className="flex flex-col gap-2">
+        <ProfileMapLoader locale={locale} />
+        <p className="text-center text-xs text-ink2-faint">{t("mapCaption")}</p>
+      </div>
 
       {profilesWithThumbnails.length === 0 ? (
         <p className="py-16 text-center text-sm text-ink2-faint">{t("emptyState")}</p>

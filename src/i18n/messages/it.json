@@ -20,12 +20,20 @@
     "title": "Trova una fornitrice indipendente in Svizzera",
     "subtitle": "Ogni profilo pubblicato è verificato maggiorenne e moderato.",
     "emptyState": "Nessun profilo pubblicato per ora.",
+    "mapCaption": "Posizione limitata al centro città — mai un indirizzo esatto.",
+    "statsProfiles": "profili",
+    "statsCities": "città",
     "filters": {
       "city": "Città",
       "category": "Categoria",
       "language": "Lingua",
       "onlineOnly": "Solo online"
     }
+  },
+  "map": {
+    "profileCount": "profili",
+    "viewCity": "Vedi i profili →",
+    "loadError": "Impossibile caricare la mappa in questo momento."
   },
   "profile": {
     "verifiedBadge": "Verificata",

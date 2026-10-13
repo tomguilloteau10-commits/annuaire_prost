@@ -21,6 +21,7 @@
   "dependencies": {
     "@node-rs/argon2": "^2.0.2",
     "@prisma/client": "^5.22.0",
+    "maplibre-gl": "^4.7.1",
     "next": "^14.2.18",
     "next-intl": "^3.26.3",
     "react": "^18.3.1",

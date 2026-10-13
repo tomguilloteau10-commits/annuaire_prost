@@ -19,12 +19,20 @@
     "title": "Trouvez une annonceuse indépendante en Suisse",
     "subtitle": "Tous les profils publiés sont vérifiés majeurs et modérés.",
     "emptyState": "Aucun profil publié pour le moment.",
+    "mapCaption": "Localisation au centre-ville uniquement — jamais une adresse exacte.",
+    "statsProfiles": "profils",
+    "statsCities": "villes",
     "filters": {
       "city": "Ville",
       "category": "Catégorie",
       "language": "Langue",
       "onlineOnly": "En ligne uniquement"
     }
+  },
+  "map": {
+    "profileCount": "profils",
+    "viewCity": "Voir les profils →",
+    "loadError": "Impossible de charger la carte pour le moment."
   },
   "profile": {
     "verifiedBadge": "Vérifiée",

@@ -20,12 +20,20 @@
     "title": "Finden Sie eine unabhängige Anbieterin in der Schweiz",
     "subtitle": "Jedes veröffentlichte Profil ist altersverifiziert und moderiert.",
     "emptyState": "Noch keine veröffentlichten Profile.",
+    "mapCaption": "Nur Stadtzentrum als Standort — nie eine genaue Adresse.",
+    "statsProfiles": "Profile",
+    "statsCities": "Städte",
     "filters": {
       "city": "Stadt",
       "category": "Kategorie",
       "language": "Sprache",
       "onlineOnly": "Nur online"
     }
+  },
+  "map": {
+    "profileCount": "Profile",
+    "viewCity": "Profile ansehen →",
+    "loadError": "Die Karte konnte derzeit nicht geladen werden."
   },
   "profile": {
     "verifiedBadge": "Verifiziert",

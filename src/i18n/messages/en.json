@@ -19,12 +19,20 @@
     "title": "Find an independent provider in Switzerland",
     "subtitle": "Every published profile is age-verified and moderated.",
     "emptyState": "No published profiles yet.",
+    "mapCaption": "Located to the city centre only — never an exact address.",
+    "statsProfiles": "profiles",
+    "statsCities": "cities",
     "filters": {
       "city": "City",
       "category": "Category",
       "language": "Language",
       "onlineOnly": "Online only"
     }
+  },
+  "map": {
+    "profileCount": "profiles",
+    "viewCity": "View profiles →",
+    "loadError": "Could not load the map right now."
   },
   "profile": {
     "verifiedBadge": "Verified",

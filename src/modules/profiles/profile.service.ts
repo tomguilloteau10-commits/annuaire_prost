@@ -202,3 +202,50 @@ export async function getPublishedProfileBySlug(slug: string) {
     select: publicProfileSelect(),
   });
 }
+
+export interface PublishedCityPoint {
+  citySlug: string;
+  name: string;
+  canton: string;
+  lat: number;
+  lng: number;
+  count: number;
+}
+
+/**
+ * Pour la carte interactive (constraint #8, localisation approximative) :
+ * un seul point par ville, au centre-ville (`City.lat`/`City.lng`), avec
+ * uniquement un total de profils publiés — jamais un identifiant de
+ * profil, un nom ou une coordonnée plus précise que la ville. Agréger ici,
+ * côté base, rend structurellement impossible toute fuite plus fine que
+ * la ville, quel que soit ce que fait l'appelant du résultat.
+ */
+export async function listPublishedProfileCityCounts(): Promise<PublishedCityPoint[]> {
+  const grouped = await prisma.providerProfile.groupBy({
+    by: ["cityId"],
+    where: { status: "PUBLISHED" },
+    _count: { _all: true },
+  });
+  if (grouped.length === 0) return [];
+
+  const cities = await prisma.city.findMany({
+    where: { id: { in: grouped.map((g) => g.cityId) } },
+    select: { id: true, slug: true, name: true, canton: true, lat: true, lng: true },
+  });
+  const cityById = new Map(cities.map((c) => [c.id, c]));
+
+  const points: PublishedCityPoint[] = [];
+  for (const group of grouped) {
+    const city = cityById.get(group.cityId);
+    if (!city || city.lat === null || city.lng === null) continue;
+    points.push({
+      citySlug: city.slug,
+      name: city.name,
+      canton: city.canton,
+      lat: city.lat,
+      lng: city.lng,
+      count: group._count._all,
+    });
+  }
+  return points;
+}
