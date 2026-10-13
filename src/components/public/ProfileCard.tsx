@@ -17,36 +17,51 @@ export function ProfileCard({
   profile,
   locale,
   featured = false,
+  compact = false,
 }: {
   profile: ProfileCardData;
   locale: string;
   featured?: boolean;
+  /** Format carré et badges empilés, pour les carrousels. */
+  compact?: boolean;
 }) {
   const t = useTranslations("profile");
 
   return (
     <Link
       href={`/profiles/${profile.slug}`}
-      className="group flex flex-col overflow-hidden rounded-xl3 border border-hairline bg-surface shadow-card transition-colors hover:border-hairline2"
+      className="group flex h-full flex-col overflow-hidden rounded-xl3 border border-hairline bg-surface shadow-card transition-colors hover:border-hairline2"
     >
-      <div className="relative aspect-[4/5] w-full bg-surface-raised">
+      {/* Image en position absolue : la hauteur du cadre vient uniquement du
+          ratio, jamais de la taille d'origine de l'image (sinon certains
+          moteurs, dont Safari, peuvent donner des cartes de hauteurs
+          différentes). */}
+      <div
+        className={`relative w-full shrink-0 overflow-hidden bg-surface-raised ${
+          compact ? "aspect-square" : "aspect-[4/5]"
+        }`}
+      >
         {profile.thumbnailUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={profile.thumbnailUrl}
             alt=""
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-xs text-ink2-faint">
+          <div className="absolute inset-0 flex items-center justify-center text-xs text-ink2-faint">
             {t("noPhoto")}
           </div>
         )}
 
-        <div className="absolute inset-x-0 top-0 flex items-start justify-between p-2">
-          <Badge variant="success">{t("verifiedBadge")}</Badge>
+        <div
+          className={`absolute inset-x-0 top-0 flex items-start p-2 ${
+            compact ? "flex-col gap-1" : "justify-between"
+          }`}
+        >
+          <Badge variant="successOnImage">{t("verifiedBadge")}</Badge>
           {profile.onlineStatus === "ONLINE" && (
-            <Badge variant="success" dot>
+            <Badge variant="successOnImage" dot>
               {t("onlineStatus.ONLINE")}
             </Badge>
           )}

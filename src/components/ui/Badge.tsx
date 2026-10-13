@@ -1,6 +1,6 @@
 import type { HTMLAttributes } from "react";
 
-export type BadgeVariant = "success" | "warning" | "danger" | "neutral" | "accent" | "featured";
+export type BadgeVariant = "success" | "warning" | "danger" | "neutral" | "accent" | "featured" | "successOnImage";
 
 const VARIANT_CLASSES: Record<BadgeVariant, string> = {
   success: "bg-success-soft text-success",
@@ -10,6 +10,8 @@ const VARIANT_CLASSES: Record<BadgeVariant, string> = {
   accent: "bg-accent-soft text-accent",
   // Plein (pas "soft") : reste lisible posé sur une photo claire.
   featured: "bg-accent text-accent-foreground",
+  // Fond noir à 60 % : le vert reste lisible quelle que soit la photo dessous.
+  successOnImage: "bg-black/60 text-success backdrop-blur-sm",
 };
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {

@@ -133,8 +133,8 @@ export default async function HomePage({
           <h2 className="font-serif text-2xl font-medium text-ink2">{t("featuredTitle")}</h2>
           <HorizontalScroller label={t("featuredTitle")}>
             {featuredProfiles.map((profile) => (
-              <div key={profile.slug} className="w-44 shrink-0 snap-start sm:w-52">
-                <ProfileCard profile={profile} locale={locale} featured />
+              <div key={profile.slug} className="w-36 shrink-0 snap-start sm:w-44">
+                <ProfileCard profile={profile} locale={locale} featured compact />
               </div>
             ))}
           </HorizontalScroller>
