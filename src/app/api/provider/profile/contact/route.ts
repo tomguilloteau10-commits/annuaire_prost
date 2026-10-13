@@ -12,6 +12,8 @@ import { checkCsrf } from "@/lib/route-helpers";
 const contactSchema = z.object({
   phone: z.string().max(32).optional(),
   email: z.string().email().max(254).optional(),
+  whatsapp: z.string().min(6).max(64),
+  instagram: z.string().max(100).optional(),
 });
 
 export async function GET() {
@@ -25,7 +27,12 @@ export async function GET() {
   }
 
   const contact = await getOwnContact(user.id);
-  return NextResponse.json({ phone: contact?.phone ?? null, email: contact?.email ?? null });
+  return NextResponse.json({
+    phone: contact?.phone ?? null,
+    email: contact?.email ?? null,
+    whatsapp: contact?.whatsapp ?? null,
+    instagram: contact?.instagram ?? null,
+  });
 }
 
 export async function PUT(request: Request) {

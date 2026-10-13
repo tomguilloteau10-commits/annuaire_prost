@@ -91,17 +91,20 @@ plateforme) est prévu dans le modèle (`Plan`) mais non implémenté.
 
 ## 5. Protection des données sensibles
 
-Téléphone, email et adresse exacte n'apparaissent **jamais** dans les logs,
-messages d'erreur, payloads d'analytics ou query strings. Le contact n'est
-jamais inclus dans le HTML de la page publique ni dans une réponse d'API de
-liste : il est servi par un endpoint dédié « révéler le contact », à la
-demande, avec rate limiting.
+Téléphone, email, WhatsApp, Instagram et adresse exacte n'apparaissent
+**jamais** dans les logs, messages d'erreur, payloads d'analytics ou query
+strings. Le contact n'est jamais inclus dans le HTML de la page publique ni
+dans une réponse d'API de liste : il est servi par un endpoint dédié
+« révéler le contact », à la demande, avec rate limiting.
 
 Mise en œuvre :
 
 - `prisma/schema.prisma` → `model ProfileContact` : table séparée de
   `ProviderProfile` (défense en profondeur — un `select` large sur le
-  profil ne peut structurellement pas ramener le contact).
+  profil ne peut structurellement pas ramener le contact). Les champs
+  `whatsapp`/`instagram` suivent exactement la même protection que
+  `phone`/`email` — même table, même service d'accès, même masquage dans
+  les logs.
 - `src/modules/profiles/contact-reveal.service.ts` : seul point d'accès à
   `ProfileContact`.
 - `src/lib/logger.ts` : logger qui refuse/masque les clés sensibles

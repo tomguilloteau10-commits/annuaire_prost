@@ -10,7 +10,7 @@
 // literal contenant field.phone, etc.) au moment de la revue de code / CI.
 
 const SENSITIVE_KEY_PATTERN =
-  /^(phone|phoneNumber|email|address|street|dateOfBirth|birthDate|dob|documentNumber|documentImage|idDocumentImage|selfieImage|biometricData|ip)$/i;
+  /^(phone|phoneNumber|email|address|street|whatsapp|instagram|dateOfBirth|birthDate|dob|documentNumber|documentImage|idDocumentImage|selfieImage|biometricData|ip)$/i;
 
 const LOGGING_CALLEES = new Set([
   "log",

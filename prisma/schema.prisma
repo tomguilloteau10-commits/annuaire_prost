@@ -157,6 +157,13 @@ model ProviderProfile {
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   slug         String        @unique
   displayName  String
+  // Âge auto-déclaré par l'annonceuse, affiché publiquement comme contenu
+  // éditorial au même titre que displayName/description — distinct de la
+  // vérification d'identité (contrainte #1) : ce n'est ni une date de
+  // naissance, ni une donnée issue d'un document, ni une preuve de quoi
+  // que ce soit ; seul VerificationRecord.isAdult fait autorité sur la
+  // majorité réelle (contrainte #2).
+  age          Int?
   description  String        @db.Text
   cityId       String
   city         City          @relation(fields: [cityId], references: [id])
@@ -190,6 +197,8 @@ model ProfileContact {
   profile   ProviderProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
   phone     String?
   email     String?
+  whatsapp  String? // numéro ou lien wa.me — même protection que phone/email (contrainte #5)
+  instagram String? // identifiant ou lien de profil, optionnel
   updatedAt DateTime        @updatedAt
 }
 

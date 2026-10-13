@@ -33,6 +33,7 @@ export async function GET() {
 
 const upsertSchema = z.object({
   displayName: z.string().min(2).max(80),
+  age: z.number().int().min(18).max(99),
   description: z.string().min(20).max(4000),
   citySlug: z.string().min(1),
   categoryKey: z.string().min(1),

@@ -9,6 +9,7 @@ import {
   VerificationIncompleteError,
   type ListPublishedProfilesFilters,
   type UpsertProfileInput,
+  type UpsertContactInput,
 } from "./types";
 
 async function resolveTaxonomyIds(input: UpsertProfileInput) {
@@ -53,6 +54,7 @@ export async function upsertOwnProfile(userId: string, input: UpsertProfileInput
       where: { userId },
       data: {
         displayName: input.displayName,
+        age: input.age,
         description: input.description,
         cityId,
         categoryId,
@@ -70,6 +72,7 @@ export async function upsertOwnProfile(userId: string, input: UpsertProfileInput
       userId,
       slug: slugifyWithSuffix(input.displayName),
       displayName: input.displayName,
+      age: input.age,
       description: input.description,
       cityId,
       categoryId,
@@ -88,12 +91,12 @@ export async function getOwnContact(userId: string) {
   return prisma.profileContact.findUnique({ where: { profileId: profile.id } });
 }
 
-export async function upsertOwnContact(userId: string, data: { phone?: string; email?: string }) {
+export async function upsertOwnContact(userId: string, data: UpsertContactInput) {
   const profile = await prisma.providerProfile.findUniqueOrThrow({ where: { userId } });
   return prisma.profileContact.upsert({
     where: { profileId: profile.id },
-    update: { phone: data.phone, email: data.email },
-    create: { profileId: profile.id, phone: data.phone, email: data.email },
+    update: data,
+    create: { profileId: profile.id, ...data },
   });
 }
 
@@ -160,6 +163,7 @@ function publicProfileSelect(mediaLimit?: number) {
     id: true,
     slug: true,
     displayName: true,
+    age: true,
     description: true,
     onlineStatus: true,
     publishedAt: true,

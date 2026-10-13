@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/Badge";
 export interface ProfileCardData {
   slug: string;
   displayName: string;
+  age: number | null;
   onlineStatus: "ONLINE" | "AWAY" | "OFFLINE";
   city: { name: string; canton: string };
   category: { label: unknown };
@@ -45,7 +46,10 @@ export function ProfileCard({ profile, locale }: { profile: ProfileCardData; loc
       </div>
 
       <div className="flex flex-col gap-0.5 p-4">
-        <span className="font-serif text-lg font-medium text-ink2">{profile.displayName}</span>
+        <span className="font-serif text-lg font-medium text-ink2">
+          {profile.displayName}
+          {profile.age && <span className="text-ink2-muted">, {t("ageYears", { age: profile.age })}</span>}
+        </span>
         <span className="text-sm text-ink2-muted">
           {profile.city.name} ({profile.city.canton}) · {getLocalizedLabel(profile.category.label, locale)}
         </span>

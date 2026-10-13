@@ -5,7 +5,7 @@
 // sensible arrive par une variable dont le nom ne le laisse pas deviner.
 
 const SENSITIVE_KEY_PATTERN =
-  /^(phone|phoneNumber|email|address|street|dateOfBirth|birthDate|dob|documentNumber|documentImage|idDocumentImage|selfieImage|biometricData|password|passwordHash|token|tokenHash|twoFactorSecret)$/i;
+  /^(phone|phoneNumber|email|address|street|whatsapp|instagram|dateOfBirth|birthDate|dob|documentNumber|documentImage|idDocumentImage|selfieImage|biometricData|password|passwordHash|token|tokenHash|twoFactorSecret)$/i;
 
 const REDACTED = "[redacted]";
 

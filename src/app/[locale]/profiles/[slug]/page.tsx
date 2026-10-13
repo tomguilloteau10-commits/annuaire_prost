@@ -57,7 +57,10 @@ export default async function PublicProfilePage({
 
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-1">
-          <h1 className="font-serif text-3xl font-medium text-ink2">{profile.displayName}</h1>
+          <h1 className="font-serif text-3xl font-medium text-ink2">
+            {profile.displayName}
+            {profile.age && <span className="text-ink2-muted">, {t("ageYears", { age: profile.age })}</span>}
+          </h1>
           <p className="text-sm text-ink2-muted">
             {profile.city.name} ({profile.city.canton}) · {getLocalizedLabel(profile.category.label, locale)}
           </p>

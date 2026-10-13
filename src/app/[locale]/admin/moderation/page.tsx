@@ -26,7 +26,10 @@ export default async function AdminModerationPage({ params }: { params: Promise<
             {pendingProfiles.map((profile) => (
               <Card key={profile.id} className="flex flex-col gap-2 p-5">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium text-ink2">{profile.displayName}</span>
+                  <span className="font-medium text-ink2">
+                    {profile.displayName}
+                    {profile.age && <span className="text-ink2-faint">, {profile.age}</span>}
+                  </span>
                   <span className="text-xs text-ink2-faint">
                     {profile.city.name} · {getLocalizedLabel(profile.category.label, locale)}
                   </span>

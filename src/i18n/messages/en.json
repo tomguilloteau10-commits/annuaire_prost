@@ -28,6 +28,7 @@
   },
   "profile": {
     "verifiedBadge": "Verified",
+    "ageYears": "{age} years old",
     "revealContact": "Show contact",
     "languagesLabel": "Languages spoken",
     "servicesLabel": "Services",
@@ -108,7 +109,19 @@
   },
   "profileEdit": {
     "title": "My profile",
+    "wizard": {
+      "stepIdentity": "Identity",
+      "stepPresentation": "Presentation",
+      "stepAvailability": "Services & availability",
+      "stepPhotos": "Photos",
+      "stepContact": "Contact",
+      "next": "Next",
+      "back": "Back",
+      "saveAndContinue": "Save and continue",
+      "readyToSubmitHint": "Your profile is ready. You can submit it for moderation now, or keep editing it."
+    },
     "displayNameLabel": "Display name",
+    "ageLabel": "Age",
     "descriptionLabel": "Description",
     "cityLabel": "City",
     "categoryLabel": "Category",
@@ -127,8 +140,11 @@
     "invalidFieldsError": "Check the form fields (city, category and languages must be valid).",
     "contactTitle": "Contact",
     "contactHint": "Never shown publicly — only revealed via the \"Show contact\" button on your public page.",
-    "phoneLabel": "Phone",
-    "contactEmailLabel": "Contact email",
+    "whatsappLabel": "WhatsApp",
+    "whatsappHint": "Phone number or wa.me link — your main contact channel, required.",
+    "instagramLabel": "Instagram (optional)",
+    "phoneLabel": "Phone (optional)",
+    "contactEmailLabel": "Contact email (optional)",
     "photosTitle": "Photos",
     "photosHint": "Every photo goes through moderation before becoming publicly visible.",
     "photoStatus": {

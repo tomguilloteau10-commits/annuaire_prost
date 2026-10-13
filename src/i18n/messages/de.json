@@ -29,6 +29,7 @@
   },
   "profile": {
     "verifiedBadge": "Verifiziert",
+    "ageYears": "{age} Jahre",
     "revealContact": "Kontakt anzeigen",
     "languagesLabel": "Gesprochene Sprachen",
     "servicesLabel": "Leistungen",
@@ -109,7 +110,19 @@
   },
   "profileEdit": {
     "title": "Mein Profil",
+    "wizard": {
+      "stepIdentity": "Identität",
+      "stepPresentation": "Präsentation",
+      "stepAvailability": "Leistungen & Verfügbarkeit",
+      "stepPhotos": "Fotos",
+      "stepContact": "Kontakt",
+      "next": "Weiter",
+      "back": "Zurück",
+      "saveAndContinue": "Speichern und weiter",
+      "readyToSubmitHint": "Ihr Profil ist bereit. Sie können es jetzt zur Moderation einreichen oder weiter bearbeiten."
+    },
     "displayNameLabel": "Anzeigename",
+    "ageLabel": "Alter",
     "descriptionLabel": "Beschreibung",
     "cityLabel": "Stadt",
     "categoryLabel": "Kategorie",
@@ -128,8 +141,11 @@
     "invalidFieldsError": "Überprüfen Sie die Formularfelder (Stadt, Kategorie und Sprachen müssen gültig sein).",
     "contactTitle": "Kontakt",
     "contactHint": "Nie öffentlich angezeigt — nur über die Schaltfläche „Kontakt anzeigen“ auf Ihrer öffentlichen Seite sichtbar.",
-    "phoneLabel": "Telefon",
-    "contactEmailLabel": "Kontakt-E-Mail",
+    "whatsappLabel": "WhatsApp",
+    "whatsappHint": "Telefonnummer oder wa.me-Link — Ihr wichtigster Kontaktweg, erforderlich.",
+    "instagramLabel": "Instagram (optional)",
+    "phoneLabel": "Telefon (optional)",
+    "contactEmailLabel": "Kontakt-E-Mail (optional)",
     "photosTitle": "Fotos",
     "photosHint": "Jedes Foto durchläuft die Moderation, bevor es öffentlich sichtbar wird.",
     "photoStatus": {

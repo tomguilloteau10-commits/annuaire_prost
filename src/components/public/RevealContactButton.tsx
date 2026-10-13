@@ -5,6 +5,15 @@ import { useCsrfToken } from "@/lib/use-csrf-token";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 
+function whatsappHref(value: string): string {
+  return `https://wa.me/${value.replace(/[^0-9]/g, "")}`;
+}
+
+function instagramHref(value: string): string {
+  if (/^https?:\/\//i.test(value)) return value;
+  return `https://instagram.com/${value.replace(/^@/, "")}`;
+}
+
 /**
  * Le contact n'est jamais dans le HTML initial ni dans une réponse de
  * liste (ENGINEERING_RULES.md §5) : ce composant l'obtient uniquement à la
@@ -13,7 +22,12 @@ import { Card } from "@/components/ui/Card";
 export function RevealContactButton({ slug }: { slug: string }) {
   const t = useTranslations("profile");
   const csrfToken = useCsrfToken();
-  const [contact, setContact] = useState<{ phone: string | null; email: string | null } | null>(null);
+  const [contact, setContact] = useState<{
+    phone: string | null;
+    email: string | null;
+    whatsapp: string | null;
+    instagram: string | null;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -37,7 +51,27 @@ export function RevealContactButton({ slug }: { slug: string }) {
 
   if (contact) {
     return (
-      <Card className="flex flex-col gap-1 p-4 text-sm text-ink2">
+      <Card className="flex flex-col gap-2 p-4 text-sm text-ink2">
+        {contact.whatsapp && (
+          <a
+            href={whatsappHref(contact.whatsapp)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-success transition-colors hover:text-success/80"
+          >
+            WhatsApp · {contact.whatsapp}
+          </a>
+        )}
+        {contact.instagram && (
+          <a
+            href={instagramHref(contact.instagram)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent transition-colors hover:text-accent-hover"
+          >
+            Instagram · {contact.instagram}
+          </a>
+        )}
         {contact.phone && <span>{contact.phone}</span>}
         {contact.email && <span>{contact.email}</span>}
       </Card>

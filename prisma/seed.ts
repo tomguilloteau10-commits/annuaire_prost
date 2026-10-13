@@ -201,6 +201,7 @@ async function seedDemoAccounts() {
 interface DemoProfileSpec {
   email: string;
   displayName: string;
+  age: number;
   description: string;
   citySlug: string;
   categoryKey: string;
@@ -214,6 +215,8 @@ interface DemoProfileSpec {
   pendingPhotoCount: number;
   phone: string;
   contactEmail: string;
+  whatsapp: string;
+  instagram?: string;
 }
 
 async function seedDemoProfile(spec: DemoProfileSpec, passwordHash: string, moderatorId: string) {
@@ -262,6 +265,7 @@ async function seedDemoProfile(spec: DemoProfileSpec, passwordHash: string, mode
       userId: user.id,
       slug: slugifyWithSuffix(spec.displayName),
       displayName: spec.displayName,
+      age: spec.age,
       description: spec.description,
       cityId: city.id,
       categoryId: category.id,
@@ -275,7 +279,13 @@ async function seedDemoProfile(spec: DemoProfileSpec, passwordHash: string, mode
   });
 
   await prisma.profileContact.create({
-    data: { profileId: profile.id, phone: spec.phone, email: spec.contactEmail },
+    data: {
+      profileId: profile.id,
+      phone: spec.phone,
+      email: spec.contactEmail,
+      whatsapp: spec.whatsapp,
+      instagram: spec.instagram,
+    },
   });
 
   for (let i = 0; i < spec.photoColors.length; i += 1) {
@@ -298,6 +308,7 @@ const DEMO_PROFILES: DemoProfileSpec[] = [
   {
     email: "lea.demo@example.test",
     displayName: "Léa",
+    age: 27,
     description:
       "Bonjour, je m'appelle Léa. Annonceuse indépendante basée à Genève, je propose des rencontres chaleureuses et respectueuses. N'hésitez pas à me contacter pour plus d'informations.",
     citySlug: "geneve-ge",
@@ -313,10 +324,13 @@ const DEMO_PROFILES: DemoProfileSpec[] = [
     pendingPhotoCount: 0,
     phone: "+41 78 000 00 01",
     contactEmail: "lea.demo@example.test",
+    whatsapp: "+41 78 000 00 01",
+    instagram: "@lea.demo",
   },
   {
     email: "nora.demo@example.test",
     displayName: "Nora",
+    age: 34,
     description:
       "Nora, masseuse indépendante à Lausanne. Je propose des massages relaxants dans un cadre discret et confortable. Contactez-moi pour convenir d'un rendez-vous.",
     citySlug: "lausanne-vd",
@@ -334,10 +348,12 @@ const DEMO_PROFILES: DemoProfileSpec[] = [
     pendingPhotoCount: 1,
     phone: "+41 78 000 00 02",
     contactEmail: "nora.demo@example.test",
+    whatsapp: "+41 78 000 00 02",
   },
   {
     email: "camille.demo@example.test",
     displayName: "Camille",
+    age: 29,
     description:
       "Camille, basée à Zürich. Profil complété et vérifié, en attente de validation par la modération.",
     citySlug: "zurich-zh",
@@ -352,6 +368,8 @@ const DEMO_PROFILES: DemoProfileSpec[] = [
     pendingPhotoCount: 1,
     phone: "+41 78 000 00 03",
     contactEmail: "camille.demo@example.test",
+    whatsapp: "+41 78 000 00 03",
+    instagram: "@camille.demo",
   },
 ];
 

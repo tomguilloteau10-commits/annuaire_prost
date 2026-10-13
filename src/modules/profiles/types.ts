@@ -2,12 +2,20 @@ import type { OnlineStatus } from "@prisma/client";
 
 export interface UpsertProfileInput {
   displayName: string;
+  age: number;
   description: string;
   citySlug: string;
   categoryKey: string;
   languageCodes: string[];
   serviceKeys: string[];
   onlineStatus?: OnlineStatus;
+}
+
+export interface UpsertContactInput {
+  phone?: string;
+  email?: string;
+  whatsapp?: string;
+  instagram?: string;
 }
 
 export interface ListPublishedProfilesFilters {

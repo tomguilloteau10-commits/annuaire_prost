@@ -4,9 +4,7 @@ import { getProviderDashboardData, getOwnContact } from "@/modules/profiles/prof
 import { listCategories, listCities, listLanguages, listServices } from "@/modules/taxonomies/taxonomy.service";
 import { getProviderEntitlements, getPlanFeatures } from "@/modules/entitlements/entitlements.service";
 import { prisma } from "@/lib/prisma";
-import { ProfileEditForm } from "@/components/provider/ProfileEditForm";
-import { ContactForm } from "@/components/provider/ContactForm";
-import { PhotoManager } from "@/components/provider/PhotoManager";
+import { ProfileWizard } from "@/components/provider/ProfileWizard";
 
 export default async function ProfileEditPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -14,14 +12,15 @@ export default async function ProfileEditPage({ params }: { params: Promise<{ lo
   const user = await requirePageRole(locale, ["PROVIDER"]);
   const t = await getTranslations("profileEdit");
 
-  const [{ profile }, contact, categories, services, languages, cities] = await Promise.all([
-    getProviderDashboardData(user.id),
-    getOwnContact(user.id),
-    listCategories(),
-    listServices(),
-    listLanguages(),
-    listCities(),
-  ]);
+  const [{ profile, verification, attestationCompleted }, contact, categories, services, languages, cities] =
+    await Promise.all([
+      getProviderDashboardData(user.id),
+      getOwnContact(user.id),
+      listCategories(),
+      listServices(),
+      listLanguages(),
+      listCities(),
+    ]);
 
   const entitlements = profile
     ? await getProviderEntitlements(profile.id)
@@ -30,6 +29,7 @@ export default async function ProfileEditPage({ params }: { params: Promise<{ lo
   const initialValues = profile
     ? {
         displayName: profile.displayName,
+        age: profile.age,
         description: profile.description,
         citySlug: profile.city.slug,
         categoryKey: profile.category.key,
@@ -43,29 +43,30 @@ export default async function ProfileEditPage({ params }: { params: Promise<{ lo
     <main className="mx-auto flex min-h-screen max-w-2xl flex-col gap-8 px-4 py-14 sm:py-20">
       <h1 className="font-serif text-3xl font-medium text-ink2">{t("title")}</h1>
 
-      <ProfileEditForm
+      <ProfileWizard
         locale={locale}
         categories={categories}
         services={services}
         languages={languages}
         cities={cities}
         initialValues={initialValues}
+        initialContact={{
+          phone: contact?.phone ?? "",
+          email: contact?.email ?? "",
+          whatsapp: contact?.whatsapp ?? "",
+          instagram: contact?.instagram ?? "",
+        }}
+        initialPhotos={
+          profile?.media.map((m) => ({
+            id: m.id,
+            status: m.status,
+            rejectionReason: m.rejectionReason,
+          })) ?? []
+        }
+        maxPhotos={entitlements.maxPhotos}
+        readyToSubmit={attestationCompleted && verification?.status === "VERIFIED"}
+        initialProfileStatus={profile?.status}
       />
-
-      {profile && (
-        <>
-          <ContactForm initialPhone={contact?.phone ?? ""} initialEmail={contact?.email ?? ""} />
-          <PhotoManager
-            initialPhotos={profile.media.map((m) => ({
-              id: m.id,
-              status: m.status,
-              rejectionReason: m.rejectionReason,
-            }))}
-            maxPhotos={entitlements.maxPhotos}
-          />
-        </>
-      )}
-      {!profile && <p className="text-sm text-ink2-faint">{t("saveProfileFirstForPhotos")}</p>}
     </main>
   );
 }

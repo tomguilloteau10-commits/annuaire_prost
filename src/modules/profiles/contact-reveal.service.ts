@@ -5,6 +5,8 @@ import { computePurgeAt, DATA_CATEGORIES } from "@/modules/retention/retention-p
 export interface RevealedContact {
   phone: string | null;
   email: string | null;
+  whatsapp: string | null;
+  instagram: string | null;
 }
 
 /**
@@ -35,5 +37,10 @@ export async function revealContact(
     },
   });
 
-  return { phone: contact.phone, email: contact.email };
+  return {
+    phone: contact.phone,
+    email: contact.email,
+    whatsapp: contact.whatsapp,
+    instagram: contact.instagram,
+  };
 }
