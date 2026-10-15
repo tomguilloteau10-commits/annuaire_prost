@@ -170,6 +170,26 @@ model ProviderProfile {
   categoryId   String
   category     Category      @relation(fields: [categoryId], references: [id])
   onlineStatus OnlineStatus  @default(OFFLINE)
+
+  // Infos complémentaires de la page profil, toutes facultatives et
+  // auto-déclarées (contenu éditorial, comme la description). Valeurs
+  // autorisées : src/modules/profiles/attributes.ts.
+  heightCm      Int?
+  bodyType      String?
+  hairColor     String?
+  eyeColor      String?
+  // Tarifs indicatifs en CHF, affichés seulement : aucun paiement ne
+  // transite par la plateforme (ENGINEERING_RULES.md §4).
+  rate30Min     Int?
+  rate1Hour     Int?
+  rate2Hours    Int?
+  rateNight     Int?
+  availableDays String[]      @default([]) // "MON" … "SUN"
+  availableFrom String? // "HH:MM"
+  availableTo   String? // "HH:MM", peut être après minuit
+  receives      Boolean       @default(false) // reçoit (incall)
+  travels       Boolean       @default(false) // se déplace (outcall)
+
   status       ProfileStatus @default(DRAFT)
   planId       String
   plan         Plan          @relation(fields: [planId], references: [id])

@@ -8,6 +8,17 @@ import {
 } from "@/modules/profiles/profile.service";
 import { UnknownTaxonomyReferenceError } from "@/modules/profiles/types";
 import { checkCsrf } from "@/lib/route-helpers";
+import {
+  BODY_TYPES,
+  EYE_COLORS,
+  HAIR_COLORS,
+  HEIGHT_MAX_CM,
+  HEIGHT_MIN_CM,
+  RATE_MAX_CHF,
+  TIME_SLOTS,
+  WEEK_DAYS,
+  sortWeekDays,
+} from "@/modules/profiles/attributes";
 
 async function requireProvider() {
   const user = await getCurrentUser();
@@ -31,6 +42,31 @@ export async function GET() {
   return NextResponse.json(data);
 }
 
+const rate = z.number().int().min(0).max(RATE_MAX_CHF).nullable();
+const timeSlot = z.enum(TIME_SLOTS as [string, ...string[]]).nullable();
+
+// Infos complémentaires, toutes facultatives (null = non renseigné).
+const detailsSchema = z
+  .object({
+    heightCm: z.number().int().min(HEIGHT_MIN_CM).max(HEIGHT_MAX_CM).nullable(),
+    bodyType: z.enum(BODY_TYPES).nullable(),
+    hairColor: z.enum(HAIR_COLORS).nullable(),
+    eyeColor: z.enum(EYE_COLORS).nullable(),
+    rate30Min: rate,
+    rate1Hour: rate,
+    rate2Hours: rate,
+    rateNight: rate,
+    availableDays: z.array(z.enum(WEEK_DAYS)).max(7).transform(sortWeekDays),
+    availableFrom: timeSlot,
+    availableTo: timeSlot,
+    receives: z.boolean(),
+    travels: z.boolean(),
+  })
+  // Une plage horaire se donne entière (début ET fin) ou pas du tout.
+  .refine((d) => (d.availableFrom === null) === (d.availableTo === null), {
+    path: ["availableTo"],
+  });
+
 const upsertSchema = z.object({
   displayName: z.string().min(2).max(80),
   age: z.number().int().min(18).max(99),
@@ -40,6 +76,7 @@ const upsertSchema = z.object({
   languageCodes: z.array(z.string()).min(1).max(10),
   serviceKeys: z.array(z.string()).max(20),
   onlineStatus: z.enum(["ONLINE", "AWAY", "OFFLINE"]).optional(),
+  details: detailsSchema.optional(),
 });
 
 export async function PUT(request: Request) {

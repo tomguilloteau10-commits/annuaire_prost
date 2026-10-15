@@ -11,10 +11,10 @@
     "login": "Log in",
     "register": "Sign up",
     "dashboard": "My space",
-    "moderation": "Moderation",
-    "taxonomies": "Taxonomies",
-    "auditLog": "Audit log",
-    "geoSettings": "Geo-restriction",
+    "moderation": "Photos to review",
+    "taxonomies": "Categories & cities",
+    "auditLog": "Action history",
+    "geoSettings": "Allowed countries",
     "logout": "Log out",
     "mainNavLabel": "Main navigation",
     "escorts": "Escorts",
@@ -88,7 +88,28 @@
     "contactIntro": "Contact the advertiser directly — no account, no middleman, no tracking.",
     "showContact": "Show contact",
     "reportProfile": "Report this profile",
-    "locationNotice": "Location shown at city-centre level only, never the exact address."
+    "locationNotice": "Location shown at city-centre level only, never the exact address.",
+    "ratesTitle": "Indicative rates",
+    "rates": {
+      "rate30Min": "30 minutes",
+      "rate1Hour": "1 hour",
+      "rate2Hours": "2 hours",
+      "rateNight": "Night"
+    },
+    "ratesNote": "Rates given by the advertiser, to be confirmed directly with her. No payment goes through this site.",
+    "availabilityTitle": "Availability",
+    "daysLabel": "Days",
+    "hoursLabel": "Hours",
+    "receives": "Incall",
+    "travels": "Outcall",
+    "traitsTitle": "Characteristics",
+    "traits": {
+      "height": "Height",
+      "heightValue": "{cm} cm",
+      "bodyType": "Figure",
+      "hair": "Hair",
+      "eyes": "Eyes"
+    }
   },
   "auth": {
     "loginTitle": "Log in",
@@ -184,13 +205,16 @@
     "wizard": {
       "stepIdentity": "Identity",
       "stepPresentation": "Presentation",
-      "stepAvailability": "Services & availability",
+      "stepAvailability": "Availability",
       "stepPhotos": "Photos",
       "stepContact": "Contact",
       "next": "Next",
       "back": "Back",
       "saveAndContinue": "Save and continue",
-      "progress": "Step {current} of {total}"
+      "progress": "Step {current} of {total}",
+      "stepAppearance": "Appearance",
+      "stepRates": "Rates",
+      "optionalHint": "Optional: fill in what you like, or skip this step."
     },
     "displayNameLabel": "Display name",
     "ageLabel": "Age",
@@ -199,12 +223,6 @@
     "categoryLabel": "Category",
     "languagesLabel": "Languages spoken",
     "servicesLabel": "Services",
-    "onlineStatusLabel": "Status",
-    "onlineStatusOptions": {
-      "ONLINE": "Online",
-      "AWAY": "Away",
-      "OFFLINE": "Offline"
-    },
     "save": "Save",
     "saved": "Saved.",
     "saveError": "Could not save right now.",
@@ -235,10 +253,30 @@
     "photoAdd": "Add a photo",
     "photoAddHint": "From your phone or computer · {count} of {max} photos",
     "photoUploading": "Uploading…",
-    "photoDeleteError": "The photo could not be deleted. Please try again."
+    "photoDeleteError": "The photo could not be deleted. Please try again.",
+    "heightLabel": "Height (in cm)",
+    "bodyTypeLabel": "Figure",
+    "hairLabel": "Hair",
+    "eyesLabel": "Eyes",
+    "meetingLabel": "Meetings",
+    "receivesLabel": "I receive (incall)",
+    "travelsLabel": "I travel (outcall)",
+    "daysLabel": "Days you are available",
+    "hoursLabel": "Hours",
+    "hoursFrom": "From",
+    "hoursTo": "To",
+    "hoursHint": "If you finish after midnight, just pick the end time (for example 18:00 to 02:00).",
+    "hoursIncomplete": "Choose both a start and an end time, or neither.",
+    "ratesHint": "Optional. Indicative rates in CHF, shown on your profile. Payment happens directly between you and the client, never on this site.",
+    "rates": {
+      "rate30Min": "30 minutes",
+      "rate1Hour": "1 hour",
+      "rate2Hours": "2 hours",
+      "rateNight": "Night"
+    }
   },
   "moderation": {
-    "title": "Moderation",
+    "title": "Photos to review",
     "pendingProfiles": "Pending profiles",
     "pendingMedia": "Pending photos",
     "emptyQueue": "Queue is empty.",
@@ -252,7 +290,7 @@
     "resolveReport": "Mark as handled"
   },
   "adminTaxonomies": {
-    "title": "Taxonomies",
+    "title": "Categories & cities",
     "categories": "Categories",
     "services": "Services",
     "languages": "Languages",
@@ -270,7 +308,7 @@
     "cityCanton": "Canton"
   },
   "adminAuditLog": {
-    "title": "Audit log",
+    "title": "Action history",
     "empty": "No entries.",
     "date": "Date",
     "actor": "Actor",
@@ -278,7 +316,7 @@
     "target": "Target"
   },
   "adminGeoSettings": {
-    "title": "Geo-restriction",
+    "title": "Allowed countries",
     "hint": "Countries allowed to access the site (enforced by the middleware if a GeoIP header is provided by the reverse proxy).",
     "countryCode": "Country code (ISO 2)",
     "status": "Status",
@@ -331,5 +369,39 @@
     "backToProfile": "Back to profile",
     "rateLimited": "Too many reports sent — please try again later.",
     "error": "Unable to send the report right now."
+  },
+  "attributes": {
+    "bodyType": {
+      "SLIM": "Slim",
+      "ATHLETIC": "Athletic",
+      "AVERAGE": "Average",
+      "CURVY": "Curvy",
+      "PLUS": "Full-figured"
+    },
+    "hairColor": {
+      "BLONDE": "Blonde",
+      "LIGHT_BROWN": "Light brown",
+      "BROWN": "Brown",
+      "BLACK": "Black",
+      "RED": "Red",
+      "OTHER": "Other colour"
+    },
+    "eyeColor": {
+      "BLUE": "Blue",
+      "GREEN": "Green",
+      "BROWN": "Brown",
+      "HAZEL": "Hazel",
+      "GREY": "Grey"
+    },
+    "days": {
+      "MON": "Mon",
+      "TUE": "Tue",
+      "WED": "Wed",
+      "THU": "Thu",
+      "FRI": "Fri",
+      "SAT": "Sat",
+      "SUN": "Sun",
+      "all": "Every day"
+    }
   }
 }

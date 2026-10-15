@@ -11,10 +11,10 @@
     "login": "Connexion",
     "register": "Inscription",
     "dashboard": "Mon espace",
-    "moderation": "Modération",
-    "taxonomies": "Taxonomies",
-    "auditLog": "Journal d'audit",
-    "geoSettings": "Géo-restriction",
+    "moderation": "Photos à valider",
+    "taxonomies": "Catégories & villes",
+    "auditLog": "Historique des actions",
+    "geoSettings": "Pays autorisés",
     "logout": "Déconnexion",
     "mainNavLabel": "Navigation principale",
     "escorts": "Escortes",
@@ -88,7 +88,28 @@
     "contactIntro": "Contact direct avec l'annonceuse — sans compte, sans intermédiaire, sans suivi.",
     "showContact": "Afficher le contact",
     "reportProfile": "Signaler ce profil",
-    "locationNotice": "Localisation au centre-ville uniquement, jamais l'adresse exacte."
+    "locationNotice": "Localisation au centre-ville uniquement, jamais l'adresse exacte.",
+    "ratesTitle": "Tarifs indicatifs",
+    "rates": {
+      "rate30Min": "30 minutes",
+      "rate1Hour": "1 heure",
+      "rate2Hours": "2 heures",
+      "rateNight": "Nuit"
+    },
+    "ratesNote": "Tarifs indiqués par l'annonceuse, à confirmer directement avec elle. Aucun paiement ne passe par ce site.",
+    "availabilityTitle": "Disponibilités",
+    "daysLabel": "Jours",
+    "hoursLabel": "Horaires",
+    "receives": "Reçoit",
+    "travels": "Se déplace",
+    "traitsTitle": "Caractéristiques",
+    "traits": {
+      "height": "Taille",
+      "heightValue": "{cm} cm",
+      "bodyType": "Silhouette",
+      "hair": "Cheveux",
+      "eyes": "Yeux"
+    }
   },
   "auth": {
     "loginTitle": "Connexion",
@@ -184,13 +205,16 @@
     "wizard": {
       "stepIdentity": "Identité",
       "stepPresentation": "Présentation",
-      "stepAvailability": "Services & disponibilité",
+      "stepAvailability": "Disponibilités",
       "stepPhotos": "Photos",
       "stepContact": "Contact",
       "next": "Suivant",
       "back": "Précédent",
       "saveAndContinue": "Enregistrer et continuer",
-      "progress": "Étape {current} sur {total}"
+      "progress": "Étape {current} sur {total}",
+      "stepAppearance": "Apparence",
+      "stepRates": "Tarifs",
+      "optionalHint": "Facultatif : remplissez ce que vous voulez, ou passez cette étape."
     },
     "displayNameLabel": "Nom d'affichage",
     "ageLabel": "Âge",
@@ -199,12 +223,6 @@
     "categoryLabel": "Catégorie",
     "languagesLabel": "Langues parlées",
     "servicesLabel": "Services",
-    "onlineStatusLabel": "Statut",
-    "onlineStatusOptions": {
-      "ONLINE": "En ligne",
-      "AWAY": "Absente",
-      "OFFLINE": "Hors ligne"
-    },
     "save": "Enregistrer",
     "saved": "Enregistré.",
     "saveError": "Impossible d'enregistrer pour le moment.",
@@ -235,10 +253,30 @@
     "photoAdd": "Ajouter une photo",
     "photoAddHint": "Depuis votre téléphone ou votre ordinateur · {count} sur {max} photos",
     "photoUploading": "Envoi en cours…",
-    "photoDeleteError": "La photo n'a pas pu être supprimée. Réessayez."
+    "photoDeleteError": "La photo n'a pas pu être supprimée. Réessayez.",
+    "heightLabel": "Taille (en cm)",
+    "bodyTypeLabel": "Silhouette",
+    "hairLabel": "Cheveux",
+    "eyesLabel": "Yeux",
+    "meetingLabel": "Rencontres",
+    "receivesLabel": "Je reçois",
+    "travelsLabel": "Je me déplace",
+    "daysLabel": "Jours où vous êtes disponible",
+    "hoursLabel": "Horaires",
+    "hoursFrom": "De",
+    "hoursTo": "À",
+    "hoursHint": "Si vous finissez après minuit, choisissez simplement l'heure de fin (par exemple de 18:00 à 02:00).",
+    "hoursIncomplete": "Choisissez l'heure de début et l'heure de fin, ou aucune des deux.",
+    "ratesHint": "Facultatif. Tarifs indicatifs en CHF, affichés sur votre profil. Le paiement se fait directement entre vous et le client, jamais sur ce site.",
+    "rates": {
+      "rate30Min": "30 minutes",
+      "rate1Hour": "1 heure",
+      "rate2Hours": "2 heures",
+      "rateNight": "Nuit"
+    }
   },
   "moderation": {
-    "title": "Modération",
+    "title": "Photos à valider",
     "pendingProfiles": "Profils en attente",
     "pendingMedia": "Photos en attente",
     "emptyQueue": "File vide.",
@@ -252,7 +290,7 @@
     "resolveReport": "Marquer comme traité"
   },
   "adminTaxonomies": {
-    "title": "Taxonomies",
+    "title": "Catégories & villes",
     "categories": "Catégories",
     "services": "Services",
     "languages": "Langues",
@@ -270,7 +308,7 @@
     "cityCanton": "Canton"
   },
   "adminAuditLog": {
-    "title": "Journal d'audit",
+    "title": "Historique des actions",
     "empty": "Aucune entrée.",
     "date": "Date",
     "actor": "Auteur",
@@ -278,7 +316,7 @@
     "target": "Cible"
   },
   "adminGeoSettings": {
-    "title": "Géo-restriction",
+    "title": "Pays autorisés",
     "hint": "Pays autorisés à accéder au site (appliqué par le middleware si un en-tête GeoIP est fourni par le reverse proxy).",
     "countryCode": "Code pays (ISO 2)",
     "status": "Statut",
@@ -331,5 +369,39 @@
     "backToProfile": "Retour au profil",
     "rateLimited": "Trop de signalements envoyés — réessayez plus tard.",
     "error": "Impossible d'envoyer le signalement pour le moment."
+  },
+  "attributes": {
+    "bodyType": {
+      "SLIM": "Mince",
+      "ATHLETIC": "Sportive",
+      "AVERAGE": "Moyenne",
+      "CURVY": "Pulpeuse",
+      "PLUS": "Ronde"
+    },
+    "hairColor": {
+      "BLONDE": "Blonds",
+      "LIGHT_BROWN": "Châtains",
+      "BROWN": "Bruns",
+      "BLACK": "Noirs",
+      "RED": "Roux",
+      "OTHER": "Autre couleur"
+    },
+    "eyeColor": {
+      "BLUE": "Bleus",
+      "GREEN": "Verts",
+      "BROWN": "Marron",
+      "HAZEL": "Noisette",
+      "GREY": "Gris"
+    },
+    "days": {
+      "MON": "Lun",
+      "TUE": "Mar",
+      "WED": "Mer",
+      "THU": "Jeu",
+      "FRI": "Ven",
+      "SAT": "Sam",
+      "SUN": "Dim",
+      "all": "Tous les jours"
+    }
   }
 }

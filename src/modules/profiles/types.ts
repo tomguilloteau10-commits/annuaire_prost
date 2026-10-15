@@ -9,6 +9,27 @@ export interface UpsertProfileInput {
   languageCodes: string[];
   serviceKeys: string[];
   onlineStatus?: OnlineStatus;
+  details?: ProfileDetailsInput;
+}
+
+/**
+ * Infos complémentaires, toutes facultatives (null = non renseigné). Les
+ * valeurs sont validées par l'API contre modules/profiles/attributes.ts.
+ */
+export interface ProfileDetailsInput {
+  heightCm: number | null;
+  bodyType: string | null;
+  hairColor: string | null;
+  eyeColor: string | null;
+  rate30Min: number | null;
+  rate1Hour: number | null;
+  rate2Hours: number | null;
+  rateNight: number | null;
+  availableDays: string[];
+  availableFrom: string | null;
+  availableTo: string | null;
+  receives: boolean;
+  travels: boolean;
 }
 
 export interface UpsertContactInput {

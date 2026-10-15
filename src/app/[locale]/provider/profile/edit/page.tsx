@@ -43,7 +43,21 @@ export default async function ProfileEditPage({
         categoryKey: profile.category.key,
         languageCodes: profile.languages.map((l) => l.language.code),
         serviceKeys: profile.services.map((s) => s.service.key),
-        onlineStatus: profile.onlineStatus,
+        details: {
+          heightCm: profile.heightCm,
+          bodyType: profile.bodyType,
+          hairColor: profile.hairColor,
+          eyeColor: profile.eyeColor,
+          rate30Min: profile.rate30Min,
+          rate1Hour: profile.rate1Hour,
+          rate2Hours: profile.rate2Hours,
+          rateNight: profile.rateNight,
+          availableDays: profile.availableDays,
+          availableFrom: profile.availableFrom,
+          availableTo: profile.availableTo,
+          receives: profile.receives,
+          travels: profile.travels,
+        },
       }
     : null;
 

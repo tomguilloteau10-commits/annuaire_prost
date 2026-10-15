@@ -23,6 +23,7 @@ import path from "node:path";
 import { PrismaClient } from "@prisma/client";
 import { DATA_CATEGORIES } from "../src/modules/retention/retention-policy.service";
 import { slugify, slugifyWithSuffix } from "../src/lib/slugify";
+import { BODY_TYPES, EYE_COLORS, HAIR_COLORS, type WeekDay } from "../src/modules/profiles/attributes";
 import { hashPassword } from "../src/modules/auth/password";
 import {
   createPlaceholderPng,
@@ -144,8 +145,8 @@ async function seedCategories() {
 
 async function seedServices() {
   const services: { key: string; label: Record<string, string> }[] = [
-    { key: "outcall", label: { fr: "Déplacement (outcall)", en: "Outcall", de: "Hausbesuch", it: "A domicilio" } },
-    { key: "incall", label: { fr: "Reçoit (incall)", en: "Incall", de: "Empfängt", it: "Riceve" } },
+    // "Reçoit" / "Se déplace" ne sont plus des services mais des champs du
+    // profil (receives / travels) — voir la migration *_add_profile_details.
     { key: "massage", label: { fr: "Massage", en: "Massage", de: "Massage", it: "Massaggio" } },
     {
       key: "evenements",
@@ -300,7 +301,7 @@ async function seedDemoProfile(spec: DemoProfileSpec, passwordHash: string, mode
     prisma.city.findUniqueOrThrow({ where: { slug: spec.citySlug } }),
     prisma.category.findUniqueOrThrow({ where: { key: spec.categoryKey } }),
     prisma.language.findMany({ where: { code: { in: spec.languageCodes } } }),
-    prisma.service.findMany({ where: { key: { in: spec.serviceKeys } } }),
+    prisma.service.findMany({ where: { key: { in: spec.serviceKeys.filter((k) => !TRAVEL_KEYS.has(k)) } } }),
     prisma.plan.findUniqueOrThrow({ where: { code: "founder" } }),
   ]);
 
@@ -317,6 +318,8 @@ async function seedDemoProfile(spec: DemoProfileSpec, passwordHash: string, mode
       status: spec.profileStatus,
       publishedAt: spec.profileStatus === "PUBLISHED" ? new Date() : null,
       onlineStatus: spec.onlineStatus,
+      receives: spec.serviceKeys.includes("incall"),
+      travels: spec.serviceKeys.includes("outcall"),
       languages: { create: languages.map((l) => ({ languageId: l.id })) },
       services: { create: services.map((s) => ({ serviceId: s.id })) },
     },
@@ -349,6 +352,62 @@ async function seedDemoProfile(spec: DemoProfileSpec, passwordHash: string, mode
       },
     });
   }
+}
+
+// Clés historiques des specs de démo, devenues les champs receives/travels.
+const TRAVEL_KEYS = new Set(["incall", "outcall"]);
+
+const DEMO_HEIGHTS = [165, 170, 158, 172, 168, 175, 162, 169, 160, 174, 166, 171, 163, 177, 159, 167, 173, 164];
+const DEMO_DAYS: WeekDay[][] = [
+  ["MON", "TUE", "WED", "THU", "FRI"],
+  ["TUE", "WED", "THU", "FRI", "SAT"],
+  ["MON", "WED", "FRI", "SAT"],
+  ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"],
+  ["THU", "FRI", "SAT", "SUN"],
+];
+const DEMO_HOURS: [string, string][] = [
+  ["10:00", "20:00"],
+  ["14:00", "23:00"],
+  ["18:00", "02:00"],
+  ["11:00", "19:00"],
+  ["20:00", "04:00"],
+];
+
+/**
+ * Remplit tarifs indicatifs, caractéristiques et disponibilités d'un profil
+ * de démo (valeurs fictives, déterministes selon sa position). Comme
+ * seedDemoGallery(), s'applique aussi aux profils déjà seedés, une seule
+ * fois : ne touche à rien si l'un de ces champs est déjà renseigné. Quelques
+ * profils restent volontairement incomplets (champs facultatifs).
+ */
+async function seedDemoDetails(spec: DemoProfileSpec, index: number) {
+  const profile = await prisma.providerProfile.findFirst({
+    where: { user: { email: spec.email } },
+    select: { id: true, heightCm: true, rate1Hour: true, availableDays: true },
+  });
+  if (!profile || profile.heightCm !== null || profile.rate1Hour !== null || profile.availableDays.length > 0) {
+    return;
+  }
+
+  const hourly = 220 + (index % 5) * 30;
+  const [from, to] = DEMO_HOURS[index % DEMO_HOURS.length]!;
+  const hasHours = index % 6 !== 5;
+  await prisma.providerProfile.update({
+    where: { id: profile.id },
+    data: {
+      heightCm: DEMO_HEIGHTS[index % DEMO_HEIGHTS.length],
+      bodyType: BODY_TYPES[(index * 2) % BODY_TYPES.length],
+      hairColor: HAIR_COLORS[index % HAIR_COLORS.length],
+      eyeColor: index % 4 === 3 ? null : EYE_COLORS[index % EYE_COLORS.length],
+      rate30Min: index % 3 === 0 ? null : Math.round((hourly * 0.6) / 10) * 10,
+      rate1Hour: hourly,
+      rate2Hours: Math.round((hourly * 1.8) / 10) * 10,
+      rateNight: index % 4 === 1 ? null : 1000 + (index % 4) * 200,
+      availableDays: DEMO_DAYS[index % DEMO_DAYS.length],
+      availableFrom: hasHours ? from : null,
+      availableTo: hasHours ? to : null,
+    },
+  });
 }
 
 type Rgb = [number, number, number];
@@ -863,9 +922,10 @@ async function main() {
   );
 
   const { adminId, passwordHash } = await seedDemoAccounts();
-  for (const spec of DEMO_PROFILES) {
+  for (const [index, spec] of DEMO_PROFILES.entries()) {
     await seedDemoProfile(spec, passwordHash, adminId);
     await seedDemoGallery(spec, adminId);
+    await seedDemoDetails(spec, index);
   }
 
   // eslint-disable-next-line no-console
