@@ -5,6 +5,7 @@ import { hasCompletedOnboardingAttestation } from "@/modules/onboarding/attestat
 import { hasPassedAdultVerification } from "@/modules/verification/verification.service";
 import { VerificationStart } from "@/components/provider/VerificationStart";
 import { Badge } from "@/components/ui/Badge";
+import { ONBOARDING_PATH } from "@/lib/spaces";
 
 export default async function VerificationPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -12,7 +13,7 @@ export default async function VerificationPage({ params }: { params: Promise<{ l
   const user = await requirePageRole(locale, ["PROVIDER"]);
 
   if (!(await hasCompletedOnboardingAttestation(user.id))) {
-    redirect({ href: "/provider/onboarding", locale });
+    redirect({ href: ONBOARDING_PATH, locale });
   }
 
   const t = await getTranslations("verification");

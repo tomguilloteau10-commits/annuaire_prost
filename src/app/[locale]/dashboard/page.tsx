@@ -9,6 +9,7 @@ import { ProfileCard } from "@/components/public/ProfileCard";
 import { SubmitProfileButton } from "@/components/provider/SubmitProfileButton";
 import { AvailabilityToggle } from "@/components/provider/AvailabilityToggle";
 import { Card } from "@/components/ui/Card";
+import { PROFILE_EDIT_PATH } from "@/lib/spaces";
 
 const TONE_CLASSES: Record<StatusTone, { box: string; dot: string; title: string }> = {
   online: { box: "border-success/40 bg-success-soft", dot: "bg-success", title: "text-success" },
@@ -92,7 +93,7 @@ export default async function ProviderDashboardPage({
           </Link>
         )}
         {state.reason === "rejected" && (
-          <Link href="/provider/profile/edit" className={state.canSubmit ? SECONDARY_BUTTON : PRIMARY_BUTTON}>
+          <Link href={PROFILE_EDIT_PATH} className={state.canSubmit ? SECONDARY_BUTTON : PRIMARY_BUTTON}>
             {t("status.fixProfile")}
           </Link>
         )}
@@ -133,7 +134,7 @@ export default async function ProviderDashboardPage({
                 ) : (
                   <p className="text-center text-sm text-ink2-faint">{t("preview.notPublicYet")}</p>
                 )}
-                <Link href="/provider/profile/edit" className={`${PRIMARY_BUTTON} sm:w-full`}>
+                <Link href={PROFILE_EDIT_PATH} className={`${PRIMARY_BUTTON} sm:w-full`}>
                   {t("preview.edit")}
                 </Link>
               </div>
@@ -141,7 +142,7 @@ export default async function ProviderDashboardPage({
           ) : (
             <>
               <p className="text-ink2-muted">{t("preview.noProfile")}</p>
-              <Link href="/provider/profile/edit?step=identity" className={`${PRIMARY_BUTTON} sm:w-full`}>
+              <Link href={`${PROFILE_EDIT_PATH}?step=identity`} className={`${PRIMARY_BUTTON} sm:w-full`}>
                 {t("preview.create")}
               </Link>
             </>

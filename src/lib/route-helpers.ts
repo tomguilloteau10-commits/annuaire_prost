@@ -27,7 +27,7 @@ export type RequireRoleResult = { user: User; error?: undefined } | { user?: und
 /**
  * Factorise le bloc "récupérer l'utilisateur courant + vérifier son rôle"
  * répété dans toutes les routes protégées. Usage :
- * `const guard = await requireRole(["MODERATOR", "ADMIN"]); if (guard.error) return guard.error;`
+ * `const guard = await requireRole(["ADMIN"]); if (guard.error) return guard.error;`
  */
 export async function requireRole(roles: Role[]): Promise<RequireRoleResult> {
   const user = await getCurrentUser();

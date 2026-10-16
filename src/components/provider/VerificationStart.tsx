@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useCsrfToken } from "@/lib/use-csrf-token";
 import { Button } from "@/components/ui/Button";
+import { DASHBOARD_PATH } from "@/lib/spaces";
 
 /**
  * Simule le parcours de vérification 18+ (MockVerificationProvider) : un
@@ -41,7 +42,7 @@ export function VerificationStart() {
       return;
     }
 
-    router.push("/provider/dashboard");
+    router.push(DASHBOARD_PATH);
     router.refresh();
   }
 

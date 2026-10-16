@@ -14,7 +14,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const guard = await requireRole(["MODERATOR", "ADMIN"]);
+  const guard = await requireRole(["ADMIN"]);
   if (guard.error) return guard.error;
 
   const { MEDIA_STORAGE_DRIVER } = getEnv();

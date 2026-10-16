@@ -10,7 +10,7 @@
     "home": "Home",
     "login": "Log in",
     "register": "Sign up",
-    "dashboard": "My space",
+    "dashboard": "My dashboard",
     "moderation": "Photos to review",
     "taxonomies": "Categories & cities",
     "auditLog": "Action history",
@@ -24,7 +24,10 @@
     "salons": "Salons",
     "stories": "Stories",
     "camLive": "Cam Live",
-    "soon": "Coming soon"
+    "soon": "Coming soon",
+    "admin": "Admin",
+    "adminHome": "Overview",
+    "adminNavLabel": "Admin area navigation"
   },
   "home": {
     "title": "Find an independent provider in Switzerland",
@@ -143,7 +146,7 @@
     "error": "Verification failed. Please try again."
   },
   "dashboard": {
-    "title": "My space",
+    "title": "My dashboard",
     "greeting": "Hello {name}.",
     "status": {
       "onlineTitle": "Your profile is LIVE",
@@ -194,7 +197,7 @@
       "body": "Your listing is free during the launch, with up to {maxPhotos} photos. No payment is requested."
     },
     "submitForReview": "Send my profile for review",
-    "submitErrorOnboarding": "The starting declaration is missing. Complete it from your space.",
+    "submitErrorOnboarding": "The starting declaration is missing. Complete it from your dashboard.",
     "submitErrorVerification": "Your age check is not approved yet.",
     "submitErrorPhoto": "Add at least one photo before sending your profile.",
     "submitErrorWhatsapp": "Add your WhatsApp number before sending your profile.",
@@ -248,7 +251,7 @@
     "photoUploadError": "Photo upload failed.",
     "saveProfileFirstForPhotos": "Save your profile first to add photos.",
     "createTitle": "Create my profile",
-    "backToDashboard": "Back to my space",
+    "backToDashboard": "Back to my dashboard",
     "contactSave": "Save and finish",
     "photoAdd": "Add a photo",
     "photoAddHint": "From your phone or computer · {count} of {max} photos",
@@ -403,5 +406,14 @@
       "SUN": "Sun",
       "all": "Every day"
     }
+  },
+  "adminHome": {
+    "title": "Administration",
+    "toReview": "{count, plural, one {# item is waiting for your review.} other {# items are waiting for your review.}}",
+    "nothingToReview": "Nothing to review right now.",
+    "moderationBody": "Waiting — photos: {media} · profiles: {profiles} · reports: {reports}",
+    "taxonomiesBody": "{categories} active categories and {cities} active cities.",
+    "auditLogBody": "{count, plural, one {# recorded action.} other {# recorded actions.}}",
+    "geoBody": "{count, plural, one {# allowed country.} other {# allowed countries.}}"
   }
 }

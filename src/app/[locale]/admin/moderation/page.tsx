@@ -12,7 +12,7 @@ import { Card } from "@/components/ui/Card";
 export default async function AdminModerationPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  await requirePageRole(locale, ["MODERATOR", "ADMIN"]);
+  await requirePageRole(locale, ["ADMIN"]);
   const t = await getTranslations("moderation");
   const tReport = await getTranslations("report");
 
@@ -24,7 +24,7 @@ export default async function AdminModerationPage({ params }: { params: Promise<
   const dateFormatter = new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" });
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-10 px-4 py-14 sm:py-20">
+    <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-10 px-4 py-10 sm:py-14">
       <h1 className="font-serif text-3xl font-medium text-ink2">{t("title")}</h1>
 
       <section className="flex flex-col gap-4">

@@ -14,6 +14,16 @@ const nextConfig = {
   },
   // @node-rs/argon2 embarque un binaire natif (.node) : il doit être
   // chargé via require() côté serveur, pas bundlé par webpack.
+  // Anciennes adresses de l'espace prestataire (avant /dashboard) : gardées
+  // en redirection pour les favoris et liens déjà envoyés.
+  async redirects() {
+    return [
+      { source: "/:locale/provider/dashboard", destination: "/:locale/dashboard", permanent: false },
+      { source: "/:locale/provider/profile/edit", destination: "/:locale/dashboard/profile", permanent: false },
+      { source: "/:locale/provider/onboarding", destination: "/:locale/dashboard/onboarding", permanent: false },
+      { source: "/:locale/provider/verification", destination: "/:locale/dashboard/verification", permanent: false },
+    ];
+  },
   experimental: {
     serverComponentsExternalPackages: ["@node-rs/argon2"],
   },

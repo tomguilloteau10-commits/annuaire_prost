@@ -5,6 +5,7 @@ import { useRouter } from "@/i18n/navigation";
 import { useCsrfToken } from "@/lib/use-csrf-token";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { VERIFICATION_PATH } from "@/lib/spaces";
 
 const FIELDS = [
   "attestedAdult",
@@ -48,7 +49,7 @@ export function AttestationForm() {
       return;
     }
 
-    router.push("/provider/verification");
+    router.push(VERIFICATION_PATH);
     router.refresh();
   }
 

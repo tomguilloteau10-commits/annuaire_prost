@@ -94,20 +94,24 @@ toi-même avec ton éditeur habituel.
 utiliser ces identifiants (ni ce mot de passe partagé) dans un
 environnement accessible publiquement.** Après le seed :
 
-| Email                         | Rôle       | Mot de passe        |
-|--------------------------------|------------|----------------------|
-| `admin@example.test`           | ADMIN      | `DemoPassword123!`  |
-| `moderator@example.test`       | MODERATOR  | `DemoPassword123!`  |
-| `lea.demo@example.test`        | PROVIDER (profil publié)                | `DemoPassword123!` |
-| `nora.demo@example.test`       | PROVIDER (publié, 1 photo en attente)   | `DemoPassword123!` |
-| `camille.demo@example.test`    | PROVIDER (profil en attente de modération) | `DemoPassword123!` |
+La plateforme a trois espaces cloisonnés côté serveur, un par rôle :
 
-Ces trois profils couvrent les états utiles pour vérifier les flux : un
-profil visible publiquement (Léa), un profil publié avec un média encore
-dans la file de modération (Nora, pour tester `/admin/moderation`), et un
-profil complet mais pas encore approuvé (Camille, pour tester la
-modération de profil). Les comptes admin/modérateur permettent d'accéder
-aux pages `/admin/*`.
+| Espace | Adresse | Qui | Compte de démo |
+|--------|---------|-----|----------------|
+| Client | site public (`/`, `/profiles/…`) | visiteur non connecté | — (aucun compte) |
+| Prestataire | `/dashboard` (tableau de bord, édition du profil) | rôle `PROVIDER` | `prestataire@example.test` |
+| Admin | `/admin` (photos à valider, catégories & villes, historique, pays) | rôle `ADMIN` uniquement | `admin@example.test` |
+
+Mot de passe commun : `DemoPassword123!`. Après connexion, chaque compte
+arrive directement dans son espace. Un visiteur qui ouvre `/dashboard` ou
+`/admin` est renvoyé vers la connexion ; une prestataire qui ouvre `/admin`
+est renvoyée vers son tableau de bord (gardes dans
+`app/[locale]/dashboard/layout.tsx`, `app/[locale]/admin/layout.tsx` et
+chaque page/API ; test : `tests/invariants/role-spaces.test.ts`).
+
+`prestataire@example.test` possède le profil publié de Léa. Les 17 autres
+profils de démo appartiennent à des comptes `<prenom>.demo@example.test`
+(même mot de passe) qui ne servent qu'à les porter.
 
 ### Développement sans rebuild Docker à chaque changement
 

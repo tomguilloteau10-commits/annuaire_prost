@@ -12,7 +12,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const csrfError = checkCsrf(request);
   if (csrfError) return csrfError;
 
-  const guard = await requireRole(["MODERATOR", "ADMIN"]);
+  const guard = await requireRole(["ADMIN"]);
   if (guard.error) return guard.error;
 
   const body = await request.json().catch(() => null);

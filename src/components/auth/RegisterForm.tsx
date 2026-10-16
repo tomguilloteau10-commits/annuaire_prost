@@ -5,6 +5,7 @@ import { useRouter } from "@/i18n/navigation";
 import { useCsrfToken } from "@/lib/use-csrf-token";
 import { Button } from "@/components/ui/Button";
 import { FieldGroup, Label, TextInput } from "@/components/ui/Field";
+import { ONBOARDING_PATH } from "@/lib/spaces";
 
 export function RegisterForm() {
   const t = useTranslations("auth");
@@ -34,7 +35,7 @@ export function RegisterForm() {
       return;
     }
 
-    router.push("/provider/onboarding");
+    router.push(ONBOARDING_PATH);
     router.refresh();
   }
 

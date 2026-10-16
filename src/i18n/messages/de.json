@@ -11,7 +11,7 @@
     "home": "Startseite",
     "login": "Anmelden",
     "register": "Registrieren",
-    "dashboard": "Mein Bereich",
+    "dashboard": "Mein Dashboard",
     "moderation": "Zu prüfende Fotos",
     "taxonomies": "Kategorien & Städte",
     "auditLog": "Aktionsverlauf",
@@ -25,7 +25,10 @@
     "salons": "Salons",
     "stories": "Stories",
     "camLive": "Cam Live",
-    "soon": "Demnächst"
+    "soon": "Demnächst",
+    "admin": "Admin",
+    "adminHome": "Übersicht",
+    "adminNavLabel": "Navigation des Admin-Bereichs"
   },
   "home": {
     "title": "Finden Sie eine unabhängige Anbieterin in der Schweiz",
@@ -144,7 +147,7 @@
     "error": "Verifizierung fehlgeschlagen. Bitte erneut versuchen."
   },
   "dashboard": {
-    "title": "Mein Bereich",
+    "title": "Mein Dashboard",
     "greeting": "Hallo {name}.",
     "status": {
       "onlineTitle": "Ihr Profil ist ONLINE",
@@ -195,7 +198,7 @@
       "body": "Ihre Anzeige ist während des Starts kostenlos, mit bis zu {maxPhotos} Fotos. Es wird keine Zahlung verlangt."
     },
     "submitForReview": "Profil zur Prüfung senden",
-    "submitErrorOnboarding": "Die Startbestätigung fehlt. Füllen Sie sie in Ihrem Bereich aus.",
+    "submitErrorOnboarding": "Die Startbestätigung fehlt. Füllen Sie sie in Ihrem Dashboard aus.",
     "submitErrorVerification": "Ihre Altersprüfung ist noch nicht bestätigt.",
     "submitErrorPhoto": "Fügen Sie mindestens ein Foto hinzu, bevor Sie Ihr Profil senden.",
     "submitErrorWhatsapp": "Fügen Sie Ihre WhatsApp-Nummer hinzu, bevor Sie Ihr Profil senden.",
@@ -249,7 +252,7 @@
     "photoUploadError": "Foto-Upload fehlgeschlagen.",
     "saveProfileFirstForPhotos": "Speichern Sie zuerst Ihr Profil, um Fotos hinzuzufügen.",
     "createTitle": "Profil erstellen",
-    "backToDashboard": "Zurück zu meinem Bereich",
+    "backToDashboard": "Zurück zu meinem Dashboard",
     "contactSave": "Speichern und abschliessen",
     "photoAdd": "Foto hinzufügen",
     "photoAddHint": "Vom Telefon oder Computer · {count} von {max} Fotos",
@@ -404,5 +407,14 @@
       "SUN": "So",
       "all": "Täglich"
     }
+  },
+  "adminHome": {
+    "title": "Administration",
+    "toReview": "{count, plural, one {# Element wartet auf Ihre Prüfung.} other {# Elemente warten auf Ihre Prüfung.}}",
+    "nothingToReview": "Im Moment gibt es nichts zu prüfen.",
+    "moderationBody": "Ausstehend — Fotos: {media} · Profile: {profiles} · Meldungen: {reports}",
+    "taxonomiesBody": "{categories} aktive Kategorien und {cities} aktive Städte.",
+    "auditLogBody": "{count, plural, one {# erfasste Aktion.} other {# erfasste Aktionen.}}",
+    "geoBody": "{count, plural, one {# erlaubtes Land.} other {# erlaubte Länder.}}"
   }
 }

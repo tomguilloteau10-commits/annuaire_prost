@@ -5,6 +5,8 @@ import { useRouter } from "@/i18n/navigation";
 import { useCsrfToken } from "@/lib/use-csrf-token";
 import { Button } from "@/components/ui/Button";
 import { FieldGroup, Label, TextInput } from "@/components/ui/Field";
+import { homeForRole } from "@/lib/spaces";
+import type { Role } from "@/modules/auth/rbac";
 
 export function LoginForm() {
   const t = useTranslations("auth");
@@ -33,10 +35,9 @@ export function LoginForm() {
       return;
     }
 
-    const data = (await response.json()) as { role: string };
-    if (data.role === "PROVIDER") router.push("/provider/dashboard");
-    else if (data.role === "MODERATOR" || data.role === "ADMIN") router.push("/admin/moderation");
-    else router.push("/");
+    // Chacun arrive dans son espace : prestataire → /dashboard, admin → /admin.
+    const data = (await response.json()) as { role: Role };
+    router.push(homeForRole(data.role));
     router.refresh();
   }
 

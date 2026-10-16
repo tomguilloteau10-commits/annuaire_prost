@@ -3,6 +3,7 @@ import { requirePageRole } from "@/lib/page-guards";
 import { hasCompletedOnboardingAttestation } from "@/modules/onboarding/attestation.service";
 import { redirect } from "@/i18n/navigation";
 import { AttestationForm } from "@/components/provider/AttestationForm";
+import { VERIFICATION_PATH } from "@/lib/spaces";
 
 export default async function OnboardingPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -10,7 +11,7 @@ export default async function OnboardingPage({ params }: { params: Promise<{ loc
   const user = await requirePageRole(locale, ["PROVIDER"]);
 
   if (await hasCompletedOnboardingAttestation(user.id)) {
-    redirect({ href: "/provider/verification", locale });
+    redirect({ href: VERIFICATION_PATH, locale });
   }
 
   const t = await getTranslations("onboarding");

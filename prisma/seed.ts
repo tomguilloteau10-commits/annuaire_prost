@@ -34,6 +34,8 @@ import {
 const prisma = new PrismaClient();
 
 const DEMO_PASSWORD = "DemoPassword123!";
+const DEMO_PROVIDER_EMAIL = "prestataire@example.test";
+const LEGACY_LEA_EMAIL = "lea.demo@example.test";
 const MEDIA_LOCAL_PATH = process.env.MEDIA_LOCAL_PATH ?? "./storage/media";
 
 // Écrit directement le fichier plutôt que de passer par
@@ -232,11 +234,26 @@ async function seedDemoAccounts() {
     create: { email: "admin@example.test", passwordHash, role: "ADMIN" },
   });
 
-  await prisma.user.upsert({
-    where: { email: "moderator@example.test" },
-    update: {},
-    create: { email: "moderator@example.test", passwordHash, role: "MODERATOR" },
-  });
+  // Deux comptes de démo clairs, un par espace : admin@example.test (/admin)
+  // et prestataire@example.test (/dashboard). Le compte prestataire reprend
+  // le profil publié de Léa : l'ancien compte lea.demo@example.test est
+  // renommé, sans recréer ni dupliquer le profil.
+  const [legacyLea, provider] = await Promise.all([
+    prisma.user.findUnique({ where: { email: LEGACY_LEA_EMAIL } }),
+    prisma.user.findUnique({ where: { email: DEMO_PROVIDER_EMAIL } }),
+  ]);
+  if (legacyLea && !provider) {
+    await prisma.user.update({ where: { id: legacyLea.id }, data: { email: DEMO_PROVIDER_EMAIL } });
+  }
+
+  // L'ancien compte de démo "modérateur" n'a plus d'espace (seul l'admin
+  // ouvre /admin) : supprimé s'il n'a laissé aucune trace (actions de
+  // modération, journal) ; sinon conservé tel quel pour l'historique.
+  await prisma.user
+    .deleteMany({
+      where: { email: "moderator@example.test", moderationActionsTaken: { none: {} }, auditLogs: { none: {} } },
+    })
+    .catch(() => undefined);
 
   return { adminId: admin.id, passwordHash };
 }
@@ -475,7 +492,7 @@ async function seedDemoGallery(spec: DemoProfileSpec, moderatorId: string) {
 // de test synthétiques uniquement".
 const DEMO_PROFILES: DemoProfileSpec[] = [
   {
-    email: "lea.demo@example.test",
+    email: DEMO_PROVIDER_EMAIL,
     displayName: "Léa",
     age: 27,
     description:
@@ -933,7 +950,8 @@ async function main() {
     [
       `Seed de démo terminé (${DEMO_PROFILES.length} profils fictifs).`,
       "Comptes de test (mot de passe unique, bêta uniquement — jamais en production) :",
-      "  admin@example.test / moderator@example.test / <prenom>.demo@example.test (voir DEMO_PROFILES)",
+      "  espace admin (/admin)              : admin@example.test",
+      "  espace prestataire (/dashboard)    : prestataire@example.test (profil publié de Léa)",
       `  mot de passe : ${DEMO_PASSWORD}`,
     ].join("\n"),
   );

@@ -24,9 +24,9 @@ describe("computeProviderDashboardState", () => {
     expect(state.tone).toBe("action");
     expect(state.reason).toBe("incomplete");
     expect(state.remainingCount).toBe(4);
-    expect(state.nextHref).toBe("/provider/onboarding");
+    expect(state.nextHref).toBe("/dashboard/onboarding");
     // sans profil, photos et contact renvoient à la création du profil
-    expect(state.checklist.find((i) => i.key === "photo")?.href).toBe("/provider/profile/edit?step=identity");
+    expect(state.checklist.find((i) => i.key === "photo")?.href).toBe("/dashboard/profile?step=identity");
     expect(state.canSubmit).toBe(false);
   });
 
@@ -40,7 +40,7 @@ describe("computeProviderDashboardState", () => {
   it("une case manquante mène directement à la bonne étape", () => {
     const state = computeProviderDashboardState({ ...complete, hasWhatsapp: false });
     expect(state.reason).toBe("incomplete");
-    expect(state.nextHref).toBe("/provider/profile/edit?step=contact");
+    expect(state.nextHref).toBe("/dashboard/profile?step=contact");
     expect(state.canSubmit).toBe(false);
   });
 

@@ -23,6 +23,7 @@ import {
   type RateField,
 } from "@/modules/profiles/attributes";
 import type { ProfileDetailsInput } from "@/modules/profiles/types";
+import { DASHBOARD_PATH } from "@/lib/spaces";
 
 interface LabeledOption {
   label: unknown;
@@ -639,7 +640,7 @@ export function ProfileWizard({
             initialEmail={initialContact.email}
             initialWhatsapp={initialContact.whatsapp}
             initialInstagram={initialContact.instagram}
-            onSaved={() => router.push("/provider/dashboard")}
+            onSaved={() => router.push(DASHBOARD_PATH)}
           />
           <Button
             variant="secondary"

@@ -10,7 +10,7 @@
     "home": "Accueil",
     "login": "Connexion",
     "register": "Inscription",
-    "dashboard": "Mon espace",
+    "dashboard": "Mon tableau de bord",
     "moderation": "Photos à valider",
     "taxonomies": "Catégories & villes",
     "auditLog": "Historique des actions",
@@ -24,7 +24,10 @@
     "salons": "Salons",
     "stories": "Stories",
     "camLive": "Cam Live",
-    "soon": "Bientôt"
+    "soon": "Bientôt",
+    "admin": "Admin",
+    "adminHome": "Vue d'ensemble",
+    "adminNavLabel": "Navigation de l'espace admin"
   },
   "home": {
     "title": "Trouvez une annonceuse indépendante en Suisse",
@@ -143,7 +146,7 @@
     "error": "La vérification a échoué. Réessayez."
   },
   "dashboard": {
-    "title": "Mon espace",
+    "title": "Mon tableau de bord",
     "greeting": "Bonjour {name}.",
     "status": {
       "onlineTitle": "Votre profil est EN LIGNE",
@@ -194,7 +197,7 @@
       "body": "Votre annonce est gratuite pendant le lancement, avec jusqu'à {maxPhotos} photos. Aucun paiement ne vous est demandé."
     },
     "submitForReview": "Envoyer mon profil pour vérification",
-    "submitErrorOnboarding": "Il manque l'attestation de départ. Complétez-la depuis votre espace.",
+    "submitErrorOnboarding": "Il manque l'attestation de départ. Complétez-la depuis votre tableau de bord.",
     "submitErrorVerification": "Votre vérification de majorité n'est pas encore validée.",
     "submitErrorPhoto": "Ajoutez au moins une photo avant d'envoyer votre profil.",
     "submitErrorWhatsapp": "Ajoutez votre numéro WhatsApp avant d'envoyer votre profil.",
@@ -248,7 +251,7 @@
     "photoUploadError": "Échec de l'envoi de la photo.",
     "saveProfileFirstForPhotos": "Enregistrez d'abord votre profil pour pouvoir ajouter des photos.",
     "createTitle": "Créer mon profil",
-    "backToDashboard": "Retour à mon espace",
+    "backToDashboard": "Retour à mon tableau de bord",
     "contactSave": "Enregistrer et terminer",
     "photoAdd": "Ajouter une photo",
     "photoAddHint": "Depuis votre téléphone ou votre ordinateur · {count} sur {max} photos",
@@ -403,5 +406,14 @@
       "SUN": "Dim",
       "all": "Tous les jours"
     }
+  },
+  "adminHome": {
+    "title": "Administration",
+    "toReview": "{count, plural, one {# élément attend votre validation.} other {# éléments attendent votre validation.}}",
+    "nothingToReview": "Rien à valider pour le moment.",
+    "moderationBody": "En attente — photos : {media} · profils : {profiles} · signalements : {reports}",
+    "taxonomiesBody": "{categories} catégories et {cities} villes actives.",
+    "auditLogBody": "{count, plural, one {# action enregistrée.} other {# actions enregistrées.}}",
+    "geoBody": "{count, plural, one {# pays autorisé.} other {# pays autorisés.}}"
   }
 }

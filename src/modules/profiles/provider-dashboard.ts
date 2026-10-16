@@ -5,6 +5,8 @@
  * vérité sur "que doit faire la prestataire maintenant ?".
  */
 
+import { ONBOARDING_PATH, PROFILE_EDIT_PATH, VERIFICATION_PATH } from "@/lib/spaces";
+
 export type ProfileStatus = "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | "REJECTED" | "SUSPENDED";
 export type VerificationStatus = "PENDING" | "IN_PROGRESS" | "VERIFIED" | "FAILED" | "EXPIRED";
 
@@ -46,7 +48,7 @@ export interface ProviderDashboardState {
   canSubmit: boolean;
 }
 
-const EDIT_PATH = "/provider/profile/edit";
+const EDIT_PATH = PROFILE_EDIT_PATH;
 
 export function computeProviderDashboardState(input: ProviderDashboardInput): ProviderDashboardState {
   const hasProfile = input.profileStatus !== null;
@@ -59,7 +61,7 @@ export function computeProviderDashboardState(input: ProviderDashboardInput): Pr
     {
       key: "ageVerification",
       done: verified,
-      href: input.attestationCompleted ? "/provider/verification" : "/provider/onboarding",
+      href: input.attestationCompleted ? VERIFICATION_PATH : ONBOARDING_PATH,
     },
     { key: "photo", done: input.photoCount > 0, href: stepHref("photos") },
     { key: "cityCategory", done: hasProfile, href: `${EDIT_PATH}?step=identity` },

@@ -11,7 +11,7 @@
     "home": "Home",
     "login": "Accedi",
     "register": "Registrati",
-    "dashboard": "Il mio spazio",
+    "dashboard": "La mia bacheca",
     "moderation": "Foto da convalidare",
     "taxonomies": "Categorie e città",
     "auditLog": "Cronologia delle azioni",
@@ -25,7 +25,10 @@
     "salons": "Saloni",
     "stories": "Stories",
     "camLive": "Cam Live",
-    "soon": "Presto"
+    "soon": "Presto",
+    "admin": "Admin",
+    "adminHome": "Panoramica",
+    "adminNavLabel": "Navigazione dell'area admin"
   },
   "home": {
     "title": "Trova una fornitrice indipendente in Svizzera",
@@ -144,7 +147,7 @@
     "error": "Verifica fallita. Riprova."
   },
   "dashboard": {
-    "title": "Il mio spazio",
+    "title": "La mia bacheca",
     "greeting": "Ciao {name}.",
     "status": {
       "onlineTitle": "Il tuo profilo è ONLINE",
@@ -195,7 +198,7 @@
       "body": "Il tuo annuncio è gratuito durante il lancio, con fino a {maxPhotos} foto. Nessun pagamento richiesto."
     },
     "submitForReview": "Invia il mio profilo per la verifica",
-    "submitErrorOnboarding": "Manca la dichiarazione iniziale. Completala dal tuo spazio.",
+    "submitErrorOnboarding": "Manca la dichiarazione iniziale. Completala dalla tua bacheca.",
     "submitErrorVerification": "La verifica della maggiore età non è ancora approvata.",
     "submitErrorPhoto": "Aggiungi almeno una foto prima di inviare il profilo.",
     "submitErrorWhatsapp": "Aggiungi il tuo numero WhatsApp prima di inviare il profilo.",
@@ -249,7 +252,7 @@
     "photoUploadError": "Caricamento della foto non riuscito.",
     "saveProfileFirstForPhotos": "Salva prima il tuo profilo per poter aggiungere foto.",
     "createTitle": "Crea il mio profilo",
-    "backToDashboard": "Torna al mio spazio",
+    "backToDashboard": "Torna alla mia bacheca",
     "contactSave": "Salva e termina",
     "photoAdd": "Aggiungi una foto",
     "photoAddHint": "Dal telefono o dal computer · {count} su {max} foto",
@@ -404,5 +407,14 @@
       "SUN": "Dom",
       "all": "Tutti i giorni"
     }
+  },
+  "adminHome": {
+    "title": "Amministrazione",
+    "toReview": "{count, plural, one {# elemento attende la tua convalida.} other {# elementi attendono la tua convalida.}}",
+    "nothingToReview": "Niente da convalidare per ora.",
+    "moderationBody": "In attesa — foto: {media} · profili: {profiles} · segnalazioni: {reports}",
+    "taxonomiesBody": "{categories} categorie e {cities} città attive.",
+    "auditLogBody": "{count, plural, one {# azione registrata.} other {# azioni registrate.}}",
+    "geoBody": "{count, plural, one {# paese autorizzato.} other {# paesi autorizzati.}}"
   }
 }

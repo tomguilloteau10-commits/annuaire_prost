@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { LogoutButton } from "@/components/LogoutButton";
 import { NavLinks } from "@/components/NavLinks";
+import { ADMIN_PATH, DASHBOARD_PATH } from "@/lib/spaces";
 
 export async function Nav({ locale }: { locale: string }) {
   const t = await getTranslations("nav");
@@ -33,36 +34,24 @@ export async function Nav({ locale }: { locale: string }) {
               </>
             )}
 
+            {/* Menu selon le rôle : visiteur → connexion/inscription,
+                prestataire → son tableau de bord, admin → l'espace admin.
+                Aucun lien vers un autre espace (les pages restent de toute
+                façon gardées côté serveur). */}
             {user?.role === "PROVIDER" && (
-              <>
-                <Link href="/provider/dashboard" className="transition-colors hover:text-ink2">
-                  {t("dashboard")}
-                </Link>
-                <LogoutButton />
-              </>
+              <Link href={DASHBOARD_PATH} className="transition-colors hover:text-ink2">
+                {t("dashboard")}
+              </Link>
             )}
-
-            {(user?.role === "MODERATOR" || user?.role === "ADMIN") && (
-              <>
-                <Link href="/admin/moderation" className="transition-colors hover:text-ink2">
-                  {t("moderation")}
-                </Link>
-                {user.role === "ADMIN" && (
-                  <>
-                    <Link href="/admin/taxonomies" className="transition-colors hover:text-ink2">
-                      {t("taxonomies")}
-                    </Link>
-                    <Link href="/admin/audit-log" className="transition-colors hover:text-ink2">
-                      {t("auditLog")}
-                    </Link>
-                    <Link href="/admin/geo-settings" className="transition-colors hover:text-ink2">
-                      {t("geoSettings")}
-                    </Link>
-                  </>
-                )}
-                <LogoutButton />
-              </>
+            {user?.role === "ADMIN" && (
+              <Link
+                href={ADMIN_PATH}
+                className="rounded-full border border-hairline2 px-3.5 py-1 font-medium text-ink2 transition-colors hover:bg-surface-raised"
+              >
+                {t("admin")}
+              </Link>
             )}
+            {user && <LogoutButton />}
 
             <div className="flex gap-2.5 border-l border-hairline pl-4">
               {routing.locales.map((loc) => (
