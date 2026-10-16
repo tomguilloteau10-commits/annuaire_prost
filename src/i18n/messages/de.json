@@ -38,8 +38,6 @@
     "statsProfiles": "Profile",
     "statsCities": "Städte",
     "statsVerified": "verifiziert",
-    "heroSearchLabel": "Nach Stadt suchen",
-    "heroSearchCta": "Suchen",
     "featuredTitle": "Ausgewählte Profile",
     "resultsTitle": "Alle Profile",
     "filters": {
@@ -64,7 +62,9 @@
       "clientele": "Kundschaft"
     },
     "storiesTitle": "Stories",
-    "seeAll": "Alle ansehen"
+    "seeAll": "Alle ansehen",
+    "resultsCount": "{count, plural, =0 {Keine Profile} one {# Profil} other {# Profile}}",
+    "noMatch": "Kein Profil entspricht diesen Filtern. Entfernen Sie einen."
   },
   "whyUs": {
     "title": "Warum uns wählen",
@@ -197,7 +197,8 @@
       "notPublicYet": "Ihre öffentliche Seite ist sichtbar, sobald Ihr Profil online ist.",
       "edit": "Profil bearbeiten",
       "noProfile": "Sie haben noch kein Profil erstellt. Das dauert etwa 5 Minuten.",
-      "create": "Profil erstellen"
+      "create": "Profil erstellen",
+      "pendingPhotos": "{count, plural, one {# neues Foto wird geprüft: Es erscheint nach der Freigabe auf Ihrem öffentlichen Profil.} other {# neue Fotos werden geprüft: Sie erscheinen nach der Freigabe auf Ihrem öffentlichen Profil.}}"
     },
     "checklist": {
       "title": "Um sichtbar zu sein",
@@ -318,7 +319,11 @@
     "salonNone": "Kein Salon",
     "ratesTitle": "Richtpreise",
     "paymentLabel": "Akzeptierte Zahlungsmittel",
-    "paymentHint": "Information für Ihre Kunden: Bezahlt wird direkt zwischen Ihnen, nie über diese Website."
+    "paymentHint": "Information für Ihre Kunden: Bezahlt wird direkt zwischen Ihnen, nie über diese Website.",
+    "photoPrimary": "Hauptfoto",
+    "photoMakePrimary": "Als Hauptfoto festlegen",
+    "photoPrimaryError": "Das Hauptfoto konnte nicht geändert werden. Bitte erneut versuchen.",
+    "photoPendingHint": "Für Kunden sichtbar, sobald unser Team es freigegeben hat."
   },
   "moderation": {
     "title": "Zu prüfende Fotos",

@@ -24,6 +24,8 @@ export async function listPendingMedia() {
   return prisma.media.findMany({
     where: { status: "PENDING" },
     orderBy: { createdAt: "asc" },
+    // Nom et statut du profil : l'admin doit savoir à qui appartient la photo.
+    include: { profile: { select: { displayName: true, slug: true, status: true } } },
   });
 }
 

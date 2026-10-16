@@ -52,6 +52,10 @@ export default async function ProviderDashboardPage({
     : await getPlanFeatures((await prisma.plan.findUniqueOrThrow({ where: { code: "founder" } })).id);
 
   const visiblePhotos = profile?.media.filter((m) => m.status !== "REJECTED") ?? [];
+  // L'aperçu montre exactement ce que voient les clients : uniquement les
+  // photos validées (une photo en attente n'est pas encore publique).
+  const publicPhoto = profile?.media.find((m) => m.status === "APPROVED");
+  const pendingPhotoCount = profile?.media.filter((m) => m.status === "PENDING").length ?? 0;
   const state = computeProviderDashboardState({
     profileStatus: profile?.status ?? null,
     attestationCompleted,
@@ -122,7 +126,7 @@ export default async function ProviderDashboardPage({
                     onlineStatus: profile.onlineStatus,
                     city: profile.city,
                     category: profile.category,
-                    thumbnailUrl: visiblePhotos[0] ? `/api/provider/profile/photos/${visiblePhotos[0].id}/preview` : null,
+                    thumbnailUrl: publicPhoto ? `/api/provider/profile/photos/${publicPhoto.id}/preview` : null,
                   }}
                 />
               </div>
@@ -133,6 +137,11 @@ export default async function ProviderDashboardPage({
                   </Link>
                 ) : (
                   <p className="text-center text-sm text-ink2-faint">{t("preview.notPublicYet")}</p>
+                )}
+                {pendingPhotoCount > 0 && (
+                  <p className="rounded-xl border border-warning/40 bg-warning-soft px-3.5 py-2.5 text-sm text-ink2">
+                    {t("preview.pendingPhotos", { count: pendingPhotoCount })}
+                  </p>
                 )}
                 <Link href={PROFILE_EDIT_PATH} className={`${PRIMARY_BUTTON} sm:w-full`}>
                   {t("preview.edit")}

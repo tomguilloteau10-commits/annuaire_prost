@@ -6,7 +6,6 @@ import {
 } from "@/modules/profiles/profile.service";
 import { withThumbnails } from "@/modules/profiles/profile-thumbnails";
 import { listCategories, listCities, listLanguages } from "@/modules/taxonomies/taxonomy.service";
-import { groupCitiesByCanton } from "@/lib/group-cities";
 import { Link } from "@/i18n/navigation";
 import { FilterBar } from "@/components/public/FilterBar";
 import { parseDirectoryFilters, toProfileFilters, type DirectorySearchParams } from "@/lib/directory-filters";
@@ -15,7 +14,6 @@ import { ProfileMapLoader } from "@/components/public/ProfileMapLoader";
 import { WhyUsSection } from "@/components/public/WhyUsSection";
 import { HorizontalScroller } from "@/components/public/HorizontalScroller";
 import { StoryThumb } from "@/components/public/StoryThumb";
-
 
 const FEATURED_COUNT = 6;
 const STORIES_COUNT = 8;
@@ -31,6 +29,7 @@ export default async function HomePage({
   setRequestLocale(locale);
   const searchQuery = await searchParams;
   const filters = parseDirectoryFilters(searchQuery);
+  const isFiltering = Object.values(filters).some(Boolean);
   const t = await getTranslations("home");
   const common = await getTranslations("common");
 
@@ -66,6 +65,33 @@ export default async function HomePage({
   // Stories : les plus récemment publiés (ordre natif de listPublishedProfiles).
   const stories = allWithThumbnails.slice(0, STORIES_COUNT);
 
+  const results = (
+    <section id="resultats" className="flex scroll-mt-32 flex-col gap-6">
+      <div className="flex items-baseline justify-between gap-4">
+        <h2 className="font-serif text-2xl font-medium text-ink2">{t("resultsTitle")}</h2>
+        {isFiltering && (
+          <span className="text-sm text-ink2-muted">{t("resultsCount", { count: profilesWithThumbnails.length })}</span>
+        )}
+      </div>
+      {profilesWithThumbnails.length === 0 ? (
+        <p className="py-16 text-center text-sm text-ink2-faint">{isFiltering ? t("noMatch") : t("emptyState")}</p>
+      ) : (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {profilesWithThumbnails.map((profile) => (
+            <ProfileCard key={profile.slug} profile={profile} locale={locale} />
+          ))}
+        </div>
+      )}
+    </section>
+  );
+
+  const map = (
+    <div className="flex flex-col gap-2">
+      <ProfileMapLoader locale={locale} />
+      <p className="text-center text-xs text-ink2-faint">{t("mapCaption")}</p>
+    </div>
+  );
+
   return (
     <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-14 px-4 py-14 sm:py-20">
       <div className="flex flex-col items-center gap-5 text-center">
@@ -94,35 +120,22 @@ export default async function HomePage({
           </div>
         )}
 
-        <form method="GET" className="flex w-full max-w-md items-center gap-2">
-          <label htmlFor="hero-city" className="sr-only">
-            {t("heroSearchLabel")}
-          </label>
-          <select
-            id="hero-city"
-            name="city"
-            defaultValue={filters.city ?? ""}
-            className="w-full rounded-xl border border-hairline2 bg-surface-raised px-3.5 py-2.5 text-sm text-ink2 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
-          >
-            <option value="">{t("heroSearchLabel")}</option>
-            {groupCitiesByCanton(cities).map((group) => (
-              <optgroup key={group.canton} label={group.canton}>
-                {group.cities.map((city) => (
-                  <option key={city.slug} value={city.slug}>
-                    {city.name}
-                  </option>
-                ))}
-              </optgroup>
-            ))}
-          </select>
-          <button
-            type="submit"
-            className="shrink-0 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
-          >
-            {t("heroSearchCta")}
-          </button>
-        </form>
+        {/* Tous les filtres au même endroit, en haut de page (ville,
+            catégorie, langue, en ligne + "Plus de filtres"). */}
+        <div className="w-full rounded-xl2 border border-hairline bg-surface p-3 text-left shadow-card sm:p-4">
+          <FilterBar
+            locale={locale}
+            categories={categories}
+            languages={languages}
+            cities={cities}
+            facets={facets}
+            currentFilters={filters}
+          />
+        </div>
       </div>
+
+      {/* Filtre actif : les résultats viennent juste sous les filtres. */}
+      {isFiltering && results}
 
       {featuredProfiles.length > 0 && (
         <section className="flex flex-col gap-4">
@@ -153,33 +166,8 @@ export default async function HomePage({
         </section>
       )}
 
-      <section className="flex flex-col gap-6">
-        <FilterBar
-          locale={locale}
-          categories={categories}
-          languages={languages}
-          cities={cities}
-          facets={facets}
-          currentFilters={filters}
-        />
-
-        <div className="flex flex-col gap-2">
-          <ProfileMapLoader locale={locale} />
-          <p className="text-center text-xs text-ink2-faint">{t("mapCaption")}</p>
-        </div>
-
-        <h2 className="font-serif text-2xl font-medium text-ink2">{t("resultsTitle")}</h2>
-
-        {profilesWithThumbnails.length === 0 ? (
-          <p className="py-16 text-center text-sm text-ink2-faint">{t("emptyState")}</p>
-        ) : (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {profilesWithThumbnails.map((profile) => (
-              <ProfileCard key={profile.slug} profile={profile} locale={locale} />
-            ))}
-          </div>
-        )}
-      </section>
+      {map}
+      {!isFiltering && results}
 
       <WhyUsSection />
     </main>

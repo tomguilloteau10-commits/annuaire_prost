@@ -38,8 +38,6 @@
     "statsProfiles": "profili",
     "statsCities": "città",
     "statsVerified": "verificate",
-    "heroSearchLabel": "Cerca per città",
-    "heroSearchCta": "Cerca",
     "featuredTitle": "Profili in evidenza",
     "resultsTitle": "Tutti i profili",
     "filters": {
@@ -64,7 +62,9 @@
       "clientele": "Clientela"
     },
     "storiesTitle": "Stories",
-    "seeAll": "Vedi tutto"
+    "seeAll": "Vedi tutto",
+    "resultsCount": "{count, plural, =0 {Nessun profilo} one {# profilo} other {# profili}}",
+    "noMatch": "Nessun profilo corrisponde a questi filtri. Prova a toglierne uno."
   },
   "whyUs": {
     "title": "Perché sceglierci",
@@ -197,7 +197,8 @@
       "notPublicYet": "La tua pagina pubblica sarà visibile quando il profilo sarà online.",
       "edit": "Modifica il mio profilo",
       "noProfile": "Non hai ancora creato il tuo profilo. Ci vogliono circa 5 minuti.",
-      "create": "Crea il mio profilo"
+      "create": "Crea il mio profilo",
+      "pendingPhotos": "{count, plural, one {# nuova foto è in verifica: apparirà sul tuo profilo pubblico appena convalidata.} other {# nuove foto sono in verifica: appariranno sul tuo profilo pubblico appena convalidate.}}"
     },
     "checklist": {
       "title": "Per essere visibile",
@@ -318,7 +319,11 @@
     "salonNone": "Nessun salone",
     "ratesTitle": "Tariffe indicative",
     "paymentLabel": "Metodi di pagamento accettati",
-    "paymentHint": "Informazione per i tuoi clienti: il pagamento avviene direttamente tra voi, mai su questo sito."
+    "paymentHint": "Informazione per i tuoi clienti: il pagamento avviene direttamente tra voi, mai su questo sito.",
+    "photoPrimary": "Foto principale",
+    "photoMakePrimary": "Imposta come foto principale",
+    "photoPrimaryError": "Impossibile cambiare la foto principale. Riprova.",
+    "photoPendingHint": "Visibile ai clienti appena il nostro team l'avrà convalidata."
   },
   "moderation": {
     "title": "Foto da convalidare",

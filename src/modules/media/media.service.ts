@@ -31,9 +31,10 @@ export async function uploadProviderPhoto(
     throw new MediaTooLargeError();
   }
 
-  const [entitlements, currentPhotoCount] = await Promise.all([
+  const [entitlements, currentPhotoCount, lastPosition] = await Promise.all([
     getProviderEntitlements(profileId),
     prisma.media.count({ where: { profileId } }),
+    prisma.media.aggregate({ where: { profileId }, _max: { position: true } }),
   ]);
   if (!canUploadMorePhotos(currentPhotoCount, entitlements)) {
     throw new PhotoLimitReachedError();
@@ -43,7 +44,9 @@ export async function uploadProviderPhoto(
   const { storageKey } = await storage.upload(input);
 
   const media = await prisma.media.create({
-    data: { profileId, storageKey, status: "PENDING", position: currentPhotoCount },
+    // Toujours après la dernière photo (le nombre de photos ne suffit pas :
+    // après une suppression, deux photos auraient la même position).
+    data: { profileId, storageKey, status: "PENDING", position: (lastPosition._max.position ?? -1) + 1 },
   });
 
   return { mediaId: media.id };
@@ -67,4 +70,22 @@ export async function deleteProviderPhoto(mediaId: string): Promise<void> {
   const storage = getMediaStorage();
   await storage.delete(media.storageKey);
   await prisma.media.delete({ where: { id: mediaId } });
+}
+
+/**
+ * Fait d'une photo la photo principale (première de la galerie et vignette
+ * de l'annuaire) en renumérotant les positions. Ne change jamais le statut
+ * de modération : une photo encore en attente ne devient visible qu'une
+ * fois validée ; d'ici là, c'est la première photo validée qui s'affiche.
+ */
+export async function setPrimaryPhoto(profileId: string, mediaId: string): Promise<void> {
+  const photos = await prisma.media.findMany({
+    where: { profileId },
+    orderBy: [{ position: "asc" }, { createdAt: "asc" }],
+    select: { id: true },
+  });
+  const ordered = [mediaId, ...photos.map((p) => p.id).filter((id) => id !== mediaId)];
+  await prisma.$transaction(
+    ordered.map((id, position) => prisma.media.update({ where: { id }, data: { position } })),
+  );
 }

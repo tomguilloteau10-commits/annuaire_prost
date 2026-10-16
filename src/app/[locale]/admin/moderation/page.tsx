@@ -96,6 +96,19 @@ export default async function AdminModerationPage({ params }: { params: Promise<
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {pendingMedia.map((media) => (
               <Card key={media.id} className="flex flex-col gap-2 p-5">
+                <div className="flex items-baseline justify-between gap-2 text-sm">
+                  {media.profile.status === "PUBLISHED" ? (
+                    <Link
+                      href={`/profiles/${media.profile.slug}`}
+                      className="font-medium text-ink2 underline-offset-4 hover:underline"
+                    >
+                      {media.profile.displayName}
+                    </Link>
+                  ) : (
+                    <span className="font-medium text-ink2">{media.profile.displayName}</span>
+                  )}
+                  <span className="text-xs text-ink2-faint">{dateFormatter.format(media.createdAt)}</span>
+                </div>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={`/api/admin/moderation/media/${media.id}/preview`}

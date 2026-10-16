@@ -66,8 +66,15 @@ describe("API prestataire : réservée au rôle PROVIDER", () => {
   it.each(routes.map((p) => [rel(p), p]))("%s", (_name, file) => {
     const source = readFileSync(file, "utf8");
     const handlers = source.match(HANDLER) ?? [];
+    // Garde directe, ou helper local (requireProvider / requireOwnPhoto) qui
+    // contient lui-même l'assertion de rôle PROVIDER.
     const guards =
-      source.match(/requireRole\(\["PROVIDER"\]\)|requireProvider\(\)|assertRole\(user\.role, \["PROVIDER"\]\)/g) ?? [];
+      source.match(
+        /requireRole\(\["PROVIDER"\]\)|requireProvider\(\)|requireOwnPhoto\(request|assertRole\(user\.role, \["PROVIDER"\]\)/g,
+      ) ?? [];
+    if (/requireOwnPhoto\(request/.test(source)) {
+      expect(source).toMatch(/assertRole\(user\.role, \["PROVIDER"\]\)/);
+    }
     expect(handlers.length).toBeGreaterThan(0);
     expect(guards.length).toBeGreaterThanOrEqual(handlers.length);
   });
