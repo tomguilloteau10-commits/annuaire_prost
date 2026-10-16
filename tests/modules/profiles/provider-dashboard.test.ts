@@ -26,7 +26,7 @@ describe("computeProviderDashboardState", () => {
     expect(state.remainingCount).toBe(4);
     expect(state.nextHref).toBe("/dashboard/onboarding");
     // sans profil, photos et contact renvoient à la création du profil
-    expect(state.checklist.find((i) => i.key === "photo")?.href).toBe("/dashboard/profile?step=identity");
+    expect(state.checklist.find((i) => i.key === "photo")?.href).toBe("/dashboard/profile?step=presentation");
     expect(state.canSubmit).toBe(false);
   });
 

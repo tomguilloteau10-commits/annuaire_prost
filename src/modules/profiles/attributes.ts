@@ -2,18 +2,54 @@
  * Valeurs autorisées pour les infos complémentaires du profil (toutes
  * facultatives). Module pur, sans accès base : partagé par l'API (zod), le
  * formulaire prestataire et la page publique. Les libellés vivent dans
- * les fichiers i18n (profile.attributes.*).
+ * les fichiers i18n (namespace "attributes").
  */
 
 export const BODY_TYPES = ["SLIM", "ATHLETIC", "AVERAGE", "CURVY", "PLUS"] as const;
 export const HAIR_COLORS = ["BLONDE", "LIGHT_BROWN", "BROWN", "BLACK", "RED", "OTHER"] as const;
 export const EYE_COLORS = ["BLUE", "GREEN", "BROWN", "HAZEL", "GREY"] as const;
 export const WEEK_DAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"] as const;
+/** Région d'origine déclarée, géographique et large (jamais un document d'identité). */
+export const ORIGINS = [
+  "SWITZERLAND",
+  "WESTERN_EUROPE",
+  "SOUTHERN_EUROPE",
+  "EASTERN_EUROPE",
+  "NORTHERN_EUROPE",
+  "LATIN_AMERICA",
+  "NORTH_AMERICA",
+  "AFRICA",
+  "MIDDLE_EAST",
+  "ASIA",
+  "OCEANIA",
+] as const;
+export const CLIENTELE = ["MEN", "WOMEN", "COUPLES"] as const;
+/** Moyens de paiement acceptés par la prestataire elle-même (aucun paiement sur la plateforme). */
+export const PAYMENT_METHODS = ["CASH", "TWINT", "CARD"] as const;
+export const TRAVEL_RADII_KM = [5, 10, 20, 30, 50, 100] as const;
+
+/** Fourchettes de prix du filtre de l'annuaire, sur le tarif 1 heure (CHF, bornes incluses). */
+export const PRICE_RANGES = {
+  LOW: { min: 0, max: 249 },
+  MID: { min: 250, max: 350 },
+  HIGH: { min: 351, max: null },
+} as const;
+export type PriceRange = keyof typeof PRICE_RANGES;
+export const PRICE_RANGE_KEYS = Object.keys(PRICE_RANGES) as PriceRange[];
 
 export type BodyType = (typeof BODY_TYPES)[number];
 export type HairColor = (typeof HAIR_COLORS)[number];
 export type EyeColor = (typeof EYE_COLORS)[number];
 export type WeekDay = (typeof WEEK_DAYS)[number];
+export type Origin = (typeof ORIGINS)[number];
+export type Clientele = (typeof CLIENTELE)[number];
+export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
+
+export function priceRangeOf(rate1Hour: number): PriceRange {
+  if (rate1Hour <= PRICE_RANGES.LOW.max) return "LOW";
+  if (rate1Hour <= PRICE_RANGES.MID.max) return "MID";
+  return "HIGH";
+}
 
 export const RATE_FIELDS = ["rate30Min", "rate1Hour", "rate2Hours", "rateNight"] as const;
 export type RateField = (typeof RATE_FIELDS)[number];

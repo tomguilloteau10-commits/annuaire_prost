@@ -5,6 +5,7 @@ import { getPublishedProfileBySlug } from "@/modules/profiles/profile.service";
 import { getPublicPhotoUrl } from "@/modules/media/media.service";
 import { getLocalizedLabel } from "@/modules/taxonomies/types";
 import { RATE_FIELDS, WEEK_DAYS, groupWeekDays } from "@/modules/profiles/attributes";
+import { DEMO_SALONS } from "@/modules/showcase/demo-salons";
 import { ProfileGallery } from "@/components/public/ProfileGallery";
 import { ContactBlock } from "@/components/public/ContactBlock";
 import { Badge, type BadgeVariant } from "@/components/ui/Badge";
@@ -25,8 +26,14 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   return <h2 className="font-serif text-xl font-medium text-ink2">{children}</h2>;
 }
 
-function SubTitle({ children }: { children: React.ReactNode }) {
-  return <h3 className="font-sans text-xs font-medium uppercase tracking-wide text-ink2-faint">{children}</h3>;
+/** Ligne "libellé : valeur" d'une liste de définitions. */
+function InfoRow({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex gap-3">
+      <dt className="w-28 shrink-0 text-ink2-faint">{label}</dt>
+      <dd className="min-w-0 text-ink2">{children}</dd>
+    </div>
+  );
 }
 
 /** Badge "libellé · valeur" (ex. "Cheveux · Châtains") : sûr dans toutes les langues. */
@@ -72,12 +79,28 @@ export default async function PublicProfilePage({
           .join(", ");
   const hours =
     profile.availableFrom && profile.availableTo ? `${profile.availableFrom} – ${profile.availableTo}` : null;
-  const hasAvailability = !!days || !!hours || profile.receives || profile.travels;
+
+  const meeting = [
+    profile.receives && t("receives"),
+    profile.travels &&
+      (profile.travelRadiusKm
+        ? t("travelsWithin", { km: profile.travelRadiusKm, city: profile.city.name })
+        : t("travels")),
+  ].filter((m): m is string => !!m);
+  const clientele = profile.clientele.map((c) => ta(`clientele.${c}`));
+  const payments = profile.paymentMethods.map((m) => ta(`payment.${m}`));
+  const salon = profile.salonSlug ? DEMO_SALONS.find((s) => s.slug === profile.salonSlug) : undefined;
+  const hasServices = meeting.length > 0 || clientele.length > 0 || profile.services.length > 0 || !!salon;
+  const yesNo = (value: boolean) => (value ? t("yes") : t("no"));
+
   const traits = [
     profile.heightCm && { label: t("traits.height"), value: t("traits.heightValue", { cm: profile.heightCm }) },
     profile.bodyType && { label: t("traits.bodyType"), value: ta(`bodyType.${profile.bodyType}`) },
     profile.hairColor && { label: t("traits.hair"), value: ta(`hairColor.${profile.hairColor}`) },
     profile.eyeColor && { label: t("traits.eyes"), value: ta(`eyeColor.${profile.eyeColor}`) },
+    profile.tattoos !== null && { label: t("traits.tattoos"), value: yesNo(profile.tattoos) },
+    profile.piercings !== null && { label: t("traits.piercings"), value: yesNo(profile.piercings) },
+    profile.origin && { label: t("traits.origin"), value: ta(`origin.${profile.origin}`) },
   ].filter((trait): trait is { label: string; value: string } => !!trait);
 
   return (
@@ -119,46 +142,60 @@ export default async function PublicProfilePage({
             <p className="whitespace-pre-wrap text-[15px] leading-relaxed text-ink2-muted">{profile.description}</p>
           </section>
 
-          {rates.length > 0 && (
+          {(rates.length > 0 || payments.length > 0) && (
             <section className="flex flex-col gap-3">
               <SectionTitle>{t("ratesTitle")}</SectionTitle>
-              <dl className="divide-y divide-hairline overflow-hidden rounded-xl2 border border-hairline bg-surface">
-                {rates.map(({ field, amount }) => (
-                  <div key={field} className="flex items-center justify-between gap-4 px-4 py-3">
-                    <dt className="text-ink2-muted">{t(`rates.${field}`)}</dt>
-                    <dd className="font-medium text-ink2">{chf.format(amount)}</dd>
-                  </div>
-                ))}
-              </dl>
+              {rates.length > 0 && (
+                <dl className="divide-y divide-hairline overflow-hidden rounded-xl2 border border-hairline bg-surface">
+                  {rates.map(({ field, amount }) => (
+                    <div key={field} className="flex items-center justify-between gap-4 px-4 py-3">
+                      <dt className="text-ink2-muted">{t(`rates.${field}`)}</dt>
+                      <dd className="font-medium text-ink2">{chf.format(amount)}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+              {payments.length > 0 && (
+                <dl>
+                  <InfoRow label={t("paymentLabel")}>{payments.join(" · ")}</InfoRow>
+                </dl>
+              )}
               <p className="text-xs text-ink2-faint">{t("ratesNote")}</p>
             </section>
           )}
 
-          {hasAvailability && (
+          {hasServices && (
             <section className="flex flex-col gap-4">
-              <SectionTitle>{t("availabilityTitle")}</SectionTitle>
-              {(days || hours) && (
-                <dl className="flex flex-col gap-2 text-[15px]">
-                  {days && (
-                    <div className="flex gap-3">
-                      <dt className="w-24 shrink-0 text-ink2-faint">{t("daysLabel")}</dt>
-                      <dd className="text-ink2">{days}</dd>
-                    </div>
-                  )}
-                  {hours && (
-                    <div className="flex gap-3">
-                      <dt className="w-24 shrink-0 text-ink2-faint">{t("hoursLabel")}</dt>
-                      <dd className="text-ink2">{hours}</dd>
-                    </div>
-                  )}
-                </dl>
-              )}
-              {(profile.receives || profile.travels) && (
+              <SectionTitle>{t("servicesTitle")}</SectionTitle>
+              <dl className="flex flex-col gap-2.5 text-[15px]">
+                {meeting.length > 0 && <InfoRow label={t("meetingLabel")}>{meeting.join(" · ")}</InfoRow>}
+                {clientele.length > 0 && <InfoRow label={t("clienteleLabel")}>{clientele.join(" · ")}</InfoRow>}
+                {salon && (
+                  <InfoRow label={t("salonLabel")}>
+                    <Link href="/salons" className="underline-offset-4 hover:underline">
+                      {salon.name}
+                    </Link>{" "}
+                    <span className="text-ink2-faint">({salon.city})</span>
+                  </InfoRow>
+                )}
+              </dl>
+              {profile.services.length > 0 && (
                 <div className="flex flex-wrap gap-2">
-                  {profile.receives && <Pill>{t("receives")}</Pill>}
-                  {profile.travels && <Pill>{t("travels")}</Pill>}
+                  {profile.services.map((s) => (
+                    <Pill key={s.service.key}>{getLocalizedLabel(s.service.label, locale)}</Pill>
+                  ))}
                 </div>
               )}
+            </section>
+          )}
+
+          {(days || hours) && (
+            <section className="flex flex-col gap-4">
+              <SectionTitle>{t("availabilityTitle")}</SectionTitle>
+              <dl className="flex flex-col gap-2.5 text-[15px]">
+                {days && <InfoRow label={t("daysLabel")}>{days}</InfoRow>}
+                {hours && <InfoRow label={t("hoursLabel")}>{hours}</InfoRow>}
+              </dl>
             </section>
           )}
 
@@ -173,29 +210,14 @@ export default async function PublicProfilePage({
             </section>
           )}
 
-          {(profile.languages.length > 0 || profile.services.length > 0) && (
-            <section className="flex flex-col gap-4">
-              <SectionTitle>{t("detailsTitle")}</SectionTitle>
-              {profile.languages.length > 0 && (
-                <div className="flex flex-col gap-2">
-                  <SubTitle>{t("languagesLabel")}</SubTitle>
-                  <div className="flex flex-wrap gap-2">
-                    {profile.languages.map((l) => (
-                      <Pill key={l.language.code}>{getLocalizedLabel(l.language.label, locale)}</Pill>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {profile.services.length > 0 && (
-                <div className="flex flex-col gap-2">
-                  <SubTitle>{t("servicesLabel")}</SubTitle>
-                  <div className="flex flex-wrap gap-2">
-                    {profile.services.map((s) => (
-                      <Pill key={s.service.key}>{getLocalizedLabel(s.service.label, locale)}</Pill>
-                    ))}
-                  </div>
-                </div>
-              )}
+          {profile.languages.length > 0 && (
+            <section className="flex flex-col gap-3">
+              <SectionTitle>{t("languagesLabel")}</SectionTitle>
+              <div className="flex flex-wrap gap-2">
+                {profile.languages.map((l) => (
+                  <Pill key={l.language.code}>{getLocalizedLabel(l.language.label, locale)}</Pill>
+                ))}
+              </div>
             </section>
           )}
         </div>

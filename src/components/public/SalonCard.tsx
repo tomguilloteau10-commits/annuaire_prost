@@ -1,7 +1,15 @@
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import type { DemoSalon } from "@/modules/showcase/demo-salons";
 
-export function SalonCard({ salon }: { salon: DemoSalon }) {
+export function SalonCard({
+  salon,
+  profiles,
+}: {
+  salon: DemoSalon;
+  /** Annonceuses publiées rattachées à ce salon. */
+  profiles: { slug: string; displayName: string }[];
+}) {
   const t = useTranslations("salons");
 
   return (
@@ -23,6 +31,19 @@ export function SalonCard({ salon }: { salon: DemoSalon }) {
         <p className="text-sm text-ink2-muted">
           {salon.city} ({salon.canton})
         </p>
+        {profiles.length > 0 && (
+          <p className="mt-2 text-sm text-ink2-muted">
+            {t("profilesHere")}{" "}
+            {profiles.map((profile, index) => (
+              <span key={profile.slug}>
+                {index > 0 && ", "}
+                <Link href={`/profiles/${profile.slug}`} className="text-ink2 underline-offset-4 hover:underline">
+                  {profile.displayName}
+                </Link>
+              </span>
+            ))}
+          </p>
+        )}
       </div>
     </article>
   );

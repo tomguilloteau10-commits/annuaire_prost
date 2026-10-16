@@ -23,7 +23,16 @@ import path from "node:path";
 import { PrismaClient } from "@prisma/client";
 import { DATA_CATEGORIES } from "../src/modules/retention/retention-policy.service";
 import { slugify, slugifyWithSuffix } from "../src/lib/slugify";
-import { BODY_TYPES, EYE_COLORS, HAIR_COLORS, type WeekDay } from "../src/modules/profiles/attributes";
+import {
+  BODY_TYPES,
+  EYE_COLORS,
+  HAIR_COLORS,
+  ORIGINS,
+  type Clientele,
+  type PaymentMethod,
+  type WeekDay,
+} from "../src/modules/profiles/attributes";
+import { DEMO_SALONS } from "../src/modules/showcase/demo-salons";
 import { hashPassword } from "../src/modules/auth/password";
 import {
   createPlaceholderPng,
@@ -423,6 +432,69 @@ async function seedDemoDetails(spec: DemoProfileSpec, index: number) {
       availableDays: DEMO_DAYS[index % DEMO_DAYS.length],
       availableFrom: hasHours ? from : null,
       availableTo: hasHours ? to : null,
+    },
+  });
+}
+
+const DEMO_CLIENTELE: Clientele[][] = [
+  ["MEN"],
+  ["MEN", "COUPLES"],
+  ["MEN", "WOMEN", "COUPLES"],
+  ["WOMEN", "COUPLES"],
+  ["MEN", "WOMEN"],
+  ["MEN"],
+  [],
+];
+const DEMO_PAYMENTS: PaymentMethod[][] = [["CASH", "TWINT"], ["CASH"], ["CASH", "TWINT", "CARD"], ["TWINT"], ["CASH", "TWINT"], []];
+const DEMO_RADII = [10, 20, 30, 50];
+
+/**
+ * Deuxième lot d'infos de démo (tatouages, piercings, origine, rayon de
+ * déplacement, clientèle, paiement, salon) pour que l'affichage et les
+ * nouveaux filtres soient visibles. Même principe que seedDemoDetails() :
+ * s'applique aussi aux profils déjà seedés, une seule fois (rien n'est
+ * touché si l'un de ces champs est déjà renseigné), quelques profils
+ * restent volontairement incomplets. Rattache au salon de démo de sa
+ * ville une partie des profils, et monte le tarif horaire de quelques-uns
+ * pour couvrir toutes les fourchettes de prix du filtre.
+ */
+async function seedDemoExtras(spec: DemoProfileSpec, index: number) {
+  const profile = await prisma.providerProfile.findFirst({
+    where: { user: { email: spec.email } },
+    select: {
+      id: true,
+      travels: true,
+      rate1Hour: true,
+      origin: true,
+      tattoos: true,
+      clientele: true,
+      paymentMethods: true,
+      city: { select: { name: true } },
+    },
+  });
+  if (
+    !profile ||
+    profile.origin !== null ||
+    profile.tattoos !== null ||
+    profile.clientele.length > 0 ||
+    profile.paymentMethods.length > 0
+  ) {
+    return;
+  }
+
+  const salon = DEMO_SALONS.find((s) => s.city === profile.city.name);
+  const premium = index % 6 === 2 && profile.rate1Hour !== null && profile.rate1Hour <= 350;
+  await prisma.providerProfile.update({
+    where: { id: profile.id },
+    data: {
+      tattoos: [true, false, null][index % 3],
+      piercings: [true, null, false, null][index % 4],
+      origin: index % 5 === 4 ? null : ORIGINS[(index * 3) % ORIGINS.length],
+      travelRadiusKm: profile.travels ? DEMO_RADII[index % DEMO_RADII.length] : null,
+      clientele: DEMO_CLIENTELE[index % DEMO_CLIENTELE.length],
+      paymentMethods: DEMO_PAYMENTS[index % DEMO_PAYMENTS.length],
+      salonSlug: salon && index % 2 === 0 ? salon.slug : null,
+      ...(premium ? { rate1Hour: 400 + (index % 3) * 50, rate2Hours: 750 + (index % 3) * 80 } : {}),
     },
   });
 }
@@ -943,6 +1015,7 @@ async function main() {
     await seedDemoProfile(spec, passwordHash, adminId);
     await seedDemoGallery(spec, adminId);
     await seedDemoDetails(spec, index);
+    await seedDemoExtras(spec, index);
   }
 
   // eslint-disable-next-line no-console

@@ -55,7 +55,7 @@ export function computeProviderDashboardState(input: ProviderDashboardInput): Pr
   const verified = input.attestationCompleted && input.verificationStatus === "VERIFIED";
   // Photos et contact ne peuvent être ajoutés qu'une fois le profil créé :
   // sans profil, ces cases mènent à la première étape du formulaire.
-  const stepHref = (step: string) => `${EDIT_PATH}?step=${hasProfile ? step : "identity"}`;
+  const stepHref = (step: string) => `${EDIT_PATH}?step=${hasProfile ? step : "presentation"}`;
 
   const checklist: ChecklistItem[] = [
     {
@@ -64,7 +64,7 @@ export function computeProviderDashboardState(input: ProviderDashboardInput): Pr
       href: input.attestationCompleted ? VERIFICATION_PATH : ONBOARDING_PATH,
     },
     { key: "photo", done: input.photoCount > 0, href: stepHref("photos") },
-    { key: "cityCategory", done: hasProfile, href: `${EDIT_PATH}?step=identity` },
+    { key: "cityCategory", done: hasProfile, href: `${EDIT_PATH}?step=presentation` },
     { key: "whatsapp", done: input.hasWhatsapp, href: stepHref("contact") },
   ];
 

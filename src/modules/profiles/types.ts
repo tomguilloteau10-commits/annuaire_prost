@@ -30,6 +30,13 @@ export interface ProfileDetailsInput {
   availableTo: string | null;
   receives: boolean;
   travels: boolean;
+  travelRadiusKm: number | null;
+  tattoos: boolean | null;
+  piercings: boolean | null;
+  origin: string | null;
+  clientele: string[];
+  paymentMethods: string[];
+  salonSlug: string | null;
 }
 
 export interface UpsertContactInput {
@@ -44,6 +51,10 @@ export interface ListPublishedProfilesFilters {
   categoryKey?: string;
   languageCode?: string;
   onlineOnly?: boolean;
+  bodyType?: string;
+  meeting?: "receives" | "travels";
+  priceRange?: string;
+  clientele?: string;
 }
 
 export class UnknownTaxonomyReferenceError extends Error {
@@ -83,4 +94,12 @@ export class ProfileIncompleteError extends Error {
     );
     this.name = "ProfileIncompleteError";
   }
+}
+
+/** Valeurs renseignées par au moins un profil publié : filtres affichés dans l'annuaire. */
+export interface PublishedProfileFacets {
+  bodyTypes: string[];
+  meetings: ("receives" | "travels")[];
+  priceRanges: ("LOW" | "MID" | "HIGH")[];
+  clientele: string[];
 }

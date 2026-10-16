@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { listPublishedProfiles } from "@/modules/profiles/profile.service";
+import { parseDirectoryFilters, toProfileFilters } from "@/lib/directory-filters";
 import { getPublicPhotoUrl } from "@/modules/media/media.service";
 
 // Liste publique : uniquement des profils PUBLISHED (vérifiés + modérés),
@@ -8,12 +9,8 @@ import { getPublicPhotoUrl } from "@/modules/media/media.service";
 // ProfileContact).
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const citySlug = url.searchParams.get("city") ?? undefined;
-  const categoryKey = url.searchParams.get("category") ?? undefined;
-  const languageCode = url.searchParams.get("language") ?? undefined;
-  const onlineOnly = url.searchParams.get("online") === "true";
-
-  const profiles = await listPublishedProfiles({ citySlug, categoryKey, languageCode, onlineOnly });
+  const filters = parseDirectoryFilters(Object.fromEntries(url.searchParams));
+  const profiles = await listPublishedProfiles(toProfileFilters(filters));
 
   const withPhotoUrls = await Promise.all(
     profiles.map(async (profile) => ({

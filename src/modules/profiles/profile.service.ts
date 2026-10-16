@@ -1,5 +1,13 @@
 import { prisma } from "@/lib/prisma";
 import { slugifyWithSuffix } from "@/lib/slugify";
+import {
+  BODY_TYPES,
+  CLIENTELE,
+  PRICE_RANGES,
+  PRICE_RANGE_KEYS,
+  priceRangeOf,
+  type PriceRange,
+} from "./attributes";
 import { hasCompletedOnboardingAttestation } from "@/modules/onboarding/attestation.service";
 import { hasPassedAdultVerification } from "@/modules/verification/verification.service";
 import {
@@ -9,6 +17,7 @@ import {
   UnknownTaxonomyReferenceError,
   VerificationIncompleteError,
   type ListPublishedProfilesFilters,
+  type PublishedProfileFacets,
   type UpsertProfileInput,
   type UpsertContactInput,
 } from "./types";
@@ -222,6 +231,13 @@ function publicProfileSelect(mediaLimit?: number) {
     availableTo: true,
     receives: true,
     travels: true,
+    travelRadiusKm: true,
+    tattoos: true,
+    piercings: true,
+    origin: true,
+    clientele: true,
+    paymentMethods: true,
+    salonSlug: true,
     city: { select: { name: true, canton: true, slug: true } },
     category: { select: { key: true, label: true } },
     languages: { select: { language: { select: { code: true, label: true } } } },
@@ -236,6 +252,10 @@ function publicProfileSelect(mediaLimit?: number) {
 }
 
 export async function listPublishedProfiles(filters: ListPublishedProfilesFilters) {
+  const priceRange =
+    filters.priceRange && filters.priceRange in PRICE_RANGES
+      ? PRICE_RANGES[filters.priceRange as PriceRange]
+      : undefined;
   return prisma.providerProfile.findMany({
     where: {
       status: "PUBLISHED",
@@ -245,10 +265,59 @@ export async function listPublishedProfiles(filters: ListPublishedProfilesFilter
         ? { some: { language: { code: filters.languageCode } } }
         : undefined,
       onlineStatus: filters.onlineOnly ? "ONLINE" : undefined,
+      bodyType: filters.bodyType || undefined,
+      receives: filters.meeting === "receives" ? true : undefined,
+      travels: filters.meeting === "travels" ? true : undefined,
+      rate1Hour: priceRange ? { gte: priceRange.min, ...(priceRange.max !== null ? { lte: priceRange.max } : {}) } : undefined,
+      clientele: filters.clientele ? { has: filters.clientele } : undefined,
     },
     select: publicProfileSelect(1),
     orderBy: { publishedAt: "desc" },
   });
+}
+
+/**
+ * Valeurs réellement renseignées par au moins un profil publié : l'annuaire
+ * n'affiche un filtre (et ses options) que si des profils peuvent y
+ * correspondre. Ne lit que des champs publics, jamais le contact.
+ */
+export async function getPublishedProfileFacets(): Promise<PublishedProfileFacets> {
+  const rows = await prisma.providerProfile.findMany({
+    where: { status: "PUBLISHED" },
+    select: { bodyType: true, receives: true, travels: true, rate1Hour: true, clientele: true },
+  });
+  const bodyTypes = new Set<string>();
+  const priceRanges = new Set<PriceRange>();
+  const clientele = new Set<string>();
+  let receives = false;
+  let travels = false;
+  for (const row of rows) {
+    if (row.bodyType) bodyTypes.add(row.bodyType);
+    if (row.rate1Hour !== null) priceRanges.add(priceRangeOf(row.rate1Hour));
+    row.clientele.forEach((c) => clientele.add(c));
+    receives ||= row.receives;
+    travels ||= row.travels;
+  }
+  return {
+    bodyTypes: BODY_TYPES.filter((b) => bodyTypes.has(b)),
+    meetings: [...(receives ? ["receives" as const] : []), ...(travels ? ["travels" as const] : [])],
+    priceRanges: PRICE_RANGE_KEYS.filter((p) => priceRanges.has(p)),
+    clientele: CLIENTELE.filter((c) => clientele.has(c)),
+  };
+}
+
+/** Profils publiés rattachés à un salon (page Salons) : nom et lien seulement. */
+export async function listPublishedProfilesBySalon(): Promise<Record<string, { slug: string; displayName: string }[]>> {
+  const rows = await prisma.providerProfile.findMany({
+    where: { status: "PUBLISHED", salonSlug: { not: null } },
+    select: { slug: true, displayName: true, salonSlug: true },
+    orderBy: { displayName: "asc" },
+  });
+  const bySalon: Record<string, { slug: string; displayName: string }[]> = {};
+  for (const { salonSlug, slug, displayName } of rows) {
+    (bySalon[salonSlug!] ??= []).push({ slug, displayName });
+  }
+  return bySalon;
 }
 
 export async function getPublishedProfileBySlug(slug: string) {

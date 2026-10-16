@@ -12,13 +12,17 @@ import { PhotoManager, type PhotoItem } from "@/components/provider/PhotoManager
 import { ContactForm } from "@/components/provider/ContactForm";
 import {
   BODY_TYPES,
+  CLIENTELE,
   EYE_COLORS,
   HAIR_COLORS,
   HEIGHT_MAX_CM,
   HEIGHT_MIN_CM,
+  ORIGINS,
+  PAYMENT_METHODS,
   RATE_FIELDS,
   RATE_MAX_CHF,
   TIME_SLOTS,
+  TRAVEL_RADII_KM,
   WEEK_DAYS,
   type RateField,
 } from "@/modules/profiles/attributes";
@@ -43,6 +47,11 @@ export interface CityOption {
   name: string;
   canton: string;
 }
+export interface SalonOption {
+  slug: string;
+  name: string;
+  city: string;
+}
 
 export interface ProfileWizardProps {
   locale: string;
@@ -50,6 +59,7 @@ export interface ProfileWizardProps {
   services: ServiceOption[];
   languages: LanguageOption[];
   cities: CityOption[];
+  salons: SalonOption[];
   initialValues: {
     displayName: string;
     age: number | null;
@@ -71,14 +81,34 @@ function toggle(list: string[], value: string): string[] {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
 }
 
-const STEP_IDS = ["identity", "presentation", "appearance", "availability", "rates", "photos", "contact"] as const;
+const STEP_IDS = ["presentation", "traits", "services", "availability", "photos", "contact"] as const;
 type StepId = (typeof STEP_IDS)[number];
 /** Dernière étape enregistrée par PUT /api/provider/profile (avant Photos). */
-const LAST_CORE_INDEX = STEP_IDS.indexOf("rates");
+const LAST_CORE_INDEX = STEP_IDS.indexOf("availability");
+/** Anciens noms d'étapes (liens déjà envoyés, favoris). */
+const STEP_ALIASES: Record<string, StepId> = { identity: "presentation", appearance: "traits", rates: "services" };
 
 const CHIP = "cursor-pointer rounded-full border px-4 py-2 text-sm transition-colors";
 const CHIP_ON = "border-accent bg-accent text-accent-foreground";
 const CHIP_OFF = "border-hairline2 text-ink2-muted hover:border-accent/60";
+
+function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button type="button" aria-pressed={on} onClick={onClick} className={`${CHIP} ${on ? CHIP_ON : CHIP_OFF}`}>
+      {children}
+    </button>
+  );
+}
+
+function ChipGroup({ legend, hint, children }: { legend: string; hint?: string; children: React.ReactNode }) {
+  return (
+    <fieldset className="flex flex-col gap-2">
+      <legend className="mb-2 text-sm font-medium text-ink2-muted">{legend}</legend>
+      <div className="flex flex-wrap gap-2">{children}</div>
+      {hint && <p className="text-xs text-ink2-faint">{hint}</p>}
+    </fieldset>
+  );
+}
 
 /** Puces à choix unique ; toucher la puce choisie la désélectionne (tout est facultatif). */
 function ChoiceChips({
@@ -95,23 +125,44 @@ function ChoiceChips({
   labelFor: (option: string) => string;
 }) {
   return (
-    <fieldset className="flex flex-col gap-2">
-      <legend className="mb-2 text-sm font-medium text-ink2-muted">{legend}</legend>
-      <div className="flex flex-wrap gap-2">
-        {options.map((option) => (
-          <button
-            key={option}
-            type="button"
-            aria-pressed={value === option}
-            onClick={() => onChange(value === option ? null : option)}
-            className={`${CHIP} ${value === option ? CHIP_ON : CHIP_OFF}`}
-          >
-            {labelFor(option)}
-          </button>
-        ))}
-      </div>
-    </fieldset>
+    <ChipGroup legend={legend}>
+      {options.map((option) => (
+        <Chip key={option} on={value === option} onClick={() => onChange(value === option ? null : option)}>
+          {labelFor(option)}
+        </Chip>
+      ))}
+    </ChipGroup>
   );
+}
+
+/** Oui / Non / (rien) pour un champ booléen facultatif. */
+function YesNoChips({
+  legend,
+  value,
+  onChange,
+  yes,
+  no,
+}: {
+  legend: string;
+  value: boolean | null;
+  onChange: (value: boolean | null) => void;
+  yes: string;
+  no: string;
+}) {
+  return (
+    <ChipGroup legend={legend}>
+      <Chip on={value === true} onClick={() => onChange(value === true ? null : true)}>
+        {yes}
+      </Chip>
+      <Chip on={value === false} onClick={() => onChange(value === false ? null : false)}>
+        {no}
+      </Chip>
+    </ChipGroup>
+  );
+}
+
+function SectionTitle({ children }: { children: React.ReactNode }) {
+  return <h3 className="font-serif text-lg font-medium text-ink2">{children}</h3>;
 }
 
 function toInt(value: string): number | null {
@@ -125,14 +176,14 @@ function isOptionalIntInRange(value: string, min: number, max: number): boolean 
 }
 
 /**
- * Parcours prestataire en 7 étapes : identité (nom/âge/ville/catégorie),
- * présentation (langues/description), apparence, services & disponibilités,
- * tarifs (ces trois-là facultatives), photos, contact. Les étapes 1 à 5
- * partagent un seul état et un seul appel réseau (PUT /api/provider/profile,
- * déclenché en quittant l'étape Tarifs) : c'est ce qui crée le profil DRAFT.
- * Les étapes Photos et Contact exigent un profil déjà créé (les deux API
- * sous-jacentes le vérifient), donc elles restent verrouillées tant que
- * l'étape Tarifs n'a pas été validée au moins une fois.
+ * Parcours prestataire en 6 étapes, une à la fois : Présentation (le seul
+ * minimum obligatoire : nom, âge, ville, catégorie, langues, description),
+ * Caractéristiques, Prestations & tarifs, Disponibilité (ces trois-là
+ * entièrement facultatives), Photos, Contact. Les étapes 1 à 4 partagent un
+ * seul état et un seul appel réseau (PUT /api/provider/profile, déclenché
+ * en quittant Disponibilité) : c'est ce qui crée le profil DRAFT. Photos et
+ * Contact exigent un profil déjà créé (les deux API le vérifient), donc
+ * elles restent verrouillées jusque-là.
  *
  * En modification (profil existant, formulaire pré-rempli), chaque
  * "Enregistrer et continuer" enregistre immédiatement : on peut arriver
@@ -144,6 +195,7 @@ export function ProfileWizard({
   services,
   languages,
   cities,
+  salons,
   initialValues,
   initialContact,
   initialPhotos,
@@ -157,32 +209,46 @@ export function ProfileWizard({
 
   const [profileExists, setProfileExists] = useState(initialValues !== null);
   const [stepIndex, setStepIndex] = useState(() => {
-    const requested = STEP_IDS.indexOf(initialStep as StepId);
+    const requestedId = initialStep ? (STEP_ALIASES[initialStep] ?? initialStep) : undefined;
+    const requested = STEP_IDS.indexOf(requestedId as StepId);
     const maxIndex = initialValues !== null ? STEP_IDS.length - 1 : LAST_CORE_INDEX;
     return requested >= 0 && requested <= maxIndex ? requested : 0;
   });
 
+  // Présentation (obligatoire)
   const [displayName, setDisplayName] = useState(initialValues?.displayName ?? "");
   const [age, setAge] = useState(initialValues?.age ? String(initialValues.age) : "");
   const [description, setDescription] = useState(initialValues?.description ?? "");
   const [citySlug, setCitySlug] = useState(initialValues?.citySlug ?? cities[0]?.slug ?? "");
   const [categoryKey, setCategoryKey] = useState(initialValues?.categoryKey ?? categories[0]?.key ?? "");
   const [languageCodes, setLanguageCodes] = useState<string[]>(initialValues?.languageCodes ?? []);
+
+  // Tout le reste est facultatif.
+  const d = initialValues?.details;
+  const [heightCm, setHeightCm] = useState(d?.heightCm ? String(d.heightCm) : "");
+  const [bodyType, setBodyType] = useState<string | null>(d?.bodyType ?? null);
+  const [hairColor, setHairColor] = useState<string | null>(d?.hairColor ?? null);
+  const [eyeColor, setEyeColor] = useState<string | null>(d?.eyeColor ?? null);
+  const [tattoos, setTattoos] = useState<boolean | null>(d?.tattoos ?? null);
+  const [piercings, setPiercings] = useState<boolean | null>(d?.piercings ?? null);
+  const [origin, setOrigin] = useState(d?.origin ?? "");
+
+  const [receives, setReceives] = useState(d?.receives ?? false);
+  const [travels, setTravels] = useState(d?.travels ?? false);
+  const [travelRadiusKm, setTravelRadiusKm] = useState(d?.travelRadiusKm ? String(d.travelRadiusKm) : "");
+  const [clientele, setClientele] = useState<string[]>(d?.clientele ?? []);
   const [serviceKeys, setServiceKeys] = useState<string[]>(initialValues?.serviceKeys ?? []);
-  const initialDetails = initialValues?.details;
-  const [heightCm, setHeightCm] = useState(initialDetails?.heightCm ? String(initialDetails.heightCm) : "");
-  const [bodyType, setBodyType] = useState<string | null>(initialDetails?.bodyType ?? null);
-  const [hairColor, setHairColor] = useState<string | null>(initialDetails?.hairColor ?? null);
-  const [eyeColor, setEyeColor] = useState<string | null>(initialDetails?.eyeColor ?? null);
   const [rates, setRates] = useState<Record<RateField, string>>(() => {
-    const entries = RATE_FIELDS.map((field) => [field, initialDetails?.[field]?.toString() ?? ""]);
+    const entries = RATE_FIELDS.map((field) => [field, d?.[field]?.toString() ?? ""]);
     return Object.fromEntries(entries) as Record<RateField, string>;
   });
-  const [availableDays, setAvailableDays] = useState<string[]>(initialDetails?.availableDays ?? []);
-  const [availableFrom, setAvailableFrom] = useState(initialDetails?.availableFrom ?? "");
-  const [availableTo, setAvailableTo] = useState(initialDetails?.availableTo ?? "");
-  const [receives, setReceives] = useState(initialDetails?.receives ?? false);
-  const [travels, setTravels] = useState(initialDetails?.travels ?? false);
+  const [paymentMethods, setPaymentMethods] = useState<string[]>(d?.paymentMethods ?? []);
+  const [salonSlug, setSalonSlug] = useState(d?.salonSlug ?? "");
+
+  const [availableDays, setAvailableDays] = useState<string[]>(d?.availableDays ?? []);
+  const [availableFrom, setAvailableFrom] = useState(d?.availableFrom ?? "");
+  const [availableTo, setAvailableTo] = useState(d?.availableTo ?? "");
+
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -190,7 +256,7 @@ export function ProfileWizard({
   const maxUnlockedIndex = profileExists ? STEP_IDS.length - 1 : LAST_CORE_INDEX;
 
   function isStepValid(id: StepId): boolean {
-    if (id === "identity") {
+    if (id === "presentation") {
       const ageNum = Number(age);
       return (
         displayName.trim().length >= 2 &&
@@ -198,15 +264,14 @@ export function ProfileWizard({
         ageNum >= 18 &&
         ageNum <= 99 &&
         !!citySlug &&
-        !!categoryKey
+        !!categoryKey &&
+        languageCodes.length > 0 &&
+        description.trim().length >= 20
       );
     }
-    if (id === "presentation") {
-      return languageCodes.length > 0 && description.trim().length >= 20;
-    }
-    if (id === "appearance") return isOptionalIntInRange(heightCm, HEIGHT_MIN_CM, HEIGHT_MAX_CM);
+    if (id === "traits") return isOptionalIntInRange(heightCm, HEIGHT_MIN_CM, HEIGHT_MAX_CM);
+    if (id === "services") return RATE_FIELDS.every((field) => isOptionalIntInRange(rates[field], 0, RATE_MAX_CHF));
     if (id === "availability") return (availableFrom === "") === (availableTo === "");
-    if (id === "rates") return RATE_FIELDS.every((field) => isOptionalIntInRange(rates[field], 0, RATE_MAX_CHF));
     return true;
   }
 
@@ -221,6 +286,29 @@ export function ProfileWizard({
     setError(null);
     setSubmitting(true);
 
+    const details: ProfileDetailsInput = {
+      heightCm: toInt(heightCm),
+      bodyType,
+      hairColor,
+      eyeColor,
+      tattoos,
+      piercings,
+      origin: origin || null,
+      receives,
+      travels,
+      travelRadiusKm: travels ? toInt(travelRadiusKm) : null,
+      clientele,
+      rate30Min: toInt(rates.rate30Min),
+      rate1Hour: toInt(rates.rate1Hour),
+      rate2Hours: toInt(rates.rate2Hours),
+      rateNight: toInt(rates.rateNight),
+      paymentMethods,
+      salonSlug: salonSlug || null,
+      availableDays,
+      availableFrom: availableFrom || null,
+      availableTo: availableTo || null,
+    };
+
     const response = await fetch("/api/provider/profile", {
       method: "PUT",
       headers: { "Content-Type": "application/json", "x-csrf-token": csrfToken },
@@ -232,21 +320,7 @@ export function ProfileWizard({
         categoryKey,
         languageCodes,
         serviceKeys,
-        details: {
-          heightCm: toInt(heightCm),
-          bodyType,
-          hairColor,
-          eyeColor,
-          rate30Min: toInt(rates.rate30Min),
-          rate1Hour: toInt(rates.rate1Hour),
-          rate2Hours: toInt(rates.rate2Hours),
-          rateNight: toInt(rates.rateNight),
-          availableDays,
-          availableFrom: availableFrom || null,
-          availableTo: availableTo || null,
-          receives,
-          travels,
-        } satisfies ProfileDetailsInput,
+        details,
       }),
     });
 
@@ -261,7 +335,7 @@ export function ProfileWizard({
     return true;
   }
 
-  async function handleSaveAndContinue(nextIndex = LAST_CORE_INDEX + 1) {
+  async function handleSaveAndContinue(nextIndex: number) {
     if (languageCodes.length === 0) {
       setError(t("selectAtLeastOneLanguage"));
       return;
@@ -272,9 +346,8 @@ export function ProfileWizard({
     if (ok) setStepIndex(nextIndex);
   }
 
-  // Avant l'étape Tarifs : simple passage à la suite à la création (le
-  // profil n'est créé qu'en quittant Tarifs, quand tout est rempli) ;
-  // enregistrement immédiat en modification.
+  // À la création, le profil n'est enregistré qu'en quittant Disponibilité
+  // (tout le minimum est alors rempli) ; en modification, à chaque étape.
   function handleNext(fromIndex: number) {
     if (profileExists || fromIndex === LAST_CORE_INDEX) void handleSaveAndContinue(fromIndex + 1);
     else goToStep(fromIndex + 1);
@@ -307,14 +380,24 @@ export function ProfileWizard({
   const optionalHint = <p className="text-sm text-ink2-faint">{t("wizard.optionalHint")}</p>;
 
   const steps: { id: StepId; label: string }[] = [
-    { id: "identity", label: t("wizard.stepIdentity") },
     { id: "presentation", label: t("wizard.stepPresentation") },
-    { id: "appearance", label: t("wizard.stepAppearance") },
+    { id: "traits", label: t("wizard.stepTraits") },
+    { id: "services", label: t("wizard.stepServices") },
     { id: "availability", label: t("wizard.stepAvailability") },
-    { id: "rates", label: t("wizard.stepRates") },
     { id: "photos", label: t("wizard.stepPhotos") },
     { id: "contact", label: t("wizard.stepContact") },
   ];
+
+  const timeOptions = (
+    <>
+      <option value="">—</option>
+      {TIME_SLOTS.map((slot) => (
+        <option key={slot} value={slot}>
+          {slot}
+        </option>
+      ))}
+    </>
+  );
 
   return (
     <div className="flex w-full max-w-2xl flex-col gap-6">
@@ -349,7 +432,7 @@ export function ProfileWizard({
         ))}
       </div>
 
-      {step === "identity" && (
+      {step === "presentation" && (
         <Card className="flex flex-col gap-5 p-5">
           <FieldGroup>
             <Label htmlFor="displayName">{t("displayNameLabel")}</Label>
@@ -368,6 +451,7 @@ export function ProfileWizard({
             <TextInput
               id="age"
               type="number"
+              inputMode="numeric"
               required
               min={18}
               max={99}
@@ -405,35 +489,17 @@ export function ProfileWizard({
             </FieldGroup>
           </div>
 
-          {coreStepButtons(0)}
-        </Card>
-      )}
-
-      {step === "presentation" && (
-        <Card className="flex flex-col gap-5 p-5">
-          <fieldset className="flex flex-col gap-2">
-            <legend className="text-sm font-medium text-ink2-muted">{t("languagesLabel")}</legend>
-            <div className="flex flex-wrap gap-2">
-              {languages.map((language) => (
-                <label
-                  key={language.code}
-                  className={`cursor-pointer rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
-                    languageCodes.includes(language.code)
-                      ? "border-accent bg-accent text-accent-foreground"
-                      : "border-hairline2 text-ink2-muted hover:border-hairline2"
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    className="hidden"
-                    checked={languageCodes.includes(language.code)}
-                    onChange={() => setLanguageCodes((prev) => toggle(prev, language.code))}
-                  />
-                  {getLocalizedLabel(language.label, locale)}
-                </label>
-              ))}
-            </div>
-          </fieldset>
+          <ChipGroup legend={t("languagesLabel")}>
+            {languages.map((language) => (
+              <Chip
+                key={language.code}
+                on={languageCodes.includes(language.code)}
+                onClick={() => setLanguageCodes((prev) => toggle(prev, language.code))}
+              >
+                {getLocalizedLabel(language.label, locale)}
+              </Chip>
+            ))}
+          </ChipGroup>
 
           <FieldGroup>
             <Label htmlFor="description">{t("descriptionLabel")}</Label>
@@ -446,13 +512,14 @@ export function ProfileWizard({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
+            <p className="text-xs text-ink2-faint">{t("descriptionHint")}</p>
           </FieldGroup>
 
-          {coreStepButtons(1)}
+          {coreStepButtons(0)}
         </Card>
       )}
 
-      {step === "appearance" && (
+      {step === "traits" && (
         <Card className="flex flex-col gap-6 p-5">
           {optionalHint}
           <FieldGroup>
@@ -490,107 +557,93 @@ export function ProfileWizard({
             onChange={setEyeColor}
             labelFor={(o) => ta(`eyeColor.${o}`)}
           />
-          {coreStepButtons(2)}
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <YesNoChips legend={t("tattoosLabel")} value={tattoos} onChange={setTattoos} yes={t("yes")} no={t("no")} />
+            <YesNoChips
+              legend={t("piercingsLabel")}
+              value={piercings}
+              onChange={setPiercings}
+              yes={t("yes")}
+              no={t("no")}
+            />
+          </div>
+          <FieldGroup>
+            <Label htmlFor="origin">{t("originLabel")}</Label>
+            <Select id="origin" fit value={origin} onChange={(e) => setOrigin(e.target.value)}>
+              <option value="">{t("notSpecified")}</option>
+              {ORIGINS.map((o) => (
+                <option key={o} value={o}>
+                  {ta(`origin.${o}`)}
+                </option>
+              ))}
+            </Select>
+          </FieldGroup>
+          {coreStepButtons(1)}
         </Card>
       )}
 
-      {step === "availability" && (
+      {step === "services" && (
         <Card className="flex flex-col gap-6 p-5">
           {optionalHint}
-          <fieldset className="flex flex-col gap-2">
-            <legend className="mb-2 text-sm font-medium text-ink2-muted">{t("meetingLabel")}</legend>
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                aria-pressed={receives}
-                onClick={() => setReceives((v) => !v)}
-                className={`${CHIP} ${receives ? CHIP_ON : CHIP_OFF}`}
-              >
-                {t("receivesLabel")}
-              </button>
-              <button
-                type="button"
-                aria-pressed={travels}
-                onClick={() => setTravels((v) => !v)}
-                className={`${CHIP} ${travels ? CHIP_ON : CHIP_OFF}`}
-              >
-                {t("travelsLabel")}
-              </button>
-            </div>
-          </fieldset>
 
-          <fieldset className="flex flex-col gap-2">
-            <legend className="mb-2 text-sm font-medium text-ink2-muted">{t("daysLabel")}</legend>
-            <div className="flex flex-wrap gap-2">
-              {WEEK_DAYS.map((day) => (
-                <button
-                  key={day}
-                  type="button"
-                  aria-pressed={availableDays.includes(day)}
-                  onClick={() => setAvailableDays((prev) => toggle(prev, day))}
-                  className={`${CHIP} ${availableDays.includes(day) ? CHIP_ON : CHIP_OFF}`}
-                >
-                  {ta(`days.${day}`)}
-                </button>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset className="flex flex-col gap-2">
-            <legend className="mb-2 text-sm font-medium text-ink2-muted">{t("hoursLabel")}</legend>
-            <div className="grid max-w-sm grid-cols-2 gap-3">
-              <FieldGroup>
-                <Label htmlFor="availableFrom">{t("hoursFrom")}</Label>
-                <Select id="availableFrom" value={availableFrom} onChange={(e) => setAvailableFrom(e.target.value)}>
-                  <option value="">—</option>
-                  {TIME_SLOTS.map((slot) => (
-                    <option key={slot} value={slot}>
-                      {slot}
-                    </option>
-                  ))}
-                </Select>
-              </FieldGroup>
-              <FieldGroup>
-                <Label htmlFor="availableTo">{t("hoursTo")}</Label>
-                <Select id="availableTo" value={availableTo} onChange={(e) => setAvailableTo(e.target.value)}>
-                  <option value="">—</option>
-                  {TIME_SLOTS.map((slot) => (
-                    <option key={slot} value={slot}>
-                      {slot}
-                    </option>
-                  ))}
-                </Select>
-              </FieldGroup>
-            </div>
-            <p className="text-xs text-ink2-faint">{t("hoursHint")}</p>
-            {!isStepValid("availability") && <p className="text-sm text-warning">{t("hoursIncomplete")}</p>}
-          </fieldset>
-
-          {services.length > 0 && (
-            <fieldset className="flex flex-col gap-2">
-              <legend className="mb-2 text-sm font-medium text-ink2-muted">{t("servicesLabel")}</legend>
-              <div className="flex flex-wrap gap-2">
-                {services.map((service) => (
-                  <button
-                    key={service.key}
-                    type="button"
-                    aria-pressed={serviceKeys.includes(service.key)}
-                    onClick={() => setServiceKeys((prev) => toggle(prev, service.key))}
-                    className={`${CHIP} ${serviceKeys.includes(service.key) ? CHIP_ON : CHIP_OFF}`}
-                  >
-                    {getLocalizedLabel(service.label, locale)}
-                  </button>
+          <SectionTitle>{t("logisticsTitle")}</SectionTitle>
+          <ChipGroup legend={t("meetingLabel")}>
+            <Chip on={receives} onClick={() => setReceives((v) => !v)}>
+              {t("receivesLabel")}
+            </Chip>
+            <Chip on={travels} onClick={() => setTravels((v) => !v)}>
+              {t("travelsLabel")}
+            </Chip>
+          </ChipGroup>
+          {travels && (
+            <FieldGroup>
+              <Label htmlFor="travelRadiusKm">{t("travelRadiusLabel")}</Label>
+              <Select id="travelRadiusKm" fit value={travelRadiusKm} onChange={(e) => setTravelRadiusKm(e.target.value)}>
+                <option value="">{t("notSpecified")}</option>
+                {TRAVEL_RADII_KM.map((km) => (
+                  <option key={km} value={km}>
+                    {t("travelRadiusOption", { km })}
+                  </option>
                 ))}
-              </div>
-            </fieldset>
+              </Select>
+              <p className="text-xs text-ink2-faint">{t("travelRadiusHint")}</p>
+            </FieldGroup>
+          )}
+          <ChipGroup legend={t("clienteleLabel")}>
+            {CLIENTELE.map((c) => (
+              <Chip key={c} on={clientele.includes(c)} onClick={() => setClientele((prev) => toggle(prev, c))}>
+                {ta(`clientele.${c}`)}
+              </Chip>
+            ))}
+          </ChipGroup>
+          {services.length > 0 && (
+            <ChipGroup legend={t("servicesLabel")}>
+              {services.map((service) => (
+                <Chip
+                  key={service.key}
+                  on={serviceKeys.includes(service.key)}
+                  onClick={() => setServiceKeys((prev) => toggle(prev, service.key))}
+                >
+                  {getLocalizedLabel(service.label, locale)}
+                </Chip>
+              ))}
+            </ChipGroup>
+          )}
+          {salons.length > 0 && (
+            <FieldGroup>
+              <Label htmlFor="salonSlug">{t("salonLabel")}</Label>
+              <Select id="salonSlug" fit value={salonSlug} onChange={(e) => setSalonSlug(e.target.value)}>
+                <option value="">{t("salonNone")}</option>
+                {salons.map((salon) => (
+                  <option key={salon.slug} value={salon.slug}>
+                    {salon.name} — {salon.city}
+                  </option>
+                ))}
+              </Select>
+            </FieldGroup>
           )}
 
-          {coreStepButtons(3)}
-        </Card>
-      )}
-
-      {step === "rates" && (
-        <Card className="flex flex-col gap-5 p-5">
+          <SectionTitle>{t("ratesTitle")}</SectionTitle>
           <p className="text-sm text-ink2-muted">{t("ratesHint")}</p>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {RATE_FIELDS.map((field) => (
@@ -611,6 +664,53 @@ export function ProfileWizard({
               </FieldGroup>
             ))}
           </div>
+          <ChipGroup legend={t("paymentLabel")} hint={t("paymentHint")}>
+            {PAYMENT_METHODS.map((m) => (
+              <Chip key={m} on={paymentMethods.includes(m)} onClick={() => setPaymentMethods((prev) => toggle(prev, m))}>
+                {ta(`payment.${m}`)}
+              </Chip>
+            ))}
+          </ChipGroup>
+
+          {coreStepButtons(2)}
+        </Card>
+      )}
+
+      {step === "availability" && (
+        <Card className="flex flex-col gap-6 p-5">
+          {optionalHint}
+          <ChipGroup legend={t("daysLabel")}>
+            {WEEK_DAYS.map((day) => (
+              <Chip
+                key={day}
+                on={availableDays.includes(day)}
+                onClick={() => setAvailableDays((prev) => toggle(prev, day))}
+              >
+                {ta(`days.${day}`)}
+              </Chip>
+            ))}
+          </ChipGroup>
+
+          <fieldset className="flex flex-col gap-2">
+            <legend className="mb-2 text-sm font-medium text-ink2-muted">{t("hoursLabel")}</legend>
+            <div className="grid max-w-sm grid-cols-2 gap-3">
+              <FieldGroup>
+                <Label htmlFor="availableFrom">{t("hoursFrom")}</Label>
+                <Select id="availableFrom" value={availableFrom} onChange={(e) => setAvailableFrom(e.target.value)}>
+                  {timeOptions}
+                </Select>
+              </FieldGroup>
+              <FieldGroup>
+                <Label htmlFor="availableTo">{t("hoursTo")}</Label>
+                <Select id="availableTo" value={availableTo} onChange={(e) => setAvailableTo(e.target.value)}>
+                  {timeOptions}
+                </Select>
+              </FieldGroup>
+            </div>
+            <p className="text-xs text-ink2-faint">{t("hoursHint")}</p>
+            {!isStepValid("availability") && <p className="text-sm text-warning">{t("hoursIncomplete")}</p>}
+          </fieldset>
+
           {coreStepButtons(LAST_CORE_INDEX)}
         </Card>
       )}

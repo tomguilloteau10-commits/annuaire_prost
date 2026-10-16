@@ -45,7 +45,22 @@
       "city": "City",
       "category": "Category",
       "language": "Language",
-      "onlineOnly": "Online only"
+      "onlineOnly": "Online only",
+      "reset": "Clear filters",
+      "more": "More filters",
+      "bodyType": "Figure",
+      "meeting": "Outcall / Incall",
+      "meetingOptions": {
+        "receives": "Incall",
+        "travels": "Outcall"
+      },
+      "price": "Rate (1 hour)",
+      "priceOptions": {
+        "LOW": "Under CHF 250",
+        "MID": "CHF 250 to 350",
+        "HIGH": "Over CHF 350"
+      },
+      "clientele": "Clientele"
     },
     "storiesTitle": "Stories",
     "seeAll": "See all"
@@ -86,7 +101,6 @@
     "backToDirectory": "Back to directory",
     "galleryPhoto": "Photo {index} of {total}",
     "aboutTitle": "About",
-    "detailsTitle": "Details",
     "contactTitle": "Contact",
     "contactIntro": "Contact the advertiser directly — no account, no middleman, no tracking.",
     "showContact": "Show contact",
@@ -111,8 +125,19 @@
       "heightValue": "{cm} cm",
       "bodyType": "Figure",
       "hair": "Hair",
-      "eyes": "Eyes"
-    }
+      "eyes": "Eyes",
+      "tattoos": "Tattoos",
+      "piercings": "Piercings",
+      "origin": "Origin"
+    },
+    "yes": "Yes",
+    "no": "No",
+    "travelsWithin": "Travels up to {km} km around {city}",
+    "paymentLabel": "Payment",
+    "servicesTitle": "Services",
+    "meetingLabel": "Where",
+    "clienteleLabel": "Clientele",
+    "salonLabel": "Salon"
   },
   "auth": {
     "loginTitle": "Log in",
@@ -206,8 +231,7 @@
   "profileEdit": {
     "title": "Edit my profile",
     "wizard": {
-      "stepIdentity": "Identity",
-      "stepPresentation": "Presentation",
+      "stepPresentation": "About you",
       "stepAvailability": "Availability",
       "stepPhotos": "Photos",
       "stepContact": "Contact",
@@ -215,9 +239,9 @@
       "back": "Back",
       "saveAndContinue": "Save and continue",
       "progress": "Step {current} of {total}",
-      "stepAppearance": "Appearance",
-      "stepRates": "Rates",
-      "optionalHint": "Optional: fill in what you like, or skip this step."
+      "optionalHint": "Optional: fill in what you like, or skip this step.",
+      "stepTraits": "Characteristics",
+      "stepServices": "Services & rates"
     },
     "displayNameLabel": "Display name",
     "ageLabel": "Age",
@@ -276,7 +300,24 @@
       "rate1Hour": "1 hour",
       "rate2Hours": "2 hours",
       "rateNight": "Night"
-    }
+    },
+    "descriptionHint": "A few sentences about you and how you meet clients (at least 20 characters).",
+    "tattoosLabel": "Tattoos",
+    "piercingsLabel": "Piercings",
+    "yes": "Yes",
+    "no": "No",
+    "originLabel": "Origin",
+    "notSpecified": "Not specified",
+    "logisticsTitle": "Where and for whom",
+    "travelRadiusLabel": "How far do you travel?",
+    "travelRadiusOption": "{km} km around my city",
+    "travelRadiusHint": "Around the city chosen in the first step.",
+    "clienteleLabel": "Clientele accepted",
+    "salonLabel": "Salon where you work",
+    "salonNone": "No salon",
+    "ratesTitle": "Indicative rates",
+    "paymentLabel": "Payment methods accepted",
+    "paymentHint": "Information for your clients: payment happens directly between you, never on this site."
   },
   "moderation": {
     "title": "Photos to review",
@@ -340,7 +381,8 @@
       "studio": "Private studio",
       "club": "Club",
       "wellness": "Wellness institute"
-    }
+    },
+    "profilesHere": "Advertisers:"
   },
   "stories": {
     "title": "Stories",
@@ -405,6 +447,29 @@
       "SAT": "Sat",
       "SUN": "Sun",
       "all": "Every day"
+    },
+    "origin": {
+      "SWITZERLAND": "Switzerland",
+      "WESTERN_EUROPE": "Western Europe",
+      "SOUTHERN_EUROPE": "Southern Europe",
+      "EASTERN_EUROPE": "Eastern Europe",
+      "NORTHERN_EUROPE": "Northern Europe",
+      "LATIN_AMERICA": "Latin America",
+      "NORTH_AMERICA": "North America",
+      "AFRICA": "Africa",
+      "MIDDLE_EAST": "Middle East",
+      "ASIA": "Asia",
+      "OCEANIA": "Oceania"
+    },
+    "clientele": {
+      "MEN": "Men",
+      "WOMEN": "Women",
+      "COUPLES": "Couples"
+    },
+    "payment": {
+      "CASH": "Cash",
+      "TWINT": "TWINT",
+      "CARD": "Card"
     }
   },
   "adminHome": {

@@ -10,15 +10,20 @@ import { UnknownTaxonomyReferenceError } from "@/modules/profiles/types";
 import { checkCsrf } from "@/lib/route-helpers";
 import {
   BODY_TYPES,
+  CLIENTELE,
   EYE_COLORS,
   HAIR_COLORS,
   HEIGHT_MAX_CM,
   HEIGHT_MIN_CM,
+  ORIGINS,
+  PAYMENT_METHODS,
   RATE_MAX_CHF,
   TIME_SLOTS,
+  TRAVEL_RADII_KM,
   WEEK_DAYS,
   sortWeekDays,
 } from "@/modules/profiles/attributes";
+import { DEMO_SALONS } from "@/modules/showcase/demo-salons";
 
 async function requireProvider() {
   const user = await getCurrentUser();
@@ -61,7 +66,26 @@ const detailsSchema = z
     availableTo: timeSlot,
     receives: z.boolean(),
     travels: z.boolean(),
+    travelRadiusKm: z
+      .number()
+      .int()
+      .refine((km) => (TRAVEL_RADII_KM as readonly number[]).includes(km))
+      .nullable(),
+    tattoos: z.boolean().nullable(),
+    piercings: z.boolean().nullable(),
+    origin: z.enum(ORIGINS).nullable(),
+    clientele: z.array(z.enum(CLIENTELE)).max(CLIENTELE.length).transform((v) => [...new Set(v)]),
+    paymentMethods: z
+      .array(z.enum(PAYMENT_METHODS))
+      .max(PAYMENT_METHODS.length)
+      .transform((v) => [...new Set(v)]),
+    salonSlug: z
+      .string()
+      .refine((slug) => DEMO_SALONS.some((salon) => salon.slug === slug))
+      .nullable(),
   })
+  // Le rayon de déplacement n'a de sens que si la prestataire se déplace.
+  .transform((d) => (d.travels ? d : { ...d, travelRadiusKm: null }))
   // Une plage horaire se donne entière (début ET fin) ou pas du tout.
   .refine((d) => (d.availableFrom === null) === (d.availableTo === null), {
     path: ["availableTo"],

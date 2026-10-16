@@ -1,28 +1,24 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { listPublishedProfiles } from "@/modules/profiles/profile.service";
+import { getPublishedProfileFacets, listPublishedProfiles } from "@/modules/profiles/profile.service";
+import { parseDirectoryFilters, toProfileFilters, type DirectorySearchParams } from "@/lib/directory-filters";
 import { withThumbnails } from "@/modules/profiles/profile-thumbnails";
 import { listCategories, listCities, listLanguages } from "@/modules/taxonomies/taxonomy.service";
 import { getLocalizedLabel } from "@/modules/taxonomies/types";
 import { FilterBar } from "@/components/public/FilterBar";
 import { ProfileCard } from "@/components/public/ProfileCard";
 
-interface CategorySearchParams {
-  city?: string;
-  language?: string;
-  online?: string;
-}
-
 export default async function CategoryPage({
   params,
   searchParams,
 }: {
   params: Promise<{ locale: string; key: string }>;
-  searchParams: Promise<CategorySearchParams>;
+  searchParams: Promise<DirectorySearchParams>;
 }) {
   const { locale, key } = await params;
   setRequestLocale(locale);
-  const filters = await searchParams;
+  // La catégorie vient de l'URL de la page, jamais d'un paramètre de filtre.
+  const filters = { ...parseDirectoryFilters(await searchParams), category: undefined };
   const t = await getTranslations("categoryPage");
   const home = await getTranslations("home");
 
@@ -30,15 +26,11 @@ export default async function CategoryPage({
   const category = (await listCategories()).find((c) => c.key === key);
   if (!category) notFound();
 
-  const [profiles, languages, cities] = await Promise.all([
-    listPublishedProfiles({
-      categoryKey: key,
-      citySlug: filters.city,
-      languageCode: filters.language,
-      onlineOnly: filters.online === "true",
-    }),
+  const [profiles, languages, cities, facets] = await Promise.all([
+    listPublishedProfiles({ ...toProfileFilters(filters), categoryKey: key }),
     listLanguages(),
     listCities(),
+    getPublishedProfileFacets(),
   ]);
   const cards = await withThumbnails(profiles);
 
@@ -57,11 +49,8 @@ export default async function CategoryPage({
         languages={languages}
         cities={cities}
         hideCategory
-        currentFilters={{
-          city: filters.city,
-          language: filters.language,
-          online: filters.online === "true",
-        }}
+        facets={facets}
+        currentFilters={filters}
       />
 
       {cards.length === 0 ? (

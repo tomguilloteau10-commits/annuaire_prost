@@ -1,11 +1,16 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { DEMO_SALONS } from "@/modules/showcase/demo-salons";
 import { SalonCard } from "@/components/public/SalonCard";
+import { listPublishedProfilesBySalon } from "@/modules/profiles/profile.service";
+
+// Lit les profils rattachés : rendu à chaque requête, jamais figé au build.
+export const dynamic = "force-dynamic";
 
 export default async function SalonsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("salons");
+  const profilesBySalon = await listPublishedProfilesBySalon();
 
   return (
     <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-8 px-4 py-12 sm:py-16">
@@ -16,7 +21,7 @@ export default async function SalonsPage({ params }: { params: Promise<{ locale:
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {DEMO_SALONS.map((salon) => (
-          <SalonCard key={salon.slug} salon={salon} />
+          <SalonCard key={salon.slug} salon={salon} profiles={profilesBySalon[salon.slug] ?? []} />
         ))}
       </div>
 

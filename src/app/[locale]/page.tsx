@@ -1,22 +1,21 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { listPublishedProfiles, listPublishedProfileCityCounts } from "@/modules/profiles/profile.service";
+import {
+  getPublishedProfileFacets,
+  listPublishedProfiles,
+  listPublishedProfileCityCounts,
+} from "@/modules/profiles/profile.service";
 import { withThumbnails } from "@/modules/profiles/profile-thumbnails";
 import { listCategories, listCities, listLanguages } from "@/modules/taxonomies/taxonomy.service";
 import { groupCitiesByCanton } from "@/lib/group-cities";
 import { Link } from "@/i18n/navigation";
 import { FilterBar } from "@/components/public/FilterBar";
+import { parseDirectoryFilters, toProfileFilters, type DirectorySearchParams } from "@/lib/directory-filters";
 import { ProfileCard } from "@/components/public/ProfileCard";
 import { ProfileMapLoader } from "@/components/public/ProfileMapLoader";
 import { WhyUsSection } from "@/components/public/WhyUsSection";
 import { HorizontalScroller } from "@/components/public/HorizontalScroller";
 import { StoryThumb } from "@/components/public/StoryThumb";
 
-interface HomeSearchParams {
-  city?: string;
-  category?: string;
-  language?: string;
-  online?: string;
-}
 
 const FEATURED_COUNT = 6;
 const STORIES_COUNT = 8;
@@ -26,21 +25,17 @@ export default async function HomePage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<HomeSearchParams>;
+  searchParams: Promise<DirectorySearchParams>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const filters = await searchParams;
+  const searchQuery = await searchParams;
+  const filters = parseDirectoryFilters(searchQuery);
   const t = await getTranslations("home");
   const common = await getTranslations("common");
 
-  const [profiles, featuredSource, categories, languages, cities, cityCounts] = await Promise.all([
-    listPublishedProfiles({
-      citySlug: filters.city,
-      categoryKey: filters.category,
-      languageCode: filters.language,
-      onlineOnly: filters.online === "true",
-    }),
+  const [profiles, featuredSource, categories, languages, cities, cityCounts, facets] = await Promise.all([
+    listPublishedProfiles(toProfileFilters(filters)),
     // Vedette et Stories : toujours issues de l'ensemble complet,
     // indépendamment des filtres actifs sur la liste principale ci-dessous.
     listPublishedProfiles({}),
@@ -48,6 +43,7 @@ export default async function HomePage({
     listLanguages(),
     listCities(),
     listPublishedProfileCityCounts(),
+    getPublishedProfileFacets(),
   ]);
 
   const totalProfiles = cityCounts.reduce((sum, c) => sum + c.count, 0);
@@ -163,12 +159,8 @@ export default async function HomePage({
           categories={categories}
           languages={languages}
           cities={cities}
-          currentFilters={{
-            city: filters.city,
-            category: filters.category,
-            language: filters.language,
-            online: filters.online === "true",
-          }}
+          facets={facets}
+          currentFilters={filters}
         />
 
         <div className="flex flex-col gap-2">

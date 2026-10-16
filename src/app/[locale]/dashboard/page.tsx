@@ -142,7 +142,7 @@ export default async function ProviderDashboardPage({
           ) : (
             <>
               <p className="text-ink2-muted">{t("preview.noProfile")}</p>
-              <Link href={`${PROFILE_EDIT_PATH}?step=identity`} className={`${PRIMARY_BUTTON} sm:w-full`}>
+              <Link href={`${PROFILE_EDIT_PATH}?step=presentation`} className={`${PRIMARY_BUTTON} sm:w-full`}>
                 {t("preview.create")}
               </Link>
             </>

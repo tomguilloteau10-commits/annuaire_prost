@@ -6,6 +6,7 @@ import { getProviderEntitlements, getPlanFeatures } from "@/modules/entitlements
 import { prisma } from "@/lib/prisma";
 import { Link } from "@/i18n/navigation";
 import { ProfileWizard } from "@/components/provider/ProfileWizard";
+import { DEMO_SALONS } from "@/modules/showcase/demo-salons";
 import { DASHBOARD_PATH } from "@/lib/spaces";
 
 export default async function ProfileEditPage({
@@ -58,6 +59,13 @@ export default async function ProfileEditPage({
           availableTo: profile.availableTo,
           receives: profile.receives,
           travels: profile.travels,
+          travelRadiusKm: profile.travelRadiusKm,
+          tattoos: profile.tattoos,
+          piercings: profile.piercings,
+          origin: profile.origin,
+          clientele: profile.clientele,
+          paymentMethods: profile.paymentMethods,
+          salonSlug: profile.salonSlug,
         },
       }
     : null;
@@ -77,6 +85,7 @@ export default async function ProfileEditPage({
         services={services}
         languages={languages}
         cities={cities}
+        salons={DEMO_SALONS.map(({ slug, name, city }) => ({ slug, name, city }))}
         initialValues={initialValues}
         initialContact={{
           phone: contact?.phone ?? "",

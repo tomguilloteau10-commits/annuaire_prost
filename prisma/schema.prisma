@@ -189,6 +189,17 @@ model ProviderProfile {
   availableTo   String? // "HH:MM", peut être après minuit
   receives      Boolean       @default(false) // reçoit (incall)
   travels       Boolean       @default(false) // se déplace (outcall)
+  travelRadiusKm Int? // rayon de déplacement autour de la ville du profil
+  tattoos        Boolean? // null = non précisé
+  piercings      Boolean?
+  origin         String? // région d'origine déclarée (liste ORIGINS), jamais un document
+  clientele      String[]      @default([]) // "MEN" | "WOMEN" | "COUPLES"
+  // Moyens de paiement acceptés directement par la prestataire : simple
+  // information, aucun paiement ne transite par la plateforme (§4).
+  paymentMethods String[]      @default([]) // "CASH" | "TWINT" | "CARD"
+  // Salon de rattachement : slug d'un salon de modules/showcase/demo-salons
+  // (pas encore de modèle Salon en base).
+  salonSlug      String?
 
   status       ProfileStatus @default(DRAFT)
   planId       String
