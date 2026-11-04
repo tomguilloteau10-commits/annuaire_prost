@@ -86,7 +86,7 @@ export default async function ProfileEditPage({
         services={services}
         languages={languages}
         cities={cities}
-        salons={DEMO_SALONS.map(({ slug, name, city }) => ({ slug, name, city }))}
+        salons={DEMO_SALONS.map(({ slug, name, city, canton }) => ({ slug, name, city, canton }))}
         initialValues={initialValues}
         initialContact={{
           phone: contact?.phone ?? "",

@@ -136,8 +136,13 @@ d'attention :
   jamais commités, jamais réutilisés entre environnements.
 - `APP_IP_HASH_SECRET` sale le hash des adresses IP stockées (jamais d'IP
   en clair — voir ENGINEERING_RULES.md §5).
-- `VERIFICATION_PROVIDER=mock` est la seule valeur supportée en bêta (voir
-  `src/modules/verification/`).
+- `DOCUMENT_ENCRYPTION_KEY` (optionnel, 32 caractères min.) : clé de
+  chiffrement des pièces d'identité déposées, le temps de la vérification
+  par l'admin. À défaut, une clé est dérivée de `SESSION_SECRET` (voir
+  ENGINEERING_RULES.md §1).
+- `VERIFICATION_PROVIDER=mock` : abstraction gardée pour un futur
+  prestataire externe ; elle n'est **pas branchée** — en bêta, la majorité
+  est validée uniquement à la main par l'admin.
 - `GEO_COUNTRY_HEADER` (optionnel, défaut `x-geo-country`) : nom de l'en-tête
   HTTP que le middleware lit pour la géo-restriction. En self-hosting, ce
   header doit être posé par un reverse proxy équipé d'une base GeoIP (voir
@@ -216,7 +221,8 @@ champs sensibles (téléphone, email, adresse, date de naissance, documents).
   (dérivée des statuts, décisions avec raison obligatoire), entitlements
   (lecture typée des plans). Voir `docs/ARCHITECTURE.md`.
 - **Parcours** (fait) : inscription/connexion prestataire, attestation
-  d'onboarding, vérification 18+ (mock), édition de profil (taxonomies,
+  d'onboarding avec dépôt de la pièce d'identité, vérification 18+ manuelle
+  par l'admin (documents chiffrés, supprimés à la décision), édition de profil (taxonomies,
   photos avec modération), soumission à la modération, tableau de bord ;
   côté visiteur : accueil avec filtres, page profil publique, révélation
   de contact à la demande ; côté admin : file de modération (profils +

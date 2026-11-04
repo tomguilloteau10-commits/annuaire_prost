@@ -24,6 +24,8 @@ export type ChecklistKey = "ageVerification" | "photo" | "cityCategory" | "whats
 export interface ChecklistItem {
   key: ChecklistKey;
   done: boolean;
+  /** Fait de son côté, en attente de l'admin (pièces d'identité déposées). */
+  pending?: boolean;
   /** Où compléter l'étape (chemin interne, sans locale). */
   href: string;
 }
@@ -32,7 +34,7 @@ export type StatusTone = "online" | "pending" | "action";
 export type StatusReason =
   | "published"
   | "pendingReview"
-  | "verificationPending"
+  | "identityRejected"
   | "suspended"
   | "rejected"
   | "readyToSubmit"
@@ -46,6 +48,8 @@ export interface ProviderDashboardState {
   /** Prochaine étape à faire (première case non cochée), si elle existe. */
   nextHref: string | null;
   canSubmit: boolean;
+  /** Âge (18+) validé par l'admin : badge "Profil vérifié", passage "En ligne" possible. */
+  identityVerified: boolean;
 }
 
 const EDIT_PATH = PROFILE_EDIT_PATH;
@@ -53,6 +57,11 @@ const EDIT_PATH = PROFILE_EDIT_PATH;
 export function computeProviderDashboardState(input: ProviderDashboardInput): ProviderDashboardState {
   const hasProfile = input.profileStatus !== null;
   const verified = input.attestationCompleted && input.verificationStatus === "VERIFIED";
+  // Pièces déposées, décision de l'admin attendue : rien à faire côté prestataire.
+  const identityUnderReview =
+    input.attestationCompleted && (input.verificationStatus === "PENDING" || input.verificationStatus === "IN_PROGRESS");
+  const identityRejected =
+    input.attestationCompleted && (input.verificationStatus === "FAILED" || input.verificationStatus === "EXPIRED");
   // Photos et contact ne peuvent être ajoutés qu'une fois le profil créé :
   // sans profil, ces cases mènent à la première étape du formulaire.
   const stepHref = (step: string) => `${EDIT_PATH}?step=${hasProfile ? step : "presentation"}`;
@@ -61,6 +70,7 @@ export function computeProviderDashboardState(input: ProviderDashboardInput): Pr
     {
       key: "ageVerification",
       done: verified,
+      pending: identityUnderReview,
       href: input.attestationCompleted ? VERIFICATION_PATH : ONBOARDING_PATH,
     },
     { key: "photo", done: input.photoCount > 0, href: stepHref("photos") },
@@ -68,18 +78,21 @@ export function computeProviderDashboardState(input: ProviderDashboardInput): Pr
     { key: "whatsapp", done: input.hasWhatsapp, href: stepHref("contact") },
   ];
 
-  const missing = checklist.filter((item) => !item.done);
+  // Ce qui reste à faire PAR LA PRESTATAIRE (une vérification en cours chez
+  // l'admin n'en fait pas partie : elle peut déjà envoyer son profil).
+  const missing = checklist.filter((item) => !item.done && !item.pending);
   const remainingCount = missing.length;
   const nextHref = missing[0]?.href ?? null;
   const canSubmit =
     remainingCount === 0 && (input.profileStatus === "DRAFT" || input.profileStatus === "REJECTED");
 
-  const base = { checklist, remainingCount, nextHref, canSubmit };
+  const base = { checklist, remainingCount, nextHref, canSubmit, identityVerified: verified };
 
   switch (input.profileStatus) {
     case "PUBLISHED":
       return { ...base, tone: "online", reason: "published" };
     case "PENDING_REVIEW":
+      if (identityRejected) return { ...base, tone: "action", reason: "identityRejected" };
       return { ...base, tone: "pending", reason: "pendingReview" };
     case "SUSPENDED":
       return { ...base, tone: "action", reason: "suspended" };
@@ -88,11 +101,7 @@ export function computeProviderDashboardState(input: ProviderDashboardInput): Pr
   }
 
   // Brouillon ou pas encore de profil.
-  const onlyVerificationRunning =
-    missing.length === 1 &&
-    missing[0]!.key === "ageVerification" &&
-    (input.verificationStatus === "PENDING" || input.verificationStatus === "IN_PROGRESS");
-  if (onlyVerificationRunning) return { ...base, tone: "pending", reason: "verificationPending" };
+  if (identityRejected) return { ...base, tone: "action", reason: "identityRejected" };
   if (canSubmit) return { ...base, tone: "action", reason: "readyToSubmit" };
   return { ...base, tone: "action", reason: "incomplete" };
 }

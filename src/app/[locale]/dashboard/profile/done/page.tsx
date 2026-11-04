@@ -29,7 +29,7 @@ export default async function ProfileDonePage({ params }: { params: Promise<{ lo
     hasWhatsapp: extras.hasWhatsapp,
   });
 
-  const missing = state.checklist.filter((item) => !item.done);
+  const missing = state.checklist.filter((item) => !item.done && !item.pending);
   const variant =
     profile?.status === "PENDING_REVIEW"
       ? "sent"

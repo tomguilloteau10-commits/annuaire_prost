@@ -26,6 +26,11 @@ const nextConfig = {
   },
   experimental: {
     serverComponentsExternalPackages: ["@node-rs/argon2"],
+    // Pas de cache côté navigateur pour les pages dynamiques : après une
+    // décision de l'admin (photo validée, identité vérifiée), la page
+    // suivante montre toujours l'état réel, jamais une copie périmée
+    // (bug des photos restées "en attente").
+    staleTimes: { dynamic: 0 },
   },
 };
 

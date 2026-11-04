@@ -9,7 +9,7 @@ import { ProfileCard } from "@/components/public/ProfileCard";
 import { SubmitProfileButton } from "@/components/provider/SubmitProfileButton";
 import { AvailabilityToggle } from "@/components/provider/AvailabilityToggle";
 import { Card } from "@/components/ui/Card";
-import { PROFILE_EDIT_PATH } from "@/lib/spaces";
+import { PROFILE_EDIT_PATH, VERIFICATION_PATH } from "@/lib/spaces";
 
 const TONE_CLASSES: Record<StatusTone, { box: string; dot: string; title: string }> = {
   online: { box: "border-success/40 bg-success-soft", dot: "bg-success", title: "text-success" },
@@ -68,18 +68,30 @@ export default async function ProviderDashboardPage({
 
   const statusTitle =
     state.tone === "online" ? t("status.onlineTitle") : state.tone === "pending" ? t("status.pendingTitle") : t("status.actionTitle");
+  const identityPending = state.checklist.some((item) => item.key === "ageVerification" && item.pending);
   const statusBody =
     state.reason === "incomplete"
       ? t("status.incomplete", { count: state.remainingCount })
       : state.reason === "rejected" && extras.rejectionReason
         ? t("status.rejectedWithReason", { reason: extras.rejectionReason })
-        : t(`status.${state.reason}`);
+        : state.reason === "pendingReview" && identityPending
+          ? t("status.pendingIdentity")
+          : state.reason === "readyToSubmit" && identityPending
+            ? t("status.readyToSubmitIdentityPending")
+            : t(`status.${state.reason}`);
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-6 px-4 py-10 sm:py-14">
       <div className="flex flex-col gap-1">
         <h1 className="font-serif text-3xl font-medium text-ink2">{t("title")}</h1>
-        {profile && <p className="text-ink2-muted">{t("greeting", { name: profile.displayName })}</p>}
+        <div className="flex flex-wrap items-center gap-2">
+          {profile && <p className="text-ink2-muted">{t("greeting", { name: profile.displayName })}</p>}
+          {state.identityVerified && (
+            <span className="rounded-full border border-success/40 bg-success-soft px-3 py-1 text-sm font-medium text-success">
+              ✓ {t("verifiedBadge")}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* 1. Statut : une seule information dominante + quoi faire. */}
@@ -91,6 +103,11 @@ export default async function ProviderDashboardPage({
             <p className="text-base text-ink2">{statusBody}</p>
           </div>
         </div>
+        {state.reason === "identityRejected" && (
+          <Link href={VERIFICATION_PATH} className={PRIMARY_BUTTON}>
+            {t("status.resendDocuments")}
+          </Link>
+        )}
         {state.reason === "incomplete" && state.nextHref && (
           <Link href={state.nextHref} className={PRIMARY_BUTTON}>
             {t("status.continue")}
@@ -172,6 +189,20 @@ export default async function ProviderDashboardPage({
                     <CheckIcon done />
                     <span className="text-ink2">{t(`checklist.items.${item.key}`)}</span>
                   </div>
+                ) : item.pending ? (
+                  <Link
+                    href={item.href}
+                    className="flex items-center gap-3 rounded-xl border border-warning/40 bg-warning-soft px-3 py-3"
+                  >
+                    <span
+                      aria-hidden
+                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-warning text-xs text-warning"
+                    >
+                      …
+                    </span>
+                    <span className="flex-1 text-ink2">{t(`checklist.items.${item.key}`)}</span>
+                    <span className="shrink-0 text-sm font-medium text-warning">{t("checklist.inReview")}</span>
+                  </Link>
                 ) : (
                   <Link
                     href={item.href}
@@ -190,7 +221,10 @@ export default async function ProviderDashboardPage({
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* 4. Disponibilité, réglée par la prestataire elle-même. */}
-        <AvailabilityToggle initialAvailable={profile?.onlineStatus === "ONLINE"} disabled={!profile} />
+        <AvailabilityToggle
+          initialAvailable={profile?.onlineStatus === "ONLINE"}
+          disabledReason={!profile ? "needsProfile" : !state.identityVerified ? "needsVerification" : undefined}
+        />
 
         {/* 5. Abonnement : offre de lancement, aucun paiement. */}
         <Card className="flex flex-col gap-1.5 p-5">

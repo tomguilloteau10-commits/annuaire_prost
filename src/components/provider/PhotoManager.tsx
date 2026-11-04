@@ -59,6 +59,20 @@ export function PhotoManager({ initialPhotos, maxPhotos, maxBytes, onPhotosChang
   const uploading = progress !== null;
   const canAdd = photos.length < maxPhotos;
 
+  // Quand la page est rechargée depuis le serveur (après une décision de
+  // l'admin), on reprend le statut à jour de chaque photo : sans cela, une
+  // photo validée restait affichée "en attente" jusqu'au rechargement complet.
+  const serverSignature = initialPhotos.map((p) => `${p.id}:${p.status}`).join("|");
+  useEffect(() => {
+    setPhotos((previous) =>
+      previous.map((photo) => {
+        const fresh = initialPhotos.find((p) => p.id === photo.id);
+        return fresh ? { ...photo, status: fresh.status, rejectionReason: fresh.rejectionReason } : photo;
+      }),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [serverSignature]);
+
   const usableCount = photos.filter((p) => p.status !== "REJECTED").length;
   useEffect(() => {
     onPhotosChange?.(usableCount);

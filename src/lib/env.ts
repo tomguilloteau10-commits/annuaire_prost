@@ -14,6 +14,10 @@ const envSchema = z.object({
   MEDIA_LOCAL_PATH: z.string().default("./storage/media"),
   MEDIA_SIGNED_URL_TTL_SECONDS: z.coerce.number().int().positive().default(120),
   MEDIA_SIGNING_SECRET: z.string().min(16),
+  // Clé de chiffrement des pièces d'identité déposées (32 octets en base64
+  // ou hex). Facultative : à défaut, une clé dédiée est dérivée de
+  // SESSION_SECRET (voir modules/verification/document-crypto.ts).
+  DOCUMENT_ENCRYPTION_KEY: z.string().min(32).optional(),
   NEXT_PUBLIC_APP_URL: z.string().url().default("http://localhost:3000"),
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
 });

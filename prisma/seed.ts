@@ -111,6 +111,11 @@ async function seedRetentionPolicies() {
       description: "Rétention d'audit des résultats de vérification (déjà rétention zéro sur le document).",
     },
     {
+      dataCategory: DATA_CATEGORIES.VERIFICATION_DOCUMENT,
+      retentionDays: 30,
+      description: "Pièces d'identité / permis en attente de contrôle — supprimées à la décision, au plus tard après ce délai.",
+    },
+    {
       dataCategory: DATA_CATEGORIES.MEDIA_REJECTED,
       retentionDays: 30,
       description: "Médias rejetés en modération — purgés après ce délai.",
@@ -196,11 +201,10 @@ async function seedLanguages() {
 
 async function seedCities() {
   // Coordonnées de centre-ville (donnée publique généraliste), jamais
-  // liées à une adresse individuelle (contrainte #8). Limité à trois
-  // cantons romands (GE, VD, VS), villes principales uniquement — même
-  // liste utilisée par le sélecteur de ville du formulaire prestataire et
-  // par le filtre de recherche public (groupés par canton, voir
-  // src/lib/group-cities.ts).
+  // liées à une adresse individuelle (contrainte #8). Villes principales
+  // de chacun des 26 cantons (codes : src/lib/cantons.ts) — même liste
+  // pour le choix "Canton → Ville" du formulaire prestataire et des
+  // filtres de recherche publics.
   const cities: { name: string; canton: string; lat: number; lng: number }[] = [
     // Genève
     { name: "Genève", canton: "GE", lat: 46.2044, lng: 6.1432 },
@@ -223,6 +227,49 @@ async function seedCities() {
     { name: "Monthey", canton: "VS", lat: 46.2547, lng: 6.9556 },
     { name: "Brig", canton: "VS", lat: 46.3182, lng: 7.9876 },
     { name: "Viège", canton: "VS", lat: 46.2926, lng: 7.8824 },
+    // Autres cantons : chef-lieu et principales villes, pour que le choix
+    // "Canton → Ville" propose au moins une ville dans chacun des 26 cantons.
+    { name: "Zurich", canton: "ZH", lat: 47.3769, lng: 8.5417 },
+    { name: "Winterthour", canton: "ZH", lat: 47.5001, lng: 8.724 },
+    { name: "Uster", canton: "ZH", lat: 47.3471, lng: 8.7209 },
+    { name: "Berne", canton: "BE", lat: 46.948, lng: 7.4474 },
+    { name: "Bienne", canton: "BE", lat: 47.1368, lng: 7.2468 },
+    { name: "Thoune", canton: "BE", lat: 46.758, lng: 7.628 },
+    { name: "Lucerne", canton: "LU", lat: 47.0502, lng: 8.3093 },
+    { name: "Emmen", canton: "LU", lat: 47.0716, lng: 8.3054 },
+    { name: "Altdorf", canton: "UR", lat: 46.8805, lng: 8.6444 },
+    { name: "Schwytz", canton: "SZ", lat: 47.0207, lng: 8.653 },
+    { name: "Freienbach", canton: "SZ", lat: 47.205, lng: 8.758 },
+    { name: "Sarnen", canton: "OW", lat: 46.8961, lng: 8.2462 },
+    { name: "Stans", canton: "NW", lat: 46.9581, lng: 8.3661 },
+    { name: "Glaris", canton: "GL", lat: 47.0404, lng: 9.0679 },
+    { name: "Zoug", canton: "ZG", lat: 47.1662, lng: 8.5155 },
+    { name: "Baar", canton: "ZG", lat: 47.1963, lng: 8.5295 },
+    { name: "Fribourg", canton: "FR", lat: 46.8065, lng: 7.1619 },
+    { name: "Bulle", canton: "FR", lat: 46.6194, lng: 7.0577 },
+    { name: "Soleure", canton: "SO", lat: 47.2088, lng: 7.5323 },
+    { name: "Olten", canton: "SO", lat: 47.3499, lng: 7.9077 },
+    { name: "Bâle", canton: "BS", lat: 47.5596, lng: 7.5886 },
+    { name: "Liestal", canton: "BL", lat: 47.484, lng: 7.734 },
+    { name: "Allschwil", canton: "BL", lat: 47.5507, lng: 7.536 },
+    { name: "Schaffhouse", canton: "SH", lat: 47.6973, lng: 8.6349 },
+    { name: "Herisau", canton: "AR", lat: 47.3861, lng: 9.2797 },
+    { name: "Appenzell", canton: "AI", lat: 47.3307, lng: 9.4094 },
+    { name: "Saint-Gall", canton: "SG", lat: 47.4245, lng: 9.3767 },
+    { name: "Rapperswil-Jona", canton: "SG", lat: 47.2266, lng: 8.8184 },
+    { name: "Coire", canton: "GR", lat: 46.8508, lng: 9.532 },
+    { name: "Davos", canton: "GR", lat: 46.8027, lng: 9.836 },
+    { name: "Aarau", canton: "AG", lat: 47.3925, lng: 8.0442 },
+    { name: "Baden", canton: "AG", lat: 47.4733, lng: 8.3059 },
+    { name: "Frauenfeld", canton: "TG", lat: 47.5536, lng: 8.8987 },
+    { name: "Kreuzlingen", canton: "TG", lat: 47.6505, lng: 9.175 },
+    { name: "Lugano", canton: "TI", lat: 46.0037, lng: 8.9511 },
+    { name: "Bellinzone", canton: "TI", lat: 46.1955, lng: 9.0244 },
+    { name: "Locarno", canton: "TI", lat: 46.167, lng: 8.7943 },
+    { name: "Neuchâtel", canton: "NE", lat: 46.99, lng: 6.9293 },
+    { name: "La Chaux-de-Fonds", canton: "NE", lat: 47.0999, lng: 6.8259 },
+    { name: "Delémont", canton: "JU", lat: 47.3653, lng: 7.3445 },
+    { name: "Porrentruy", canton: "JU", lat: 47.4155, lng: 7.0755 },
   ];
   for (const city of cities) {
     const slug = slugify(`${city.name}-${city.canton}`);

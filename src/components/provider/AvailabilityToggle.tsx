@@ -10,11 +10,13 @@ import { useCsrfToken } from "@/lib/use-csrf-token";
  */
 export function AvailabilityToggle({
   initialAvailable,
-  disabled = false,
+  disabledReason,
 }: {
   initialAvailable: boolean;
-  disabled?: boolean;
+  /** Pourquoi l'interrupteur est bloqué (pas de profil, identité pas encore vérifiée). */
+  disabledReason?: "needsProfile" | "needsVerification";
 }) {
+  const disabled = disabledReason !== undefined;
   const t = useTranslations("dashboard.availability");
   const csrfToken = useCsrfToken();
   const [available, setAvailable] = useState(initialAvailable);
@@ -54,7 +56,7 @@ export function AvailabilityToggle({
         <span className="flex flex-col gap-1">
           <span className="font-serif text-lg font-medium text-ink2">{t("title")}</span>
           <span className={`text-sm ${available ? "text-success" : "text-ink2-muted"}`}>
-            {disabled ? t("needsProfile") : available ? t("on") : t("off")}
+            {disabledReason ? t(disabledReason) : available ? t("on") : t("off")}
           </span>
         </span>
         <span

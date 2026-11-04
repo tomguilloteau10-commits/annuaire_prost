@@ -4,7 +4,11 @@ import { Link, usePathname } from "@/i18n/navigation";
 
 const TABS = [
   { href: "/admin", key: "adminHome" },
+  { href: "/admin/identities", key: "adminIdentities" },
+  { href: "/admin/permits", key: "adminPermits" },
+  { href: "/admin/profiles", key: "adminProfiles" },
   { href: "/admin/moderation", key: "moderation" },
+  { href: "/admin/reports", key: "adminReports" },
   { href: "/admin/taxonomies", key: "taxonomies" },
   { href: "/admin/audit-log", key: "auditLog" },
   { href: "/admin/geo-settings", key: "geoSettings" },

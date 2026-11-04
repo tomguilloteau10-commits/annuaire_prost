@@ -2,10 +2,11 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { updateCity } from "@/modules/taxonomies/taxonomy.service";
 import { requireRole, checkCsrf } from "@/lib/route-helpers";
+import { isCantonCode } from "@/lib/cantons";
 
 const updateSchema = z.object({
   name: z.string().min(1).max(80).optional(),
-  canton: z.string().min(2).max(2).optional(),
+  canton: z.string().refine(isCantonCode).optional(),
   country: z.string().length(2).optional(),
   lat: z.number().min(-90).max(90).optional(),
   lng: z.number().min(-180).max(180).optional(),

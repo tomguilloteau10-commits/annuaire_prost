@@ -12,7 +12,7 @@
     "login": "Anmelden",
     "register": "Registrieren",
     "dashboard": "Mein Dashboard",
-    "moderation": "Zu prüfende Fotos",
+    "moderation": "Fotos",
     "taxonomies": "Kategorien & Städte",
     "auditLog": "Aktionsverlauf",
     "geoSettings": "Erlaubte Länder",
@@ -28,7 +28,11 @@
     "soon": "Demnächst",
     "admin": "Admin",
     "adminHome": "Übersicht",
-    "adminNavLabel": "Navigation des Admin-Bereichs"
+    "adminNavLabel": "Navigation des Admin-Bereichs",
+    "adminIdentities": "Identitäten",
+    "adminPermits": "Bewilligungen",
+    "adminProfiles": "Profile",
+    "adminReports": "Meldungen"
   },
   "home": {
     "title": "Finden Sie eine unabhängige Anbieterin in der Schweiz",
@@ -59,7 +63,9 @@
         "MID": "250 bis 350 CHF",
         "HIGH": "Über 350 CHF"
       },
-      "clientele": "Kundschaft"
+      "clientele": "Kundschaft",
+      "canton": "Kanton",
+      "allCities": "Alle Orte"
     },
     "storiesTitle": "Stories",
     "seeAll": "Alle ansehen",
@@ -152,25 +158,61 @@
     "emailTakenError": "Für diese E-Mail existiert bereits ein Konto."
   },
   "onboarding": {
-    "title": "Bevor Sie beginnen",
-    "intro": "Bitte bestätigen Sie die folgenden Punkte. Ihre Bestätigung wird mit dem heutigen Datum gespeichert.",
+    "title": "Volljährigkeit & Bewilligung",
+    "intro": "Laden Sie Ihren Ausweis hoch und bestätigen Sie die Punkte unten. Unser Team prüft Ihre Dokumente von Hand, bevor etwas online geht.",
     "fields": {
       "attestedAdult": "Ich bin volljährig.",
       "attestedVoluntary": "Ich handle freiwillig, ohne Zwang.",
       "attestedAuthorizedToWorkInSwitzerland": "Ich bin berechtigt, in der Schweiz zu arbeiten.",
       "attestedCantonalDeclaration": "Ich melde mich bei den Behörden meines Kantons an, falls erforderlich."
     },
-    "submit": "Erklärung bestätigen",
-    "submitError": "Erklärung kann derzeit nicht gespeichert werden."
+    "submit": "Zur Prüfung senden",
+    "submitError": "Das Senden ist fehlgeschlagen. Bitte versuchen Sie es gleich erneut.",
+    "identityTitle": "Ihr Ausweis",
+    "identityIntro": "Gut lesbares Foto oder Scan der Vorder- und Rückseite (Identitätskarte, Pass oder Aufenthaltsbewilligung).",
+    "privacyNote": "Ihre Dokumente sind verschlüsselt, nur für die Administratorin sichtbar und werden nach der Prüfung gelöscht (spätestens nach 30 Tagen). Nur das Ergebnis wird aufbewahrt.",
+    "authorizationTitle": "Arbeitsbewilligung",
+    "whatNext": "Nach dem Senden bleibt Ihr Profil „in Prüfung“: Es wird erst sichtbar, wenn unser Team Ihre Dokumente bestätigt hat.",
+    "sending": "Wird gesendet…",
+    "errors": {
+      "checkRequired": "Kreuzen Sie dieses Feld an, um fortzufahren."
+    }
   },
   "verification": {
-    "title": "Altersprüfung",
-    "intro": "Die Veröffentlichung Ihres Profils erfordert eine Verifizierung Ihrer Volljährigkeit. Dieser Schritt ist in der Beta simuliert (kein Dokument wird gespeichert).",
-    "alreadyVerified": "Verifizierung bestanden.",
-    "start": "Verifizierung starten",
-    "running": "Verifizierung läuft…",
-    "error": "Verifizierung fehlgeschlagen. Bitte erneut versuchen.",
-    "continue": "Weiter"
+    "title": "Meine Prüfung",
+    "backToDashboard": "Zurück zum Dashboard",
+    "identity": {
+      "verified": {
+        "title": "Volljährigkeit bestätigt (18+)",
+        "body": "Ihre Dokumente wurden am {date} geprüft und danach gelöscht. Sie können jetzt „Online“ gehen."
+      },
+      "pending": {
+        "title": "Dokumente werden geprüft",
+        "body": "Unser Team prüft Ihre Dokumente. Sie müssen nichts tun: Ihr Dashboard aktualisiert sich nach dem Entscheid."
+      },
+      "rejected": {
+        "title": "Dokumente abgelehnt",
+        "body": "Ihre Dokumente konnten nicht bestätigt werden. Laden Sie unten neue hoch."
+      },
+      "missing": {
+        "title": "Ausweis hochladen",
+        "body": "Laden Sie Vorder- und Rückseite Ihres Ausweises hoch, um die Prüfung zu starten."
+      }
+    },
+    "reason": "Grund",
+    "toDashboard": "Zum Dashboard",
+    "continueToProfile": "Weiter: mein Profil erstellen",
+    "permit": {
+      "title": "Arbeitsbewilligung / Vertrag",
+      "NONE": "Kein Dokument hochgeladen (freiwillig).",
+      "PENDING": "Dokument wird von unserem Team geprüft.",
+      "VERIFIED": "Dokument geprüft, danach gelöscht.",
+      "REJECTED": "Dokument abgelehnt. Sie können ein neues hochladen."
+    },
+    "resubmit": "Neue Dokumente senden",
+    "sending": "Wird gesendet…",
+    "resubmitError": "Das Senden ist fehlgeschlagen. Bitte versuchen Sie es gleich erneut.",
+    "privacy": "Ihre Dokumente sind nur für die Administratorin sichtbar und werden nach der Prüfung gelöscht."
   },
   "dashboard": {
     "title": "Mein Dashboard",
@@ -190,7 +232,11 @@
       "continue": "Weiter",
       "submit": "Profil senden",
       "resubmit": "Profil erneut senden",
-      "fixProfile": "Profil korrigieren"
+      "fixProfile": "Profil korrigieren",
+      "pendingIdentity": "Ihre Dokumente und Ihr Profil werden geprüft. Sie müssen nichts tun: Ihr Profil geht nach der Bestätigung online.",
+      "readyToSubmitIdentityPending": "Ihr Profil ist bereit: Senden Sie es. Es geht online, sobald unser Team Ihre Dokumente geprüft hat.",
+      "identityRejected": "Ihre Ausweisdokumente konnten nicht bestätigt werden. Laden Sie neue hoch, um fortzufahren.",
+      "resendDocuments": "Neue Dokumente hochladen"
     },
     "preview": {
       "title": "Mein Profil aus Kundensicht",
@@ -210,14 +256,16 @@
         "photo": "Mindestens ein Foto hinzugefügt",
         "cityCategory": "Stadt und Kategorie angegeben",
         "whatsapp": "Kontaktweg (WhatsApp) hinzugefügt"
-      }
+      },
+      "inReview": "In Prüfung"
     },
     "availability": {
       "title": "Jetzt verfügbar",
       "on": "Ja — Kunden sehen „Online“ auf Ihrem Profil.",
       "off": "Nein — Ihr Profil zeigt „Offline“.",
       "needsProfile": "Erstellen Sie zuerst Ihr Profil.",
-      "error": "Die Änderung konnte nicht gespeichert werden. Bitte erneut versuchen."
+      "error": "Die Änderung konnte nicht gespeichert werden. Bitte erneut versuchen.",
+      "needsVerification": "Möglich, sobald Ihre Dokumente geprüft sind."
     },
     "plan": {
       "title": "Mein Abo",
@@ -229,7 +277,8 @@
     "submitErrorVerification": "Ihre Altersprüfung ist noch nicht bestätigt.",
     "submitErrorPhoto": "Fügen Sie mindestens ein Foto hinzu, bevor Sie Ihr Profil senden.",
     "submitErrorWhatsapp": "Fügen Sie Ihre WhatsApp-Nummer hinzu, bevor Sie Ihr Profil senden.",
-    "submitErrorGeneric": "Das Senden hat nicht funktioniert. Bitte gleich erneut versuchen."
+    "submitErrorGeneric": "Das Senden hat nicht funktioniert. Bitte gleich erneut versuchen.",
+    "verifiedBadge": "Profil verifiziert"
   },
   "profileEdit": {
     "title": "Profil bearbeiten",
@@ -342,7 +391,8 @@
       "description": "Ihr Text ist etwas kurz: noch {missing, plural, one {# Zeichen} other {# Zeichen}}.",
       "height": "Die Grösse muss zwischen {min} und {max} cm liegen (oder leer lassen).",
       "rate": "Geben Sie einen Betrag in CHF ein, nur Zahlen (oder leer lassen).",
-      "photos": "Fügen Sie mindestens ein Foto hinzu, um fortzufahren."
+      "photos": "Fügen Sie mindestens ein Foto hinzu, um fortzufahren.",
+      "canton": "Wählen Sie Ihren Kanton."
     },
     "contactErrors": {
       "whatsappRequired": "Geben Sie Ihre WhatsApp-Nummer ein: So kontaktieren Sie die Kunden.",
@@ -360,21 +410,73 @@
       "network": "„{name}“ konnte nicht gesendet werden: keine Internetverbindung. Versuchen Sie es erneut, wenn die Verbindung zurück ist.",
       "networkAction": "Im Moment keine Internetverbindung. Bitte gleich erneut versuchen.",
       "generic": "„{name}“ konnte nicht gesendet werden. Versuchen Sie es erneut oder mit einem anderen Foto."
-    }
+    },
+    "cantonLabel": "Kanton",
+    "cantonPlaceholder": "Wählen Sie Ihren Kanton",
+    "cityChooseCantonFirst": "Zuerst den Kanton wählen"
   },
   "moderation": {
     "title": "Zu prüfende Fotos",
     "pendingProfiles": "Ausstehende Profile",
     "pendingMedia": "Ausstehende Fotos",
     "emptyQueue": "Warteschlange leer.",
-    "reasonPlaceholder": "Begründung der Entscheidung (erforderlich)",
-    "approve": "Genehmigen",
+    "reasonPlaceholder": "Grund (Pflicht beim Ablehnen, wird der Anbieterin angezeigt)",
+    "approve": "Bestätigen",
     "reject": "Ablehnen",
     "decisionError": "Entscheidung konnte nicht gespeichert werden.",
-    "verificationRequiredError": "Die Altersverifizierung ist nicht mehr gültig: Veröffentlichung nicht möglich.",
+    "verificationRequiredError": "Bestätigen Sie zuerst die Identität dieser Anbieterin (Liste „Zu prüfende Identitäten“).",
     "openReports": "Offene Meldungen",
     "reportNotePlaceholder": "Bearbeitungsnotiz (Pflichtfeld)",
-    "resolveReport": "Als erledigt markieren"
+    "resolveReport": "Als erledigt markieren",
+    "reasonRequiredToReject": "Schreiben Sie den Ablehnungsgrund: Er wird der Anbieterin angezeigt.",
+    "queues": {
+      "identities": "Zu prüfende Identitäten",
+      "permits": "Zu prüfende Bewilligungen",
+      "profiles": "Zu prüfende Profile",
+      "photos": "Zu prüfende Fotos",
+      "reports": "Meldungen"
+    },
+    "identity": {
+      "intro": "Prüfen Sie den Ausweis (18+, lesbares Foto, gültiges Dokument). Beim Entscheid werden die Bilder gelöscht: Nur das Ergebnis bleibt.",
+      "documentType": "Dokumenttyp",
+      "documentTypes": {
+        "id_card": "Identitätskarte",
+        "passport": "Reisepass",
+        "residence_permit": "Aufenthaltsbewilligung",
+        "driving_licence": "Führerausweis"
+      },
+      "issuingCountry": "Ausstellungsland",
+      "otherCountry": "Andere",
+      "alsoPublish": "Profil ebenfalls bestätigen und online stellen"
+    },
+    "permit": {
+      "intro": "Hochgeladene Arbeitsbewilligungen oder Verträge (freiwillig). Beim Entscheid wird das Dokument gelöscht."
+    },
+    "documents": {
+      "kinds": {
+        "IDENTITY_FRONT": "Ausweis — Vorderseite",
+        "IDENTITY_BACK": "Ausweis — Rückseite",
+        "WORK_PERMIT": "Arbeitsbewilligung / Vertrag"
+      },
+      "pdfFallback": "PDF-Dokument",
+      "open": "Gross öffnen",
+      "missing": "Dokumente fehlen oder wurden bereits gelöscht: Fordern Sie durch Ablehnen mit Grund einen neuen Upload an.",
+      "noProfileYet": "Noch kein Profil",
+      "profileStatus": {
+        "DRAFT": "Profil-Entwurf",
+        "PENDING_REVIEW": "Profil wartet",
+        "PUBLISHED": "Profil online",
+        "REJECTED": "Profil abgelehnt",
+        "SUSPENDED": "Profil ausgeblendet"
+      },
+      "submittedAt": "hochgeladen am {date}",
+      "autoDelete": "automatische Löschung am {date}"
+    },
+    "profilesIntro": "Von Anbieterinnen gesendete Profile. Ein Profil kann erst nach bestätigter Identität online gehen.",
+    "photosIntro": "Von Anbieterinnen hinzugefügte Fotos. Ein bestätigtes Foto erscheint sofort im öffentlichen Profil.",
+    "identityVerified": "Volljährigkeit bestätigt (18+)",
+    "identityNotVerified": "Identität noch nicht bestätigt",
+    "validateIdentityFirst": "Bestätigen Sie zuerst die Identität (Liste „Zu prüfende Identitäten“), bevor dieses Profil online geht."
   },
   "adminTaxonomies": {
     "title": "Kategorien & Städte",
@@ -522,12 +624,14 @@
     "moderationBody": "Ausstehend — Fotos: {media} · Profile: {profiles} · Meldungen: {reports}",
     "taxonomiesBody": "{categories} aktive Kategorien und {cities} aktive Städte.",
     "auditLogBody": "{count, plural, one {# erfasste Aktion.} other {# erfasste Aktionen.}}",
-    "geoBody": "{count, plural, one {# erlaubtes Land.} other {# erlaubte Länder.}}"
+    "geoBody": "{count, plural, one {# erlaubtes Land.} other {# erlaubte Länder.}}",
+    "queuesTitle": "Zu prüfen",
+    "settingsTitle": "Einstellungen"
   },
   "profileDone": {
     "sent": {
       "title": "Ihr Profil ist erstellt und wartet auf Prüfung",
-      "body": "Danke! Unser Team prüft Ihr Profil, bevor es online geht. Sie müssen nichts weiter tun: Den Status sehen Sie in Ihrem Dashboard."
+      "body": "Danke! Unser Team prüft Ihre Dokumente und Ihr Profil, bevor es online geht. Sie müssen nichts weiter tun: Den Status sehen Sie im Dashboard."
     },
     "updated": {
       "title": "Ihre Änderungen sind gespeichert",
@@ -543,5 +647,22 @@
     },
     "toDashboard": "Zu meinem Dashboard",
     "editAgain": "Profil weiter bearbeiten"
+  },
+  "documents": {
+    "optional": "freiwillig",
+    "choose": "Datei wählen",
+    "selected": "Datei gewählt ({size}) — tippen zum Ändern",
+    "formats": "PNG, JPEG oder PDF — max. 10 MB",
+    "front": "Ausweis — Vorderseite",
+    "back": "Ausweis — Rückseite",
+    "passportHint": "Beim Pass: die Seite mit Foto, dann die Unterschriftsseite.",
+    "workPermit": "Arbeitsbewilligung oder Vertrag",
+    "workPermitHint": "Freiwillig. Falls vorhanden: Bewilligung B, C, L, G oder Vertrag.",
+    "errors": {
+      "format": "Format nicht akzeptiert: wählen Sie eine PNG-, JPEG- oder PDF-Datei.",
+      "tooLarge": "Datei zu gross (max. 10 MB).",
+      "missing": "Fügen Sie dieses Dokument hinzu.",
+      "network": "Verbindung unterbrochen. Prüfen Sie Ihr Netz und versuchen Sie es erneut."
+    }
   }
 }

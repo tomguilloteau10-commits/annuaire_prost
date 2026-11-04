@@ -49,17 +49,19 @@ model User {
   sessions               Session[]
   providerProfile        ProviderProfile?
   verificationRecords    VerificationRecord[]
+  verificationDocuments  VerificationDocument[]
   onboardingAttestation  OnboardingAttestation?
   moderationActionsTaken ModerationAction[]      @relation("ModeratorActions")
   auditLogs              AuditLog[]
 
   // ──────────────────────────────────────────────────────────────────────
-  // INTERDIT (contrainte #1, rétention zéro) : n'ajoutez JAMAIS ici (ni
+  // INTERDIT (contrainte #1, rétention minimale) : n'ajoutez JAMAIS ici (ni
   // ailleurs dans ce schéma) de champ birthDate / dateOfBirth,
   // documentNumber, documentImage / idDocumentImage, selfieImage,
-  // biometricData ou équivalent. La preuve de majorité et de vérification
-  // vit exclusivement dans VerificationRecord, sous forme de résultat
-  // opaque — jamais sous forme de document brut.
+  // biometricData ou équivalent. La preuve de majorité vit dans
+  // VerificationRecord, sous forme de résultat. Seule exception, encadrée :
+  // VerificationDocument, dépôt CHIFFRÉ et TEMPORAIRE des pièces pour le
+  // contrôle manuel par l'admin, supprimé dès la décision (voir plus bas).
   // ──────────────────────────────────────────────────────────────────────
 
   @@index([role])
@@ -80,13 +82,14 @@ model Session {
   @@index([ipHashPurgeAt])
 }
 
-// ── Vérification 18+ — RÉTENTION ZÉRO ───────────────────────────────────
+// ── Vérification 18+ — RÉTENTION MINIMALE ───────────────────────────────
 //
-// On ne stocke QUE le résultat normalisé d'une vérification externe.
-// Aucune image, aucun numéro de document, aucune date de naissance,
-// aucune donnée biométrique ne transite ni ne persiste dans ce modèle
-// (ni nulle part ailleurs dans ce schéma). Voir modules/verification/types.ts
-// pour le "contrat de résultat" que tout VerificationProvider doit respecter.
+// VerificationRecord ne contient QUE le résultat : vérifié oui/non, date,
+// type de document, pays. Aucun numéro de document, aucune date de
+// naissance, aucune donnée biométrique. Le contrôle est MANUEL : seul un
+// admin peut faire passer un dossier à VERIFIED (jamais la prestataire,
+// jamais le système). Les pièces déposées pour ce contrôle vivent dans
+// VerificationDocument, chiffrées, et sont supprimées dès la décision.
 
 enum VerificationStatus {
   PENDING
@@ -109,11 +112,48 @@ model VerificationRecord {
   verifiedAt              DateTime? // quand le résultat a été obtenu
   expiresAt               DateTime? // validité métier du résultat (ex: revérifier après N mois)
   retentionPurgeAt        DateTime? // rétention d'audit du *journal* — distinct de expiresAt
+  rejectionReason         String? // motif donné par l'admin en cas de refus, montré à la prestataire
+  reviewedById            String? // admin ayant décidé (trace complète dans AuditLog)
   createdAt               DateTime           @default(now())
   updatedAt               DateTime           @updatedAt
 
   @@index([providerId, status])
   @@index([retentionPurgeAt])
+}
+
+enum WorkPermitStatus {
+  NONE // aucun document déposé (facultatif)
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum VerificationDocumentKind {
+  IDENTITY_FRONT
+  IDENTITY_BACK
+  WORK_PERMIT
+}
+
+// Pièce déposée pour le contrôle MANUEL par l'admin (ENGINEERING_RULES.md
+// §1, exception encadrée). Contenu chiffré (AES-256-GCM, clé applicative,
+// voir modules/verification/document-crypto.ts) : jamais en clair, ni en
+// base ni sur disque. Lisible uniquement via /api/admin/verification-
+// documents (rôle ADMIN). Supprimé dès que l'admin décide (validation ou
+// refus) et, à défaut de décision, au plus tard à `purgeAt`. Après
+// suppression, seul le résultat subsiste (VerificationRecord /
+// OnboardingAttestation.workPermitStatus).
+model VerificationDocument {
+  id               String                   @id @default(cuid())
+  providerId       String
+  provider         User                     @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  kind             VerificationDocumentKind
+  contentType      String // image/png | image/jpeg | application/pdf
+  encryptedContent Bytes
+  createdAt        DateTime                 @default(now())
+  purgeAt          DateTime
+
+  @@index([providerId, kind])
+  @@index([purgeAt])
 }
 
 model OnboardingAttestation {
@@ -125,6 +165,11 @@ model OnboardingAttestation {
   attestedAuthorizedToWorkInSwitzerland  Boolean
   attestedCantonalDeclaration            Boolean
   attestedAt                             DateTime
+  // Permis de travail / contrat : dépôt facultatif, contrôlé par l'admin.
+  // Seul le résultat est conservé, le document est supprimé à la décision.
+  workPermitStatus                       WorkPermitStatus @default(NONE)
+  workPermitReviewedAt                   DateTime?
+  workPermitRejectionReason              String?
   // L'attestation elle-même (booléens + horodatage) est une preuve de
   // consentement conservée tant que le compte existe : elle n'est PAS
   // purgée automatiquement. Seul le hash d'IP associé a une durée de vie

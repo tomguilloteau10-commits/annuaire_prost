@@ -44,10 +44,29 @@ describe("computeProviderDashboardState", () => {
     expect(state.canSubmit).toBe(false);
   });
 
-  it("seule la vérification est en cours : en attente, rien à faire", () => {
-    const state = computeProviderDashboardState({ ...complete, verificationStatus: "IN_PROGRESS" });
-    expect(state.tone).toBe("pending");
-    expect(state.reason).toBe("verificationPending");
+  it("documents en attente de l'admin : profil envoyable, mais identité pas encore vérifiée", () => {
+    const state = computeProviderDashboardState({ ...complete, verificationStatus: "PENDING" });
+    const age = state.checklist.find((i) => i.key === "ageVerification");
+    expect(age).toMatchObject({ done: false, pending: true });
+    // rien à faire côté prestataire pour la vérification : elle peut envoyer son profil
+    expect(state.remainingCount).toBe(0);
+    expect(state.canSubmit).toBe(true);
+    expect(state.reason).toBe("readyToSubmit");
+    expect(state.identityVerified).toBe(false);
+  });
+
+  it("validation par l'admin : profil vérifié", () => {
+    const state = computeProviderDashboardState({ ...complete, profileStatus: "PENDING_REVIEW" });
+    expect(state.identityVerified).toBe(true);
+    expect(state.checklist.find((i) => i.key === "ageVerification")?.done).toBe(true);
+  });
+
+  it("documents refusés par l'admin : action requise, renvoi vers « Ma vérification »", () => {
+    const state = computeProviderDashboardState({ ...complete, profileStatus: "PENDING_REVIEW", verificationStatus: "FAILED" });
+    expect(state.tone).toBe("action");
+    expect(state.reason).toBe("identityRejected");
+    expect(state.identityVerified).toBe(false);
+    expect(state.checklist.find((i) => i.key === "ageVerification")?.href).toBe("/dashboard/verification");
   });
 
   it("statuts de modération", () => {

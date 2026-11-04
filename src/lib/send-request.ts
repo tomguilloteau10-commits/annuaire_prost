@@ -5,7 +5,7 @@
  */
 export type SendResult<T> =
   | { ok: true; status: number; data: T }
-  | { ok: false; status: number; error?: string; field?: string };
+  | { ok: false; status: number; error?: string; field?: string; reason?: string };
 
 export async function sendRequest<T = unknown>(
   url: string,
@@ -25,7 +25,11 @@ export async function sendRequest<T = unknown>(
     return { ok: false, status: 0, error: "network" };
   }
 
-  const body = (await response.json().catch(() => null)) as (T & { error?: string; field?: string }) | null;
-  if (!response.ok) return { ok: false, status: response.status, error: body?.error, field: body?.field };
+  const body = (await response.json().catch(() => null)) as
+    | (T & { error?: string; field?: string; reason?: string })
+    | null;
+  if (!response.ok) {
+    return { ok: false, status: response.status, error: body?.error, field: body?.field, reason: body?.reason };
+  }
   return { ok: true, status: response.status, data: body as T };
 }

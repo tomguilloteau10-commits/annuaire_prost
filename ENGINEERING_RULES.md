@@ -11,65 +11,79 @@ puisse vérifier — pas seulement lire — l'invariant.
 
 ---
 
-## 1. Rétention zéro sur l'identité
+## 1. Rétention minimale sur l'identité
 
-On ne stocke **jamais** : image de document d'identité, numéro de document,
-selfie/vidéo de vérification, données biométriques, date de naissance. On
-stocke uniquement le **résultat** de la vérification : `isAdult`, un
-identifiant opaque de vérification, un type de document, un pays émetteur,
-un horodatage, une date d'expiration.
+On ne conserve **jamais durablement** : image de document d'identité,
+numéro de document, selfie/vidéo de vérification, données biométriques,
+date de naissance. Le résultat de la vérification est la seule trace
+permanente : `isAdult`, un identifiant opaque, un type de document, un pays
+émetteur, la date de vérification, une date d'expiration.
+
+**Exception encadrée (vérification manuelle par l'admin)** : pour que
+l'admin puisse contrôler la majorité à la main, la prestataire dépose le
+recto/verso de sa pièce d'identité (et, facultativement, un permis de
+travail / contrat). Ces fichiers sont stockés **temporairement**, aux
+conditions suivantes, toutes obligatoires :
+
+- chiffrés au repos (AES-256-GCM, clé `DOCUMENT_ENCRYPTION_KEY` ou dérivée
+  de `SESSION_SECRET`) dans `VerificationDocument` — jamais sur le disque
+  des médias, jamais dans un bucket public ;
+- lisibles **uniquement** par le rôle ADMIN, via
+  `GET /api/admin/verification-documents/[id]` (réponse `no-store`,
+  `nosniff`) ; aucune route publique ni prestataire ne les renvoie, même à
+  leur propriétaire ;
+- **supprimés au moment de la décision** de l'admin (validation ou refus),
+  dans la même transaction que l'enregistrement du résultat ;
+- supprimés d'office au plus tard après 30 jours sans décision
+  (`purgeExpiredVerificationDocuments`, catégorie de rétention
+  `verification_document`) — le dossier passe alors en `EXPIRED` ;
+- aucun champ « numéro de document » ou « date de naissance » n'est saisi
+  ni stocké : l'admin ne relève que type de document + pays.
 
 Mise en œuvre :
 
-- `prisma/schema.prisma` → `model VerificationRecord` : liste exhaustive des
-  champs autorisés, avec un bloc de commentaires explicite au-dessus du
-  modèle.
-- `prisma/schema.prisma` → `model User` : bloc de commentaires « INTERDIT »
-  rappelant qu'aucun champ birthDate/documentNumber/documentImage/
-  biometricData ne doit être ajouté nulle part dans le schéma.
-- `src/modules/verification/types.ts` : le « contrat de résultat »
-  (`VerificationResult`) que toute implémentation de `VerificationProvider`
-  (y compris un futur Sumsub/Veriff/PXL Vision/e-ID suisse) doit respecter —
-  il n'a physiquement pas de champ pour transporter un document.
-- `src/modules/verification/mock-provider.ts` : implémentation bêta —
-  `startVerification` ne prend qu'un `providerId` en entrée, aucune image ni
-  document n'y transite, y compris dans le stockage en mémoire interne.
-- `src/modules/verification/verification.service.ts` : orchestration
-  DB ↔ provider ; `hasPassedAdultVerification()` est la seule fonction qui
-  fait autorité sur la question « cette annonceuse a-t-elle passé la
-  vérification ? », réutilisée par `modules/moderation` avant toute
-  publication (voir contrainte #2).
-- **Test automatisé** : `tests/modules/verification/mock-provider.test.ts`
-  vérifie au runtime qu'aucun champ interdit n'apparaît dans un résultat
-  réellement renvoyé par le provider bêta.
+- `prisma/schema.prisma` → `VerificationRecord` (résultat seul) et
+  `VerificationDocument` (fichier chiffré temporaire, `purgeAt` obligatoire).
+- `src/modules/verification/document-crypto.ts` : chiffrement/déchiffrement.
+- `src/modules/verification/manual-review.service.ts` : dépôt, files admin,
+  décisions (`decideIdentity`, `decideWorkPermit`) qui suppriment les
+  fichiers.
+- `src/modules/verification/document-retention.ts` : purge à 30 jours,
+  appelée par `scripts/purge-expired-data.ts` et à chaque ouverture des
+  files admin.
+- **Test automatisé** : `tests/invariants/verification-documents.test.ts`
+  — chiffrement, suppression des fichiers à la validation et au refus,
+  purge à échéance, profil non publié tant que l'identité n'est pas validée.
 - **Test automatisé** : `tests/invariants/no-forbidden-fields-in-schema.test.ts`
-  lit `prisma/schema.prisma` comme texte et échoue si un champ nommé
-  `dateOfBirth`, `birthDate`, `documentNumber`, `documentImage`,
-  `idDocumentImage`, `selfieImage`, `biometricData` (ou variantes proches)
-  y apparaît. Cet invariant est donc auto-vérifié à chaque CI, pas
-  seulement documenté.
+  échoue si un champ `birthDate`, `documentNumber`, `documentImage`,
+  `selfieImage`, `biometricData` (ou variante) apparaît dans le schéma.
 
-## 2. Aucune publication sans vérification 18+ passée
+## 2. Aucune publication sans vérification 18+ validée par l'admin
 
-Un profil reste `DRAFT` / `PENDING_REVIEW` et n'est jamais visible
+La majorité (18+) n'est **jamais** validée automatiquement : ni par la
+prestataire (aucune case « je suis vérifiée »), ni par le système. Seul un
+compte ADMIN, après contrôle visuel des documents, passe le
+`VerificationRecord` en `VERIFIED` (`decideIdentity`). Il n'existe aucun
+autre chemin de code qui écrit ce statut.
+
+La prestataire peut **envoyer** son profil pendant que ses documents sont
+en attente ; il reste alors `PENDING_REVIEW` et n'est jamais visible
 publiquement tant que `VerificationRecord.isAdult !== true` **et** que la
-modération n'a pas validé (`ProviderProfile.status === PUBLISHED`). Pas de
-« vérifier plus tard ». Pas d'exception, pas de contournement admin
-silencieux — une suspension ou un dépublication reste possible, mais toute
-republication repasse par les deux mêmes conditions.
+modération n'a pas validé (`ProviderProfile.status === PUBLISHED`). Le
+passage « Disponible maintenant » est lui aussi refusé tant que
+l'identité n'est pas validée. Pas d'exception, pas de contournement admin
+silencieux — une suspension ou une dépublication reste possible, mais
+toute republication repasse par les deux mêmes conditions.
 
 Mise en œuvre : `modules/profiles/profile.service.ts` →
 `listPublishedProfiles()` / `getPublishedProfileBySlug()` filtrent
-systématiquement sur `status = "PUBLISHED"`, jamais sur un flag modifiable
-indépendamment — ce sont les deux seules fonctions utilisées par l'API et
-les pages publiques. `submitProfileForReview()` refuse la soumission si
-l'attestation ou la vérification ne sont pas complètes (retour immédiat à
-l'annonceuse) ; `modules/moderation/moderation-queue.service.ts` →
-`decideOnProfile()` revérifie `hasPassedAdultVerification()` avant toute
-approbation, indépendamment de ce qu'affiche l'UI de modération. Test
-d'intégration (vraie base) : `tests/invariants/unverified-profile-not-public.test.ts`
-— crée un profil réel pour chaque statut non-publié et vérifie qu'aucune
-fonction de lecture publique ne le renvoie.
+systématiquement sur `status = "PUBLISHED"` ; `setOwnAvailability()`
+refuse « en ligne » sans identité validée ;
+`modules/moderation/moderation-queue.service.ts` → `decideOnProfile()`
+revérifie `hasPassedAdultVerification()` avant toute approbation,
+indépendamment de ce qu'affiche l'UI de modération. Tests d'intégration
+(vraie base) : `tests/invariants/unverified-profile-not-public.test.ts` et
+`tests/invariants/verification-documents.test.ts`.
 
 ## 3. Éditeur, pas agence
 

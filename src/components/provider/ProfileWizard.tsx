@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useCsrfToken } from "@/lib/use-csrf-token";
 import { getLocalizedLabel } from "@/modules/taxonomies/types";
-import { groupCitiesByCanton } from "@/lib/group-cities";
+import { cantonOptions, citiesOfCanton } from "@/lib/cantons";
 import { FieldGroup, Label, TextInput, TextArea, Select } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -52,6 +52,7 @@ export interface SalonOption {
   slug: string;
   name: string;
   city: string;
+  canton: string;
 }
 
 export interface ProfileWizardProps {
@@ -248,6 +249,13 @@ export function ProfileWizard({
   // À la création, aucune ville ni catégorie présélectionnée : un choix
   // conscient plutôt qu'une valeur par défaut acceptée sans la voir.
   const [citySlug, setCitySlug] = useState(initialValues?.citySlug ?? "");
+  // D'abord le canton, puis une ville de ce canton (prérempli depuis la ville enregistrée).
+  const [canton, setCanton] = useState(
+    () => cities.find((city) => city.slug === initialValues?.citySlug)?.canton ?? "",
+  );
+  const cantonCities = citiesOfCanton(cities, canton);
+  // Seuls les salons du canton choisi sont proposés.
+  const cantonSalons = salons.filter((salon) => salon.canton === canton);
   const [categoryKey, setCategoryKey] = useState(initialValues?.categoryKey ?? "");
   const [languageCodes, setLanguageCodes] = useState<string[]>(initialValues?.languageCodes ?? []);
 
@@ -299,7 +307,8 @@ export function ProfileWizard({
       if (displayName.trim().length < 2) errors.displayName = t("errors.displayName");
       if (!age.trim()) errors.age = t("errors.ageRequired");
       else if (!Number.isInteger(ageNum) || ageNum < 18 || ageNum > 99) errors.age = t("errors.ageRange");
-      if (!citySlug) errors.city = t("errors.city");
+      if (!canton) errors.canton = t("errors.canton");
+      else if (!citySlug) errors.city = t("errors.city");
       if (!categoryKey) errors.category = t("errors.category");
       if (languageCodes.length === 0) errors.languages = t("errors.languages");
       if (description.trim().length < 20) {
@@ -568,19 +577,45 @@ export function ProfileWizard({
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <FieldGroup>
-              <Label htmlFor="city">{t("cityLabel")}</Label>
-              <Select {...fieldProps("city")} value={citySlug} onChange={(e) => setCitySlug(e.target.value)}>
+              <Label htmlFor="canton">{t("cantonLabel")}</Label>
+              <Select
+                {...fieldProps("canton")}
+                value={canton}
+                onChange={(e) => {
+                  const next = e.target.value;
+                  setCanton(next);
+                  // Une ville ou un salon d'un autre canton n'a plus de sens.
+                  if (!cities.some((city) => city.slug === citySlug && city.canton === next)) setCitySlug("");
+                  if (!salons.some((salon) => salon.slug === salonSlug && salon.canton === next)) setSalonSlug("");
+                }}
+              >
                 <option value="" disabled>
-                  {t("cityPlaceholder")}
+                  {t("cantonPlaceholder")}
                 </option>
-                {groupCitiesByCanton(cities).map((group) => (
-                  <optgroup key={group.canton} label={group.canton}>
-                    {group.cities.map((city) => (
-                      <option key={city.slug} value={city.slug}>
-                        {city.name}
-                      </option>
-                    ))}
-                  </optgroup>
+                {cantonOptions(locale).map((option) => (
+                  <option key={option.code} value={option.code}>
+                    {option.name}
+                  </option>
+                ))}
+              </Select>
+              <FieldError id="canton" message={shownErrors.canton} />
+            </FieldGroup>
+
+            <FieldGroup>
+              <Label htmlFor="city">{t("cityLabel")}</Label>
+              <Select
+                {...fieldProps("city")}
+                value={citySlug}
+                disabled={!canton}
+                onChange={(e) => setCitySlug(e.target.value)}
+              >
+                <option value="" disabled>
+                  {canton ? t("cityPlaceholder") : t("cityChooseCantonFirst")}
+                </option>
+                {cantonCities.map((city) => (
+                  <option key={city.slug} value={city.slug}>
+                    {city.name}
+                  </option>
                 ))}
               </Select>
               <FieldError id="city" message={shownErrors.city} />
@@ -765,12 +800,12 @@ export function ProfileWizard({
               ))}
             </ChipGroup>
           )}
-          {salons.length > 0 && (
+          {cantonSalons.length > 0 && (
             <FieldGroup>
               <Label htmlFor="salonSlug">{t("salonLabel")}</Label>
               <Select id="salonSlug" fit value={salonSlug} onChange={(e) => setSalonSlug(e.target.value)}>
                 <option value="">{t("salonNone")}</option>
-                {salons.map((salon) => (
+                {cantonSalons.map((salon) => (
                   <option key={salon.slug} value={salon.slug}>
                     {salon.name} — {salon.city}
                   </option>

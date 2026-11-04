@@ -48,6 +48,8 @@ export interface UpsertContactInput {
 }
 
 export interface ListPublishedProfilesFilters {
+  /** Code canton (GE, VD…) : tous les profils du canton si aucune ville n'est choisie. */
+  canton?: string;
   citySlug?: string;
   categoryKey?: string;
   languageCode?: string;

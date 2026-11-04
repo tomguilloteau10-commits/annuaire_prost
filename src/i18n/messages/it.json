@@ -12,7 +12,7 @@
     "login": "Accedi",
     "register": "Registrati",
     "dashboard": "La mia bacheca",
-    "moderation": "Foto da convalidare",
+    "moderation": "Foto",
     "taxonomies": "Categorie e città",
     "auditLog": "Cronologia delle azioni",
     "geoSettings": "Paesi autorizzati",
@@ -28,7 +28,11 @@
     "soon": "Presto",
     "admin": "Admin",
     "adminHome": "Panoramica",
-    "adminNavLabel": "Navigazione dell'area admin"
+    "adminNavLabel": "Navigazione dell'area admin",
+    "adminIdentities": "Identità",
+    "adminPermits": "Permessi",
+    "adminProfiles": "Profili",
+    "adminReports": "Segnalazioni"
   },
   "home": {
     "title": "Trova una fornitrice indipendente in Svizzera",
@@ -59,7 +63,9 @@
         "MID": "Da 250 a 350 CHF",
         "HIGH": "Più di 350 CHF"
       },
-      "clientele": "Clientela"
+      "clientele": "Clientela",
+      "canton": "Cantone",
+      "allCities": "Tutte le città"
     },
     "storiesTitle": "Stories",
     "seeAll": "Vedi tutto",
@@ -152,25 +158,61 @@
     "emailTakenError": "Esiste già un account con questa email."
   },
   "onboarding": {
-    "title": "Prima di iniziare",
-    "intro": "Conferma i punti seguenti. La tua conferma viene registrata con la data di oggi.",
+    "title": "Maggiore età & autorizzazione",
+    "intro": "Carica il tuo documento d'identità e conferma i punti qui sotto. Il nostro team verifica i documenti a mano prima di qualsiasi pubblicazione.",
     "fields": {
       "attestedAdult": "Sono maggiorenne.",
       "attestedVoluntary": "Agisco volontariamente, senza costrizioni.",
       "attestedAuthorizedToWorkInSwitzerland": "Sono autorizzata a lavorare in Svizzera.",
       "attestedCantonalDeclaration": "Mi dichiaro alle autorità del mio cantone se richiesto."
     },
-    "submit": "Conferma dichiarazione",
-    "submitError": "Impossibile salvare la dichiarazione al momento."
+    "submit": "Invia per la verifica",
+    "submitError": "L'invio non è riuscito. Riprova tra poco.",
+    "identityTitle": "Il tuo documento d'identità",
+    "identityIntro": "Foto o scansione leggibile del fronte e del retro (carta d'identità, passaporto o permesso di soggiorno).",
+    "privacyNote": "I tuoi documenti sono cifrati, visibili solo all'amministratrice del sito e cancellati appena fatta la verifica (al più tardi dopo 30 giorni). Viene conservato solo il risultato.",
+    "authorizationTitle": "Autorizzazione a lavorare",
+    "whatNext": "Dopo l'invio il tuo profilo resta «in attesa di verifica»: sarà visibile solo dopo la convalida dei documenti da parte del nostro team.",
+    "sending": "Invio in corso…",
+    "errors": {
+      "checkRequired": "Spunta questa casella per continuare."
+    }
   },
   "verification": {
-    "title": "Verifica dell'età",
-    "intro": "La pubblicazione del tuo profilo richiede la verifica della maggiore età. Questo passaggio è simulato in beta (nessun documento viene conservato).",
-    "alreadyVerified": "Verifica superata.",
-    "start": "Avvia verifica",
-    "running": "Verifica in corso…",
-    "error": "Verifica fallita. Riprova.",
-    "continue": "Continua"
+    "title": "La mia verifica",
+    "backToDashboard": "Torna alla dashboard",
+    "identity": {
+      "verified": {
+        "title": "Maggiore età verificata (18+)",
+        "body": "I tuoi documenti sono stati verificati il {date} e poi cancellati. Ora puoi metterti «Online»."
+      },
+      "pending": {
+        "title": "Documenti in verifica",
+        "body": "Il nostro team sta verificando i tuoi documenti. Non devi fare nulla: la dashboard si aggiorna appena c'è una decisione."
+      },
+      "rejected": {
+        "title": "Documenti rifiutati",
+        "body": "I tuoi documenti non hanno potuto essere convalidati. Caricane di nuovi qui sotto."
+      },
+      "missing": {
+        "title": "Documento d'identità da caricare",
+        "body": "Carica fronte e retro del tuo documento per avviare la verifica."
+      }
+    },
+    "reason": "Motivo",
+    "toDashboard": "Vai alla dashboard",
+    "continueToProfile": "Avanti: crea il mio profilo",
+    "permit": {
+      "title": "Permesso di lavoro / contratto",
+      "NONE": "Nessun documento caricato (facoltativo).",
+      "PENDING": "Documento in verifica da parte del nostro team.",
+      "VERIFIED": "Documento verificato, poi cancellato.",
+      "REJECTED": "Documento rifiutato. Puoi caricarne uno nuovo."
+    },
+    "resubmit": "Invia i nuovi documenti",
+    "sending": "Invio in corso…",
+    "resubmitError": "L'invio non è riuscito. Riprova tra poco.",
+    "privacy": "I tuoi documenti sono visibili solo all'amministratrice del sito e vengono cancellati appena fatta la verifica."
   },
   "dashboard": {
     "title": "La mia bacheca",
@@ -190,7 +232,11 @@
       "continue": "Continua",
       "submit": "Invia il mio profilo",
       "resubmit": "Invia di nuovo il mio profilo",
-      "fixProfile": "Correggi il mio profilo"
+      "fixProfile": "Correggi il mio profilo",
+      "pendingIdentity": "I tuoi documenti e il tuo profilo sono in verifica. Non devi fare nulla: il profilo andrà online appena convalidato.",
+      "readyToSubmitIdentityPending": "Il tuo profilo è pronto: invialo. Andrà online quando il nostro team avrà verificato i tuoi documenti.",
+      "identityRejected": "I tuoi documenti d'identità non hanno potuto essere convalidati. Caricane di nuovi per continuare.",
+      "resendDocuments": "Carica nuovi documenti"
     },
     "preview": {
       "title": "Il mio profilo visto dai clienti",
@@ -210,14 +256,16 @@
         "photo": "Almeno una foto aggiunta",
         "cityCategory": "Città e categoria indicate",
         "whatsapp": "Contatto (WhatsApp) aggiunto"
-      }
+      },
+      "inReview": "In verifica"
     },
     "availability": {
       "title": "Disponibile ora",
       "on": "Sì — i clienti vedono «Online» sul tuo profilo.",
       "off": "No — il tuo profilo mostra «Offline».",
       "needsProfile": "Crea prima il tuo profilo.",
-      "error": "Non è stato possibile salvare la modifica. Riprova."
+      "error": "Non è stato possibile salvare la modifica. Riprova.",
+      "needsVerification": "Possibile appena i tuoi documenti sono verificati."
     },
     "plan": {
       "title": "Il mio abbonamento",
@@ -229,7 +277,8 @@
     "submitErrorVerification": "La verifica della maggiore età non è ancora approvata.",
     "submitErrorPhoto": "Aggiungi almeno una foto prima di inviare il profilo.",
     "submitErrorWhatsapp": "Aggiungi il tuo numero WhatsApp prima di inviare il profilo.",
-    "submitErrorGeneric": "L'invio non è riuscito. Riprova tra un momento."
+    "submitErrorGeneric": "L'invio non è riuscito. Riprova tra un momento.",
+    "verifiedBadge": "Profilo verificato"
   },
   "profileEdit": {
     "title": "Modifica il mio profilo",
@@ -342,7 +391,8 @@
       "description": "La tua presentazione è un po' corta: ancora {missing, plural, one {# carattere} other {# caratteri}}.",
       "height": "L'altezza deve essere tra {min} e {max} cm (oppure lascia vuoto).",
       "rate": "Indica un importo in CHF, solo cifre (oppure lascia vuoto).",
-      "photos": "Aggiungi almeno una foto per continuare."
+      "photos": "Aggiungi almeno una foto per continuare.",
+      "canton": "Scegli il tuo cantone."
     },
     "contactErrors": {
       "whatsappRequired": "Indica il tuo numero WhatsApp: è così che i clienti ti contattano.",
@@ -360,21 +410,73 @@
       "network": "«{name}» non è stata inviata: nessuna connessione internet. Riprova quando la connessione torna.",
       "networkAction": "Nessuna connessione internet al momento. Riprova tra un momento.",
       "generic": "«{name}» non è stata inviata. Riprova, oppure prova con un'altra foto."
-    }
+    },
+    "cantonLabel": "Cantone",
+    "cantonPlaceholder": "Scegli il tuo cantone",
+    "cityChooseCantonFirst": "Scegli prima il cantone"
   },
   "moderation": {
     "title": "Foto da convalidare",
     "pendingProfiles": "Profili in attesa",
     "pendingMedia": "Foto in attesa",
     "emptyQueue": "Coda vuota.",
-    "reasonPlaceholder": "Motivo della decisione (obbligatorio)",
-    "approve": "Approva",
+    "reasonPlaceholder": "Motivo (obbligatorio per rifiutare, mostrato alla prestatrice)",
+    "approve": "Convalida",
     "reject": "Rifiuta",
     "decisionError": "Impossibile salvare la decisione.",
-    "verificationRequiredError": "La verifica della maggiore età non è più valida: pubblicazione impossibile.",
+    "verificationRequiredError": "Convalida prima l'identità di questa prestatrice (coda «Identità da convalidare»).",
     "openReports": "Segnalazioni aperte",
     "reportNotePlaceholder": "Nota di gestione (obbligatoria)",
-    "resolveReport": "Segna come gestita"
+    "resolveReport": "Segna come gestita",
+    "reasonRequiredToReject": "Scrivi il motivo del rifiuto: sarà mostrato alla prestatrice.",
+    "queues": {
+      "identities": "Identità da convalidare",
+      "permits": "Permessi da convalidare",
+      "profiles": "Profili da convalidare",
+      "photos": "Foto da convalidare",
+      "reports": "Segnalazioni"
+    },
+    "identity": {
+      "intro": "Controlla il documento d'identità (18+, foto leggibile, documento valido). Alla decisione le immagini vengono cancellate: resta solo il risultato.",
+      "documentType": "Tipo di documento",
+      "documentTypes": {
+        "id_card": "Carta d'identità",
+        "passport": "Passaporto",
+        "residence_permit": "Permesso di soggiorno",
+        "driving_licence": "Licenza di condurre"
+      },
+      "issuingCountry": "Paese di emissione",
+      "otherCountry": "Altro",
+      "alsoPublish": "Convalida anche il profilo e mettilo online"
+    },
+    "permit": {
+      "intro": "Permessi di lavoro o contratti caricati (facoltativi). Alla decisione il documento viene cancellato."
+    },
+    "documents": {
+      "kinds": {
+        "IDENTITY_FRONT": "Documento d'identità — fronte",
+        "IDENTITY_BACK": "Documento d'identità — retro",
+        "WORK_PERMIT": "Permesso di lavoro / contratto"
+      },
+      "pdfFallback": "Documento PDF",
+      "open": "Apri a schermo intero",
+      "missing": "Documenti assenti o già cancellati: chiedi un nuovo caricamento rifiutando con un motivo.",
+      "noProfileYet": "Profilo non ancora creato",
+      "profileStatus": {
+        "DRAFT": "Profilo in bozza",
+        "PENDING_REVIEW": "Profilo in attesa",
+        "PUBLISHED": "Profilo online",
+        "REJECTED": "Profilo rifiutato",
+        "SUSPENDED": "Profilo nascosto"
+      },
+      "submittedAt": "caricato il {date}",
+      "autoDelete": "cancellazione automatica il {date}"
+    },
+    "profilesIntro": "Profili inviati dalle prestatrici. Un profilo può andare online solo dopo la convalida dell'identità.",
+    "photosIntro": "Foto aggiunte dalle prestatrici. Una foto convalidata appare subito sul profilo pubblico.",
+    "identityVerified": "Maggiore età verificata (18+)",
+    "identityNotVerified": "Identità non ancora verificata",
+    "validateIdentityFirst": "Convalida prima l'identità (coda «Identità da convalidare») prima di mettere online questo profilo."
   },
   "adminTaxonomies": {
     "title": "Categorie e città",
@@ -522,12 +624,14 @@
     "moderationBody": "In attesa — foto: {media} · profili: {profiles} · segnalazioni: {reports}",
     "taxonomiesBody": "{categories} categorie e {cities} città attive.",
     "auditLogBody": "{count, plural, one {# azione registrata.} other {# azioni registrate.}}",
-    "geoBody": "{count, plural, one {# paese autorizzato.} other {# paesi autorizzati.}}"
+    "geoBody": "{count, plural, one {# paese autorizzato.} other {# paesi autorizzati.}}",
+    "queuesTitle": "Da convalidare",
+    "settingsTitle": "Impostazioni"
   },
   "profileDone": {
     "sent": {
       "title": "Il tuo profilo è creato e in attesa di verifica",
-      "body": "Grazie! Il nostro team controllerà il tuo profilo prima di pubblicarlo. Non devi fare altro: segui lo stato dalla tua bacheca."
+      "body": "Grazie! Il nostro team verifica i tuoi documenti e rilegge il profilo prima di metterlo online. Non devi fare altro: segui lo stato dalla dashboard."
     },
     "updated": {
       "title": "Le tue modifiche sono salvate",
@@ -543,5 +647,22 @@
     },
     "toDashboard": "Vai alla mia bacheca",
     "editAgain": "Modifica ancora il profilo"
+  },
+  "documents": {
+    "optional": "facoltativo",
+    "choose": "Scegli un file",
+    "selected": "File scelto ({size}) — tocca per cambiarlo",
+    "formats": "PNG, JPEG o PDF — massimo 10 MB",
+    "front": "Documento d'identità — fronte",
+    "back": "Documento d'identità — retro",
+    "passportHint": "Per un passaporto: la pagina con la foto, poi la pagina delle firme.",
+    "workPermit": "Permesso di lavoro o contratto",
+    "workPermitHint": "Facoltativo. Se ne hai uno: permesso B, C, L, G o contratto.",
+    "errors": {
+      "format": "Formato non accettato: scegli un file PNG, JPEG o PDF.",
+      "tooLarge": "File troppo pesante (massimo 10 MB).",
+      "missing": "Aggiungi questo documento.",
+      "network": "Connessione persa. Controlla la rete e riprova."
+    }
   }
 }

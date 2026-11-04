@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { slugifyWithSuffix } from "@/lib/slugify";
+import { DEMO_SALONS } from "@/modules/showcase/demo-salons";
 import {
   BODY_TYPES,
   CLIENTELE,
@@ -31,6 +32,13 @@ async function resolveTaxonomyIds(input: UpsertProfileInput) {
   ]);
 
   if (!city || !city.isActive) throw new UnknownTaxonomyReferenceError("Ville inconnue ou inactive");
+  // Le salon choisi doit se trouver dans le canton de la ville du profil.
+  if (input.details?.salonSlug) {
+    const salon = DEMO_SALONS.find((s) => s.slug === input.details?.salonSlug);
+    if (!salon || salon.canton !== city.canton) {
+      throw new UnknownTaxonomyReferenceError("Salon hors du canton choisi");
+    }
+  }
   if (!category || !category.isActive) {
     throw new UnknownTaxonomyReferenceError("Catégorie inconnue ou inactive");
   }
@@ -114,22 +122,23 @@ export async function upsertOwnContact(userId: string, data: UpsertContactInput)
 
 /**
  * Constraint #2 : demande de publication. Refuse tant que l'attestation
- * d'onboarding ou la vérification 18+ ne sont pas complètes — donne un
- * retour immédiat à l'annonceuse plutôt que de la laisser attendre un
- * rejet en modération. La modération revérifie de toute façon ces deux
- * conditions avant de publier (modules/moderation), cette fonction ne
- * remplace pas ce garde-fou, elle l'anticipe.
+ * n'est pas faite ou qu'aucune pièce d'identité n'a été déposée. Le profil
+ * peut être envoyé pendant que l'identité est EN COURS de vérification : il
+ * reste alors "en attente de vérification" et invisible ; la publication
+ * (modules/moderation, decideOnProfile) exige toujours une identité
+ * VALIDÉE par l'admin — ce garde-fou-là ne dépend pas de cette fonction.
  */
 export async function submitProfileForReview(userId: string) {
   const profile = await prisma.providerProfile.findUnique({ where: { userId } });
   if (!profile) throw new ProfileNotFoundError();
 
-  const [attested, verified] = await Promise.all([
+  const [attested, verified, identityUnderReview] = await Promise.all([
     hasCompletedOnboardingAttestation(userId),
     hasPassedAdultVerification(userId),
+    prisma.verificationRecord.count({ where: { providerId: userId, status: "PENDING" } }).then((n) => n > 0),
   ]);
   if (!attested) throw new OnboardingIncompleteError();
-  if (!verified) throw new VerificationIncompleteError();
+  if (!verified && !identityUnderReview) throw new VerificationIncompleteError();
 
   // Même checklist que le tableau de bord ("Pour être visible") : au moins
   // une photo non refusée et un WhatsApp, sinon le profil publié serait vide
@@ -194,7 +203,19 @@ export async function getProviderDashboardExtras(profileId: string) {
  * Interrupteur "Disponible maintenant" : ne change que onlineStatus, jamais
  * le contenu ni le statut de modération du profil.
  */
+export class AvailabilityRequiresVerificationError extends Error {
+  constructor() {
+    super("Se mettre en ligne nécessite une identité vérifiée par l'admin");
+    this.name = "AvailabilityRequiresVerificationError";
+  }
+}
+
 export async function setOwnAvailability(userId: string, available: boolean) {
+  // "En ligne" n'a de sens qu'une fois l'identité validée par l'admin ;
+  // se mettre hors ligne reste toujours possible.
+  if (available && !(await hasPassedAdultVerification(userId))) {
+    throw new AvailabilityRequiresVerificationError();
+  }
   return prisma.providerProfile.update({
     where: { userId },
     data: { onlineStatus: available ? "ONLINE" : "OFFLINE" },
@@ -259,7 +280,11 @@ export async function listPublishedProfiles(filters: ListPublishedProfilesFilter
   return prisma.providerProfile.findMany({
     where: {
       status: "PUBLISHED",
-      city: filters.citySlug ? { slug: filters.citySlug } : undefined,
+      city: filters.citySlug
+        ? { slug: filters.citySlug }
+        : filters.canton
+          ? { canton: filters.canton }
+          : undefined,
       category: filters.categoryKey ? { key: filters.categoryKey } : undefined,
       languages: filters.languageCode
         ? { some: { language: { code: filters.languageCode } } }

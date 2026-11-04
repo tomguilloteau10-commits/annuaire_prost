@@ -11,7 +11,7 @@
     "login": "Connexion",
     "register": "Inscription",
     "dashboard": "Mon tableau de bord",
-    "moderation": "Photos à valider",
+    "moderation": "Photos",
     "taxonomies": "Catégories & villes",
     "auditLog": "Historique des actions",
     "geoSettings": "Pays autorisés",
@@ -27,7 +27,11 @@
     "soon": "Bientôt",
     "admin": "Admin",
     "adminHome": "Vue d'ensemble",
-    "adminNavLabel": "Navigation de l'espace admin"
+    "adminNavLabel": "Navigation de l'espace admin",
+    "adminIdentities": "Identités",
+    "adminPermits": "Permis",
+    "adminProfiles": "Profils",
+    "adminReports": "Signalements"
   },
   "home": {
     "title": "Trouvez une annonceuse indépendante en Suisse",
@@ -58,7 +62,9 @@
         "MID": "250 à 350 CHF",
         "HIGH": "Plus de 350 CHF"
       },
-      "clientele": "Clientèle"
+      "clientele": "Clientèle",
+      "canton": "Canton",
+      "allCities": "Toutes les villes"
     },
     "storiesTitle": "Stories",
     "seeAll": "Voir tout",
@@ -151,25 +157,61 @@
     "emailTakenError": "Un compte existe déjà avec cet email."
   },
   "onboarding": {
-    "title": "Avant de commencer",
-    "intro": "Merci de confirmer les points suivants. Votre confirmation est enregistrée avec la date du jour.",
+    "title": "Majorité & autorisation",
+    "intro": "Déposez votre pièce d'identité et confirmez les points ci-dessous. Notre équipe vérifie vos documents à la main avant toute mise en ligne.",
     "fields": {
       "attestedAdult": "Je suis majeure.",
       "attestedVoluntary": "J'agis volontairement, sans contrainte.",
       "attestedAuthorizedToWorkInSwitzerland": "Je suis autorisée à travailler en Suisse.",
       "attestedCantonalDeclaration": "Je m'annonce auprès des autorités de mon canton si requis."
     },
-    "submit": "Confirmer l'attestation",
-    "submitError": "Impossible d'enregistrer l'attestation pour le moment."
+    "submit": "Envoyer pour vérification",
+    "submitError": "L'envoi n'a pas abouti. Réessayez dans un instant.",
+    "identityTitle": "Votre pièce d'identité",
+    "identityIntro": "Photo ou scan lisible du recto et du verso (carte d'identité, passeport ou permis de séjour).",
+    "privacyNote": "Vos documents sont chiffrés, visibles uniquement par l'administratrice du site, et supprimés dès la vérification faite (au plus tard après 30 jours). Seul le résultat est conservé.",
+    "authorizationTitle": "Autorisation de travailler",
+    "whatNext": "Après l'envoi, votre profil reste « en attente de vérification » : il ne sera visible qu'une fois vos documents validés par notre équipe.",
+    "sending": "Envoi en cours…",
+    "errors": {
+      "checkRequired": "Cochez cette case pour continuer."
+    }
   },
   "verification": {
-    "title": "Vérification de votre âge",
-    "intro": "La publication de votre profil nécessite une vérification que vous êtes majeure. Cette étape est simulée en bêta (aucun document n'est conservé).",
-    "alreadyVerified": "Vérification validée.",
-    "start": "Commencer la vérification",
-    "running": "Vérification en cours…",
-    "error": "La vérification a échoué. Réessayez.",
-    "continue": "Continuer"
+    "title": "Ma vérification",
+    "backToDashboard": "Retour au tableau de bord",
+    "identity": {
+      "verified": {
+        "title": "Majorité vérifiée (18+)",
+        "body": "Vos documents ont été vérifiés le {date} puis supprimés. Vous pouvez vous mettre « En ligne »."
+      },
+      "pending": {
+        "title": "Documents en cours de vérification",
+        "body": "Notre équipe vérifie vos documents. Vous n'avez rien à faire : votre tableau de bord se mettra à jour dès la décision."
+      },
+      "rejected": {
+        "title": "Documents refusés",
+        "body": "Vos documents n'ont pas pu être validés. Déposez-en de nouveaux ci-dessous."
+      },
+      "missing": {
+        "title": "Pièce d'identité à déposer",
+        "body": "Déposez le recto et le verso de votre pièce d'identité pour lancer la vérification."
+      }
+    },
+    "reason": "Motif",
+    "toDashboard": "Aller au tableau de bord",
+    "continueToProfile": "Continuer : créer mon profil",
+    "permit": {
+      "title": "Permis de travail / contrat",
+      "NONE": "Aucun document déposé (facultatif).",
+      "PENDING": "Document en cours de vérification par notre équipe.",
+      "VERIFIED": "Document vérifié, puis supprimé.",
+      "REJECTED": "Document refusé. Vous pouvez en déposer un nouveau."
+    },
+    "resubmit": "Envoyer les nouveaux documents",
+    "sending": "Envoi en cours…",
+    "resubmitError": "L'envoi n'a pas abouti. Réessayez dans un instant.",
+    "privacy": "Vos documents ne sont visibles que par l'administratrice du site et sont supprimés dès la vérification faite."
   },
   "dashboard": {
     "title": "Mon tableau de bord",
@@ -189,7 +231,11 @@
       "continue": "Continuer",
       "submit": "Envoyer mon profil",
       "resubmit": "Renvoyer mon profil",
-      "fixProfile": "Corriger mon profil"
+      "fixProfile": "Corriger mon profil",
+      "pendingIdentity": "Vos documents et votre profil sont en cours de vérification. Vous n'avez rien à faire : votre profil sera mis en ligne dès la validation.",
+      "readyToSubmitIdentityPending": "Votre profil est prêt : envoyez-le. Il sera mis en ligne une fois vos documents vérifiés par notre équipe.",
+      "identityRejected": "Vos documents d'identité n'ont pas pu être validés. Déposez-en de nouveaux pour continuer.",
+      "resendDocuments": "Déposer de nouveaux documents"
     },
     "preview": {
       "title": "Mon profil vu par les clients",
@@ -209,14 +255,16 @@
         "photo": "Au moins une photo ajoutée",
         "cityCategory": "Ville et catégorie renseignées",
         "whatsapp": "Moyen de contact (WhatsApp) ajouté"
-      }
+      },
+      "inReview": "En vérification"
     },
     "availability": {
       "title": "Disponible maintenant",
       "on": "Oui — les clients voient « En ligne » sur votre profil.",
       "off": "Non — votre profil affiche « Hors ligne ».",
       "needsProfile": "Créez d'abord votre profil.",
-      "error": "Le changement n'a pas pu être enregistré. Réessayez."
+      "error": "Le changement n'a pas pu être enregistré. Réessayez.",
+      "needsVerification": "Possible dès que vos documents sont vérifiés."
     },
     "plan": {
       "title": "Mon abonnement",
@@ -228,7 +276,8 @@
     "submitErrorVerification": "Votre vérification de majorité n'est pas encore validée.",
     "submitErrorPhoto": "Ajoutez au moins une photo avant d'envoyer votre profil.",
     "submitErrorWhatsapp": "Ajoutez votre numéro WhatsApp avant d'envoyer votre profil.",
-    "submitErrorGeneric": "L'envoi n'a pas fonctionné. Réessayez dans un instant."
+    "submitErrorGeneric": "L'envoi n'a pas fonctionné. Réessayez dans un instant.",
+    "verifiedBadge": "Profil vérifié"
   },
   "profileEdit": {
     "title": "Modifier mon profil",
@@ -341,7 +390,8 @@
       "description": "Votre présentation est un peu courte : encore {missing, plural, one {# caractère} other {# caractères}}.",
       "height": "La taille doit être entre {min} et {max} cm (ou laissez vide).",
       "rate": "Indiquez un montant en CHF, en chiffres uniquement (ou laissez vide).",
-      "photos": "Ajoutez au moins une photo pour continuer."
+      "photos": "Ajoutez au moins une photo pour continuer.",
+      "canton": "Choisissez votre canton."
     },
     "contactErrors": {
       "whatsappRequired": "Indiquez votre numéro WhatsApp : c'est ainsi que les clients vous contactent.",
@@ -359,21 +409,73 @@
       "network": "« {name} » n'a pas pu être envoyée : pas de connexion internet. Réessayez quand la connexion revient.",
       "networkAction": "Pas de connexion internet pour le moment. Réessayez dans un instant.",
       "generic": "« {name} » n'a pas pu être envoyée. Réessayez, ou essayez une autre photo."
-    }
+    },
+    "cantonLabel": "Canton",
+    "cantonPlaceholder": "Choisissez votre canton",
+    "cityChooseCantonFirst": "Choisissez d'abord le canton"
   },
   "moderation": {
     "title": "Photos à valider",
     "pendingProfiles": "Profils en attente",
     "pendingMedia": "Photos en attente",
     "emptyQueue": "File vide.",
-    "reasonPlaceholder": "Raison de la décision (obligatoire)",
-    "approve": "Approuver",
-    "reject": "Rejeter",
+    "reasonPlaceholder": "Motif (obligatoire pour refuser, montré à la prestataire)",
+    "approve": "Valider",
+    "reject": "Refuser",
     "decisionError": "Impossible d'enregistrer la décision.",
-    "verificationRequiredError": "La vérification de majorité n'est plus valide : publication impossible.",
+    "verificationRequiredError": "Validez d'abord l'identité de cette prestataire (file « Identités à valider »).",
     "openReports": "Signalements ouverts",
     "reportNotePlaceholder": "Note de traitement (obligatoire)",
-    "resolveReport": "Marquer comme traité"
+    "resolveReport": "Marquer comme traité",
+    "reasonRequiredToReject": "Écrivez le motif du refus : il sera montré à la prestataire.",
+    "queues": {
+      "identities": "Identités à valider",
+      "permits": "Permis à valider",
+      "profiles": "Profils à valider",
+      "photos": "Photos à valider",
+      "reports": "Signalements"
+    },
+    "identity": {
+      "intro": "Contrôlez la pièce d'identité (âge 18+, photo lisible, document valable). À la décision, les images sont supprimées : seul le résultat est conservé.",
+      "documentType": "Type de document",
+      "documentTypes": {
+        "id_card": "Carte d'identité",
+        "passport": "Passeport",
+        "residence_permit": "Permis de séjour",
+        "driving_licence": "Permis de conduire"
+      },
+      "issuingCountry": "Pays d'émission",
+      "otherCountry": "Autre",
+      "alsoPublish": "Valider aussi le profil et le mettre en ligne"
+    },
+    "permit": {
+      "intro": "Permis de travail ou contrat déposés (facultatifs). À la décision, le document est supprimé."
+    },
+    "documents": {
+      "kinds": {
+        "IDENTITY_FRONT": "Pièce d'identité — recto",
+        "IDENTITY_BACK": "Pièce d'identité — verso",
+        "WORK_PERMIT": "Permis de travail / contrat"
+      },
+      "pdfFallback": "Document PDF",
+      "open": "Ouvrir en grand",
+      "missing": "Documents absents ou déjà supprimés : demandez un nouveau dépôt en refusant avec un motif.",
+      "noProfileYet": "Profil pas encore créé",
+      "profileStatus": {
+        "DRAFT": "Profil en brouillon",
+        "PENDING_REVIEW": "Profil en attente",
+        "PUBLISHED": "Profil en ligne",
+        "REJECTED": "Profil refusé",
+        "SUSPENDED": "Profil masqué"
+      },
+      "submittedAt": "déposé le {date}",
+      "autoDelete": "suppression automatique le {date}"
+    },
+    "profilesIntro": "Profils envoyés par les prestataires. Un profil ne peut être mis en ligne qu'après validation de l'identité.",
+    "photosIntro": "Photos ajoutées par les prestataires. Une photo validée apparaît tout de suite sur le profil public.",
+    "identityVerified": "Majorité vérifiée (18+)",
+    "identityNotVerified": "Identité pas encore vérifiée",
+    "validateIdentityFirst": "Validez d'abord l'identité (file « Identités à valider ») avant de mettre ce profil en ligne."
   },
   "adminTaxonomies": {
     "title": "Catégories & villes",
@@ -521,12 +623,14 @@
     "moderationBody": "En attente — photos : {media} · profils : {profiles} · signalements : {reports}",
     "taxonomiesBody": "{categories} catégories et {cities} villes actives.",
     "auditLogBody": "{count, plural, one {# action enregistrée.} other {# actions enregistrées.}}",
-    "geoBody": "{count, plural, one {# pays autorisé.} other {# pays autorisés.}}"
+    "geoBody": "{count, plural, one {# pays autorisé.} other {# pays autorisés.}}",
+    "queuesTitle": "À valider",
+    "settingsTitle": "Réglages"
   },
   "profileDone": {
     "sent": {
       "title": "Votre profil est créé et en attente de vérification",
-      "body": "Merci ! Notre équipe va relire votre profil avant de le mettre en ligne. Vous n'avez rien d'autre à faire : suivez son statut depuis votre tableau de bord."
+      "body": "Merci ! Notre équipe vérifie vos documents et relit votre profil avant de le mettre en ligne. Vous n'avez rien d'autre à faire : suivez son statut depuis votre tableau de bord."
     },
     "updated": {
       "title": "Vos modifications sont enregistrées",
@@ -542,5 +646,22 @@
     },
     "toDashboard": "Aller à mon tableau de bord",
     "editAgain": "Modifier encore mon profil"
+  },
+  "documents": {
+    "optional": "facultatif",
+    "choose": "Choisir un fichier",
+    "selected": "Fichier choisi ({size}) — touchez pour le changer",
+    "formats": "PNG, JPEG ou PDF — 10 Mo maximum",
+    "front": "Pièce d'identité — recto",
+    "back": "Pièce d'identité — verso",
+    "passportHint": "Pour un passeport : la page avec la photo, puis la page des signatures.",
+    "workPermit": "Permis de travail ou contrat",
+    "workPermitHint": "Facultatif. Si vous en avez un : permis B, C, L, G ou contrat.",
+    "errors": {
+      "format": "Format non accepté : choisissez un fichier PNG, JPEG ou PDF.",
+      "tooLarge": "Fichier trop lourd (10 Mo maximum).",
+      "missing": "Ajoutez ce document.",
+      "network": "Connexion perdue. Vérifiez votre réseau puis réessayez."
+    }
   }
 }

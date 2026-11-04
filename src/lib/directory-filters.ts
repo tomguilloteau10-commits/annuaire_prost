@@ -1,7 +1,9 @@
 import type { ListPublishedProfilesFilters } from "@/modules/profiles/types";
+import { isCantonCode } from "@/lib/cantons";
 
 /** Paramètres d'URL de l'annuaire (accueil, pages catégorie, API publique). */
 export interface DirectorySearchParams {
+  canton?: string;
   city?: string;
   category?: string;
   language?: string;
@@ -14,6 +16,8 @@ export interface DirectorySearchParams {
 
 /** État des filtres tel qu'affiché par la barre de filtres. */
 export interface DirectoryFilterState {
+  /** Code canton (GE, VD…) ; la ville, si choisie, appartient à ce canton. */
+  canton?: string;
   city?: string;
   category?: string;
   language?: string;
@@ -26,6 +30,7 @@ export interface DirectoryFilterState {
 
 export function parseDirectoryFilters(params: DirectorySearchParams): DirectoryFilterState {
   return {
+    canton: params.canton && isCantonCode(params.canton) ? params.canton : undefined,
     city: params.city || undefined,
     category: params.category || undefined,
     language: params.language || undefined,
@@ -39,6 +44,7 @@ export function parseDirectoryFilters(params: DirectorySearchParams): DirectoryF
 
 export function toProfileFilters(state: DirectoryFilterState): ListPublishedProfilesFilters {
   return {
+    canton: state.canton,
     citySlug: state.city,
     categoryKey: state.category,
     languageCode: state.language,

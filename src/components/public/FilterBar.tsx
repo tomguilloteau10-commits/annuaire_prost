@@ -2,7 +2,7 @@
 import { useTranslations } from "next-intl";
 import { useRouter, usePathname } from "@/i18n/navigation";
 import { getLocalizedLabel } from "@/modules/taxonomies/types";
-import { groupCitiesByCanton } from "@/lib/group-cities";
+import { cantonOptions, citiesOfCanton } from "@/lib/cantons";
 import { toDirectoryQuery, type DirectoryFilterState } from "@/lib/directory-filters";
 import type { PublishedProfileFacets } from "@/modules/profiles/types";
 import { Select } from "@/components/ui/Field";
@@ -22,8 +22,8 @@ export interface FilterBarProps {
 const MORE_FILTER_KEYS = ["body", "meeting", "price", "clientele"] as const;
 
 /**
- * Filtres de l'annuaire. Les filtres de base (ville, catégorie, langue, en
- * ligne) sont toujours là ; les filtres issus de la fiche prestataire
+ * Filtres de l'annuaire. Les filtres de base (canton puis ville du canton,
+ * catégorie, langue, en ligne) sont toujours là ; les filtres issus de la fiche prestataire
  * (silhouette, se déplace/reçoit, tarif, clientèle) n'apparaissent — avec
  * leurs seules options utiles — que si des profils publiés ont renseigné ces
  * champs, pour ne jamais proposer un filtre qui ne mène à rien.
@@ -48,6 +48,10 @@ export function FilterBar({
     router.push(query ? `${pathname}?${query}` : pathname);
   }
 
+  // Canton choisi, ou déduit de la ville (anciens liens sans canton).
+  const selectedCanton =
+    currentFilters.canton ?? cities.find((city) => city.slug === currentFilters.city)?.canton ?? "";
+
   const hasMoreFilters =
     facets.bodyTypes.length > 0 ||
     facets.meetings.length > 0 ||
@@ -61,19 +65,30 @@ export function FilterBar({
       <div className="flex w-full flex-col gap-2.5 md:flex-row md:flex-wrap md:items-center">
         <Select
           fit
+          aria-label={t("canton")}
+          value={selectedCanton}
+          onChange={(e) => navigate({ canton: e.target.value || undefined, city: undefined })}
+        >
+          <option value="">{t("canton")}</option>
+          {cantonOptions(locale).map((option) => (
+            <option key={option.code} value={option.code}>
+              {option.name}
+            </option>
+          ))}
+        </Select>
+
+        <Select
+          fit
           aria-label={t("city")}
           value={currentFilters.city ?? ""}
-          onChange={(e) => navigate({ city: e.target.value || undefined })}
+          disabled={!selectedCanton}
+          onChange={(e) => navigate({ canton: selectedCanton || undefined, city: e.target.value || undefined })}
         >
-          <option value="">{t("city")}</option>
-          {groupCitiesByCanton(cities).map((group) => (
-            <optgroup key={group.canton} label={group.canton}>
-              {group.cities.map((city) => (
-                <option key={city.slug} value={city.slug}>
-                  {city.name}
-                </option>
-              ))}
-            </optgroup>
+          <option value="">{selectedCanton ? t("allCities") : t("city")}</option>
+          {citiesOfCanton(cities, selectedCanton).map((city) => (
+            <option key={city.slug} value={city.slug}>
+              {city.name}
+            </option>
           ))}
         </Select>
 

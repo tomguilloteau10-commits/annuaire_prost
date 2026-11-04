@@ -1,12 +1,13 @@
 "use client";
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useCsrfToken } from "@/lib/use-csrf-token";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Label, TextInput } from "@/components/ui/Field";
+import { Label, Select, TextInput } from "@/components/ui/Field";
+import { cantonOptions } from "@/lib/cantons";
 
 export interface CityItem {
   id: string;
@@ -20,6 +21,7 @@ export interface CityItem {
 // (ajoutés à la création via seed/admin technique si besoin pour PostGIS).
 export function CityList({ items }: { items: CityItem[] }) {
   const t = useTranslations("adminTaxonomies");
+  const locale = useLocale();
   const router = useRouter();
   const csrfToken = useCsrfToken();
   const [name, setName] = useState("");
@@ -92,7 +94,16 @@ export function CityList({ items }: { items: CityItem[] }) {
         </div>
         <div className="flex flex-col gap-1">
           <Label className="text-xs">{t("cityCanton")}</Label>
-          <TextInput value={canton} maxLength={2} onChange={(e) => setCanton(e.target.value)} className="w-16" />
+          <Select fit value={canton} onChange={(e) => setCanton(e.target.value)}>
+            <option value="" disabled>
+              —
+            </option>
+            {cantonOptions(locale).map((option) => (
+              <option key={option.code} value={option.code}>
+                {option.code} · {option.name}
+              </option>
+            ))}
+          </Select>
         </div>
         <Button onClick={handleCreate} disabled={submitting || !csrfToken}>
           {t("add")}

@@ -12,6 +12,7 @@
  */
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import { purgeExpiredVerificationDocuments } from "@/modules/verification/document-retention";
 
 async function purgeSessionIpHashes(now: Date) {
   const result = await prisma.session.updateMany({
@@ -64,12 +65,14 @@ async function purgeStaleVerificationAudits(now: Date) {
 }
 
 export async function purgeExpiredData(now: Date = new Date()) {
-  const [sessions, attestations, contactLogs, media, verifications] = await Promise.all([
+  const [sessions, attestations, contactLogs, media, verifications, verificationDocuments] = await Promise.all([
     purgeSessionIpHashes(now),
     purgeOnboardingAttestationIpHashes(now),
     purgeContactRevealLogs(now),
     purgeRejectedMedia(now),
     purgeStaleVerificationAudits(now),
+    // Pièces d'identité / permis jamais examinés dans le délai maximal.
+    purgeExpiredVerificationDocuments(now),
   ]);
 
   logger.info("retention.purge.completed", {
@@ -78,9 +81,10 @@ export async function purgeExpiredData(now: Date = new Date()) {
     contactRevealLogsPurged: contactLogs,
     rejectedMediaPurged: media,
     verificationAuditsPurged: verifications,
+    verificationDocumentsPurged: verificationDocuments,
   });
 
-  return { sessions, attestations, contactLogs, media, verifications };
+  return { sessions, attestations, contactLogs, media, verifications, verificationDocuments };
 }
 
 if (require.main === module) {

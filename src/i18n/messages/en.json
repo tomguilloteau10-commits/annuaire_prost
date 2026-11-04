@@ -11,7 +11,7 @@
     "login": "Log in",
     "register": "Sign up",
     "dashboard": "My dashboard",
-    "moderation": "Photos to review",
+    "moderation": "Photos",
     "taxonomies": "Categories & cities",
     "auditLog": "Action history",
     "geoSettings": "Allowed countries",
@@ -27,7 +27,11 @@
     "soon": "Coming soon",
     "admin": "Admin",
     "adminHome": "Overview",
-    "adminNavLabel": "Admin area navigation"
+    "adminNavLabel": "Admin area navigation",
+    "adminIdentities": "Identities",
+    "adminPermits": "Permits",
+    "adminProfiles": "Profiles",
+    "adminReports": "Reports"
   },
   "home": {
     "title": "Find an independent provider in Switzerland",
@@ -58,7 +62,9 @@
         "MID": "CHF 250 to 350",
         "HIGH": "Over CHF 350"
       },
-      "clientele": "Clientele"
+      "clientele": "Clientele",
+      "canton": "Canton",
+      "allCities": "All cities"
     },
     "storiesTitle": "Stories",
     "seeAll": "See all",
@@ -151,25 +157,61 @@
     "emailTakenError": "An account already exists with this email."
   },
   "onboarding": {
-    "title": "Before you start",
-    "intro": "Please confirm the following points. Your confirmation is recorded with today's date.",
+    "title": "Age & authorisation",
+    "intro": "Upload your ID and confirm the points below. Our team checks your documents by hand before anything goes online.",
     "fields": {
       "attestedAdult": "I am an adult.",
       "attestedVoluntary": "I am acting voluntarily, without coercion.",
       "attestedAuthorizedToWorkInSwitzerland": "I am authorized to work in Switzerland.",
       "attestedCantonalDeclaration": "I will register with my canton's authorities if required."
     },
-    "submit": "Confirm attestation",
-    "submitError": "Could not save the attestation right now."
+    "submit": "Send for verification",
+    "submitError": "Sending failed. Please try again in a moment.",
+    "identityTitle": "Your ID document",
+    "identityIntro": "A clear photo or scan of the front and back (ID card, passport or residence permit).",
+    "privacyNote": "Your documents are encrypted, visible only to the site administrator, and deleted as soon as the check is done (after 30 days at most). Only the result is kept.",
+    "authorizationTitle": "Authorisation to work",
+    "whatNext": "After sending, your profile stays “pending verification”: it only becomes visible once our team has validated your documents.",
+    "sending": "Sending…",
+    "errors": {
+      "checkRequired": "Tick this box to continue."
+    }
   },
   "verification": {
-    "title": "Age check",
-    "intro": "Publishing your profile requires verifying that you are an adult. This step is simulated in beta (no document is retained).",
-    "alreadyVerified": "Verification passed.",
-    "start": "Start verification",
-    "running": "Verifying…",
-    "error": "Verification failed. Please try again.",
-    "continue": "Continue"
+    "title": "My verification",
+    "backToDashboard": "Back to dashboard",
+    "identity": {
+      "verified": {
+        "title": "Age verified (18+)",
+        "body": "Your documents were verified on {date} and then deleted. You can now go “Online”."
+      },
+      "pending": {
+        "title": "Documents being checked",
+        "body": "Our team is checking your documents. Nothing to do: your dashboard updates as soon as a decision is made."
+      },
+      "rejected": {
+        "title": "Documents rejected",
+        "body": "Your documents could not be validated. Upload new ones below."
+      },
+      "missing": {
+        "title": "ID document needed",
+        "body": "Upload the front and back of your ID to start the check."
+      }
+    },
+    "reason": "Reason",
+    "toDashboard": "Go to dashboard",
+    "continueToProfile": "Next: create my profile",
+    "permit": {
+      "title": "Work permit / contract",
+      "NONE": "No document uploaded (optional).",
+      "PENDING": "Document being checked by our team.",
+      "VERIFIED": "Document verified, then deleted.",
+      "REJECTED": "Document rejected. You can upload a new one."
+    },
+    "resubmit": "Send the new documents",
+    "sending": "Sending…",
+    "resubmitError": "Sending failed. Please try again in a moment.",
+    "privacy": "Your documents are only visible to the site administrator and are deleted as soon as the check is done."
   },
   "dashboard": {
     "title": "My dashboard",
@@ -189,7 +231,11 @@
       "continue": "Continue",
       "submit": "Send my profile",
       "resubmit": "Send my profile again",
-      "fixProfile": "Fix my profile"
+      "fixProfile": "Fix my profile",
+      "pendingIdentity": "Your documents and profile are being checked. Nothing to do: your profile goes online as soon as it's validated.",
+      "readyToSubmitIdentityPending": "Your profile is ready: send it. It goes online once our team has verified your documents.",
+      "identityRejected": "Your ID documents could not be validated. Upload new ones to continue.",
+      "resendDocuments": "Upload new documents"
     },
     "preview": {
       "title": "My profile as clients see it",
@@ -209,14 +255,16 @@
         "photo": "At least one photo added",
         "cityCategory": "City and category filled in",
         "whatsapp": "Contact method (WhatsApp) added"
-      }
+      },
+      "inReview": "Being checked"
     },
     "availability": {
       "title": "Available now",
       "on": "Yes — clients see “Online” on your profile.",
       "off": "No — your profile shows “Offline”.",
       "needsProfile": "Create your profile first.",
-      "error": "The change could not be saved. Please try again."
+      "error": "The change could not be saved. Please try again.",
+      "needsVerification": "Available once your documents are verified."
     },
     "plan": {
       "title": "My plan",
@@ -228,7 +276,8 @@
     "submitErrorVerification": "Your age check is not approved yet.",
     "submitErrorPhoto": "Add at least one photo before sending your profile.",
     "submitErrorWhatsapp": "Add your WhatsApp number before sending your profile.",
-    "submitErrorGeneric": "Sending did not work. Please try again in a moment."
+    "submitErrorGeneric": "Sending did not work. Please try again in a moment.",
+    "verifiedBadge": "Verified profile"
   },
   "profileEdit": {
     "title": "Edit my profile",
@@ -341,7 +390,8 @@
       "description": "Your text is a little short: {missing, plural, one {# more character} other {# more characters}}.",
       "height": "Height must be between {min} and {max} cm (or leave it empty).",
       "rate": "Enter an amount in CHF, numbers only (or leave it empty).",
-      "photos": "Add at least one photo to continue."
+      "photos": "Add at least one photo to continue.",
+      "canton": "Choose your canton."
     },
     "contactErrors": {
       "whatsappRequired": "Enter your WhatsApp number: this is how clients contact you.",
@@ -359,21 +409,73 @@
       "network": "“{name}” could not be sent: no internet connection. Try again when the connection is back.",
       "networkAction": "No internet connection right now. Please try again in a moment.",
       "generic": "“{name}” could not be sent. Try again, or try another photo."
-    }
+    },
+    "cantonLabel": "Canton",
+    "cantonPlaceholder": "Choose your canton",
+    "cityChooseCantonFirst": "Choose the canton first"
   },
   "moderation": {
     "title": "Photos to review",
     "pendingProfiles": "Pending profiles",
     "pendingMedia": "Pending photos",
     "emptyQueue": "Queue is empty.",
-    "reasonPlaceholder": "Reason for the decision (required)",
+    "reasonPlaceholder": "Reason (required to reject, shown to the provider)",
     "approve": "Approve",
     "reject": "Reject",
     "decisionError": "Could not save the decision.",
-    "verificationRequiredError": "Age verification is no longer valid: cannot publish.",
+    "verificationRequiredError": "Validate this provider's identity first (“Identities to validate” queue).",
     "openReports": "Open reports",
     "reportNotePlaceholder": "Resolution note (required)",
-    "resolveReport": "Mark as handled"
+    "resolveReport": "Mark as handled",
+    "reasonRequiredToReject": "Write the reason for rejection: it will be shown to the provider.",
+    "queues": {
+      "identities": "Identities to validate",
+      "permits": "Permits to validate",
+      "profiles": "Profiles to validate",
+      "photos": "Photos to validate",
+      "reports": "Reports"
+    },
+    "identity": {
+      "intro": "Check the ID document (18+, readable photo, valid document). On decision, the images are deleted: only the result is kept.",
+      "documentType": "Document type",
+      "documentTypes": {
+        "id_card": "ID card",
+        "passport": "Passport",
+        "residence_permit": "Residence permit",
+        "driving_licence": "Driving licence"
+      },
+      "issuingCountry": "Issuing country",
+      "otherCountry": "Other",
+      "alsoPublish": "Also approve the profile and put it online"
+    },
+    "permit": {
+      "intro": "Uploaded work permits or contracts (optional). On decision, the document is deleted."
+    },
+    "documents": {
+      "kinds": {
+        "IDENTITY_FRONT": "ID document — front",
+        "IDENTITY_BACK": "ID document — back",
+        "WORK_PERMIT": "Work permit / contract"
+      },
+      "pdfFallback": "PDF document",
+      "open": "Open full size",
+      "missing": "Documents missing or already deleted: ask for a new upload by rejecting with a reason.",
+      "noProfileYet": "No profile yet",
+      "profileStatus": {
+        "DRAFT": "Draft profile",
+        "PENDING_REVIEW": "Profile pending",
+        "PUBLISHED": "Profile online",
+        "REJECTED": "Profile rejected",
+        "SUSPENDED": "Profile hidden"
+      },
+      "submittedAt": "uploaded on {date}",
+      "autoDelete": "auto-deleted on {date}"
+    },
+    "profilesIntro": "Profiles sent by providers. A profile can only go online once the identity is validated.",
+    "photosIntro": "Photos added by providers. An approved photo shows on the public profile right away.",
+    "identityVerified": "Age verified (18+)",
+    "identityNotVerified": "Identity not verified yet",
+    "validateIdentityFirst": "Validate the identity first (“Identities to validate” queue) before putting this profile online."
   },
   "adminTaxonomies": {
     "title": "Categories & cities",
@@ -521,12 +623,14 @@
     "moderationBody": "Waiting — photos: {media} · profiles: {profiles} · reports: {reports}",
     "taxonomiesBody": "{categories} active categories and {cities} active cities.",
     "auditLogBody": "{count, plural, one {# recorded action.} other {# recorded actions.}}",
-    "geoBody": "{count, plural, one {# allowed country.} other {# allowed countries.}}"
+    "geoBody": "{count, plural, one {# allowed country.} other {# allowed countries.}}",
+    "queuesTitle": "To validate",
+    "settingsTitle": "Settings"
   },
   "profileDone": {
     "sent": {
-      "title": "Your profile is created and waiting for review",
-      "body": "Thank you! Our team will check your profile before putting it online. There is nothing else to do: follow its status from your dashboard."
+      "title": "Your profile is created and pending verification",
+      "body": "Thank you! Our team checks your documents and reviews your profile before putting it online. Nothing else to do: follow its status from your dashboard."
     },
     "updated": {
       "title": "Your changes are saved",
@@ -542,5 +646,22 @@
     },
     "toDashboard": "Go to my dashboard",
     "editAgain": "Edit my profile again"
+  },
+  "documents": {
+    "optional": "optional",
+    "choose": "Choose a file",
+    "selected": "File selected ({size}) — tap to change it",
+    "formats": "PNG, JPEG or PDF — 10 MB max",
+    "front": "ID document — front",
+    "back": "ID document — back",
+    "passportHint": "For a passport: the photo page, then the signature page.",
+    "workPermit": "Work permit or contract",
+    "workPermitHint": "Optional. If you have one: B, C, L, G permit or a contract.",
+    "errors": {
+      "format": "Format not accepted: choose a PNG, JPEG or PDF file.",
+      "tooLarge": "File too large (10 MB max).",
+      "missing": "Add this document.",
+      "network": "Connection lost. Check your network and try again."
+    }
   }
 }

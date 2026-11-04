@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { setOwnAvailability } from "@/modules/profiles/profile.service";
+import { AvailabilityRequiresVerificationError, setOwnAvailability } from "@/modules/profiles/profile.service";
 import { requireRole, checkCsrf } from "@/lib/route-helpers";
 import { Prisma } from "@prisma/client";
 
@@ -22,6 +22,9 @@ export async function PUT(request: Request) {
     const profile = await setOwnAvailability(guard.user.id, parsed.data.available);
     return NextResponse.json(profile);
   } catch (error) {
+    if (error instanceof AvailabilityRequiresVerificationError) {
+      return NextResponse.json({ error: "verification_required" }, { status: 409 });
+    }
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
       return NextResponse.json({ error: "profile_not_found" }, { status: 404 });
     }

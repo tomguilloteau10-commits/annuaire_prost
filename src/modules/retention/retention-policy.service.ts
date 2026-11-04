@@ -17,6 +17,7 @@ export const DATA_CATEGORIES = {
   CONTACT_REVEAL_LOG: "contact_reveal_log",
   VERIFICATION_RECORD_AUDIT: "verification_record_audit",
   MEDIA_REJECTED: "media_rejected",
+  VERIFICATION_DOCUMENT: "verification_document",
 } as const;
 
 export type DataCategory = (typeof DATA_CATEGORIES)[keyof typeof DATA_CATEGORIES];
@@ -27,6 +28,9 @@ const DEFAULT_RETENTION_DAYS: Record<DataCategory, number> = {
   [DATA_CATEGORIES.CONTACT_REVEAL_LOG]: 30,
   [DATA_CATEGORIES.VERIFICATION_RECORD_AUDIT]: 730,
   [DATA_CATEGORIES.MEDIA_REJECTED]: 30,
+  // Pièces d'identité / permis en attente de contrôle : supprimées dès la
+  // décision de l'admin, et au plus tard après ce délai sans décision.
+  [DATA_CATEGORIES.VERIFICATION_DOCUMENT]: 30,
 };
 
 export async function getRetentionDays(category: DataCategory): Promise<number> {

@@ -3,10 +3,15 @@ import { z } from "zod";
 import { decideOnMedia } from "@/modules/moderation/moderation-queue.service";
 import { requireRole, checkCsrf } from "@/lib/route-helpers";
 
-const decisionSchema = z.object({
-  decision: z.enum(["APPROVED", "REJECTED"]),
-  reason: z.string().min(3).max(1000),
-});
+// Valider se fait en un clic (motif par défaut enregistré, ENGINEERING_RULES.md
+// §7) ; refuser exige toujours un motif écrit, montré à la prestataire.
+const decisionSchema = z
+  .object({
+    decision: z.enum(["APPROVED", "REJECTED"]),
+    reason: z.string().trim().max(1000).optional(),
+  })
+  .refine((d) => d.decision === "APPROVED" || (d.reason?.length ?? 0) >= 3, { path: ["reason"] })
+  .transform((d) => ({ ...d, reason: d.reason || "Validé par l'admin" }));
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const csrfError = checkCsrf(request);

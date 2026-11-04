@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createCity, listCities } from "@/modules/taxonomies/taxonomy.service";
 import { requireRole, checkCsrf } from "@/lib/route-helpers";
+import { isCantonCode } from "@/lib/cantons";
 
 export async function GET() {
   const guard = await requireRole(["ADMIN"]);
@@ -16,7 +17,7 @@ export async function GET() {
 // individuelles.
 const createSchema = z.object({
   name: z.string().min(1).max(80),
-  canton: z.string().min(2).max(2),
+  canton: z.string().refine(isCantonCode),
   country: z.string().length(2).optional(),
   lat: z.number().min(-90).max(90).optional(),
   lng: z.number().min(-180).max(180).optional(),
