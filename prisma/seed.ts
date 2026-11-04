@@ -33,6 +33,7 @@ import {
   type WeekDay,
 } from "../src/modules/profiles/attributes";
 import { DEMO_SALONS } from "../src/modules/showcase/demo-salons";
+import { isDemoProviderEmail } from "../scripts/lib/demo-accounts";
 import { hashPassword } from "../src/modules/auth/password";
 import {
   createPlaceholderPng,
@@ -1058,20 +1059,30 @@ async function main() {
   );
 
   const { adminId, passwordHash } = await seedDemoAccounts();
-  for (const [index, spec] of DEMO_PROFILES.entries()) {
-    await seedDemoProfile(spec, passwordHash, adminId);
-    await seedDemoGallery(spec, adminId);
-    await seedDemoDetails(spec, index);
-    await seedDemoExtras(spec, index);
+
+  // Les profils fictifs de démonstration ne sont plus créés par défaut :
+  // l'annuaire ne contient que les vraies inscriptions. Pour un
+  // environnement de démo jetable : SEED_DEMO_PROFILES=true npm run db:seed
+  // (et `npm run demo:remove -- --confirm` pour les retirer).
+  if (process.env.SEED_DEMO_PROFILES === "true") {
+    for (const [index, spec] of DEMO_PROFILES.entries()) {
+      // Garde-fou : chaque compte fictif doit être reconnaissable par son
+      // adresse (scripts/lib/demo-accounts.ts) pour pouvoir être retiré.
+      if (!isDemoProviderEmail(spec.email)) throw new Error(`Adresse de démo non répertoriée : ${spec.email}`);
+      await seedDemoProfile(spec, passwordHash, adminId);
+      await seedDemoGallery(spec, adminId);
+      await seedDemoDetails(spec, index);
+      await seedDemoExtras(spec, index);
+    }
+    // eslint-disable-next-line no-console
+    console.log(`Profils fictifs de démonstration créés (${DEMO_PROFILES.length}).`);
   }
 
   // eslint-disable-next-line no-console
   console.log(
     [
-      `Seed de démo terminé (${DEMO_PROFILES.length} profils fictifs).`,
-      "Comptes de test (mot de passe unique, bêta uniquement — jamais en production) :",
-      "  espace admin (/admin)              : admin@example.test",
-      "  espace prestataire (/dashboard)    : prestataire@example.test (profil publié de Léa)",
+      "Compte admin (mot de passe de bêta — jamais en production) :",
+      "  espace admin (/admin) : admin@example.test",
       `  mot de passe : ${DEMO_PASSWORD}`,
     ].join("\n"),
   );

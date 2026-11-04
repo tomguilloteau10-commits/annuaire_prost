@@ -99,7 +99,7 @@ La plateforme a trois espaces cloisonnés côté serveur, un par rôle :
 | Espace | Adresse | Qui | Compte de démo |
 |--------|---------|-----|----------------|
 | Client | site public (`/`, `/profiles/…`) | visiteur non connecté | — (aucun compte) |
-| Prestataire | `/dashboard` (tableau de bord, édition du profil) | rôle `PROVIDER` | `prestataire@example.test` |
+| Prestataire | `/dashboard` (tableau de bord, édition du profil) | rôle `PROVIDER` | — (créez un compte via « Inscription ») |
 | Admin | `/admin` (photos à valider, catégories & villes, historique, pays) | rôle `ADMIN` uniquement | `admin@example.test` |
 
 Mot de passe commun : `DemoPassword123!`. Après connexion, chaque compte
@@ -109,9 +109,19 @@ est renvoyée vers son tableau de bord (gardes dans
 `app/[locale]/dashboard/layout.tsx`, `app/[locale]/admin/layout.tsx` et
 chaque page/API ; test : `tests/invariants/role-spaces.test.ts`).
 
-`prestataire@example.test` possède le profil publié de Léa. Les 17 autres
-profils de démo appartiennent à des comptes `<prenom>.demo@example.test`
-(même mot de passe) qui ne servent qu'à les porter.
+Le seed ne crée **plus** de profils fictifs : l'annuaire ne contient que
+les vraies inscriptions. Pour un environnement de démonstration jetable,
+`SEED_DEMO_PROFILES=true npm run db:seed` recrée 18 profils fictifs
+(comptes listés dans `scripts/lib/demo-accounts.ts`).
+
+Nettoyage :
+
+- `npm run accounts:list` — liste tous les comptes (lecture seule) ;
+- `npm run demo:remove` — aperçu des comptes fictifs qui seraient
+  supprimés et de ceux conservés (rien n'est effacé) ;
+- `npm run demo:remove -- --confirm` — suppression réelle. Les comptes
+  fictifs sont reconnus **uniquement par leur adresse de connexion**,
+  jamais par leur prénom ; un compte ADMIN n'est jamais supprimé.
 
 ### Développement sans rebuild Docker à chaque changement
 
