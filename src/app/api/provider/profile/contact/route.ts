@@ -4,16 +4,21 @@ import { getCurrentUser } from "@/modules/auth/session";
 import { assertRole, ForbiddenError } from "@/modules/auth/rbac";
 import { getOwnContact, upsertOwnContact } from "@/modules/profiles/profile.service";
 import { checkCsrf } from "@/lib/route-helpers";
+import { isValidEmail, isValidPhoneNumber, isValidWhatsapp } from "@/modules/profiles/contact-validation";
 
 // Distinct de /api/provider/profile à dessein : le contact vit dans sa
 // propre table (ProfileContact) et sa propre route, jamais mélangé au
 // reste du profil — cohérent avec la séparation structurelle du schéma
 // (ENGINEERING_RULES.md §5).
+// Champs facultatifs : chaîne vide ou null = effacer la valeur enregistrée.
+const emptyToNull = (value: unknown) => (typeof value === "string" && value.trim() === "" ? null : value);
+const optionalField = <T extends z.ZodTypeAny>(schema: T) => z.preprocess(emptyToNull, schema.nullable().optional());
+
 const contactSchema = z.object({
-  phone: z.string().max(32).optional(),
-  email: z.string().email().max(254).optional(),
-  whatsapp: z.string().min(6).max(64),
-  instagram: z.string().max(100).optional(),
+  phone: optionalField(z.string().trim().max(32).refine(isValidPhoneNumber)),
+  email: optionalField(z.string().trim().max(254).refine(isValidEmail)),
+  whatsapp: z.string().trim().max(64).refine(isValidWhatsapp),
+  instagram: optionalField(z.string().trim().max(100)),
 });
 
 export async function GET() {
@@ -51,7 +56,9 @@ export async function PUT(request: Request) {
   const body = await request.json().catch(() => null);
   const parsed = contactSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "invalid_input" }, { status: 400 });
+    // Champ fautif renvoyé pour un message précis côté formulaire.
+    const field = parsed.error.issues[0]?.path[0];
+    return NextResponse.json({ error: "invalid_input", field }, { status: 400 });
   }
 
   await upsertOwnContact(user.id, parsed.data);

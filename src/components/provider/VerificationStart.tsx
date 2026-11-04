@@ -12,7 +12,8 @@ import { DASHBOARD_PATH } from "@/lib/spaces";
  * Veriff, ...) remplacerait ce composant par une redirection vers son
  * propre flux hébergé, suivi d'un retour sur cette page.
  */
-export function VerificationStart() {
+/** nextHref : où aller une fois vérifiée (le formulaire de profil s'il n'existe pas encore). */
+export function VerificationStart({ nextHref = DASHBOARD_PATH }: { nextHref?: string }) {
   const t = useTranslations("verification");
   const router = useRouter();
   const csrfToken = useCsrfToken();
@@ -42,7 +43,7 @@ export function VerificationStart() {
       return;
     }
 
-    router.push(DASHBOARD_PATH);
+    router.push(nextHref);
     router.refresh();
   }
 

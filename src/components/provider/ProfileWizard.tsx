@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useCsrfToken } from "@/lib/use-csrf-token";
@@ -27,7 +27,8 @@ import {
   type RateField,
 } from "@/modules/profiles/attributes";
 import type { ProfileDetailsInput } from "@/modules/profiles/types";
-import { DASHBOARD_PATH } from "@/lib/spaces";
+import { PROFILE_DONE_PATH } from "@/lib/spaces";
+import { sendRequest } from "@/lib/send-request";
 
 interface LabeledOption {
   label: unknown;
@@ -70,12 +71,22 @@ export interface ProfileWizardProps {
     serviceKeys: string[];
     details: ProfileDetailsInput;
   } | null;
-  initialContact: { phone: string; email: string; whatsapp: string; instagram: string };
+  initialContact: {
+    phone: string;
+    email: string;
+    whatsapp: string;
+    instagram: string;
+  };
   initialPhotos: PhotoItem[];
   maxPhotos: number;
+  /** Taille maximale d'une photo, en octets. */
+  maxPhotoBytes: number;
+  initialProfileStatus?: "DRAFT" | "PENDING_REVIEW" | "PUBLISHED" | "REJECTED" | "SUSPENDED";
   /** Étape ouverte à l'arrivée (lien direct depuis la checklist du tableau de bord). */
   initialStep?: string;
 }
+
+type FieldErrors = Partial<Record<string, string>>;
 
 function toggle(list: string[], value: string): string[] {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
@@ -83,10 +94,15 @@ function toggle(list: string[], value: string): string[] {
 
 const STEP_IDS = ["presentation", "traits", "services", "availability", "photos", "contact"] as const;
 type StepId = (typeof STEP_IDS)[number];
-/** Dernière étape enregistrée par PUT /api/provider/profile (avant Photos). */
+/** Étapes enregistrées par PUT /api/provider/profile (avant Photos). */
 const LAST_CORE_INDEX = STEP_IDS.indexOf("availability");
+const PHOTOS_INDEX = STEP_IDS.indexOf("photos");
 /** Anciens noms d'étapes (liens déjà envoyés, favoris). */
-const STEP_ALIASES: Record<string, StepId> = { identity: "presentation", appearance: "traits", rates: "services" };
+const STEP_ALIASES: Record<string, StepId> = {
+  identity: "presentation",
+  appearance: "traits",
+  rates: "services",
+};
 
 const CHIP = "cursor-pointer rounded-full border px-4 py-2 text-sm transition-colors";
 const CHIP_ON = "border-accent bg-accent text-accent-foreground";
@@ -175,19 +191,27 @@ function isOptionalIntInRange(value: string, min: number, max: number): boolean 
   return Number.isInteger(n) && n >= min && n <= max;
 }
 
+/** Message d'erreur sous un champ, relié au champ pour les lecteurs d'écran. */
+function FieldError({ id, message }: { id: string; message?: string }) {
+  if (!message) return null;
+  return (
+    <p id={`${id}-error`} className="text-sm text-danger">
+      {message}
+    </p>
+  );
+}
+
 /**
  * Parcours prestataire en 6 étapes, une à la fois : Présentation (le seul
  * minimum obligatoire : nom, âge, ville, catégorie, langues, description),
- * Caractéristiques, Prestations & tarifs, Disponibilité (ces trois-là
- * entièrement facultatives), Photos, Contact. Les étapes 1 à 4 partagent un
- * seul état et un seul appel réseau (PUT /api/provider/profile, déclenché
- * en quittant Disponibilité) : c'est ce qui crée le profil DRAFT. Photos et
- * Contact exigent un profil déjà créé (les deux API le vérifient), donc
- * elles restent verrouillées jusque-là.
+ * Caractéristiques, Prestations & tarifs, Disponibilité (entièrement
+ * facultatives), Photos (au moins une), Contact (WhatsApp obligatoire).
  *
- * En modification (profil existant, formulaire pré-rempli), chaque
- * "Enregistrer et continuer" enregistre immédiatement : on peut arriver
- * directement sur une étape (`initialStep`) et repartir sans tout refaire.
+ * Chaque "Suivant" vérifie l'étape (message clair sous chaque champ à
+ * corriger, jamais un bouton grisé sans explication) puis enregistre : le
+ * profil est créé dès l'étape 1, rien n'est perdu si la prestataire
+ * s'arrête en route. À la fin, le profil est envoyé à l'équipe s'il ne
+ * l'était pas déjà, puis un écran de confirmation s'affiche.
  */
 export function ProfileWizard({
   locale,
@@ -200,6 +224,8 @@ export function ProfileWizard({
   initialContact,
   initialPhotos,
   maxPhotos,
+  maxPhotoBytes,
+  initialProfileStatus,
   initialStep,
 }: ProfileWizardProps) {
   const t = useTranslations("profileEdit");
@@ -219,8 +245,10 @@ export function ProfileWizard({
   const [displayName, setDisplayName] = useState(initialValues?.displayName ?? "");
   const [age, setAge] = useState(initialValues?.age ? String(initialValues.age) : "");
   const [description, setDescription] = useState(initialValues?.description ?? "");
-  const [citySlug, setCitySlug] = useState(initialValues?.citySlug ?? cities[0]?.slug ?? "");
-  const [categoryKey, setCategoryKey] = useState(initialValues?.categoryKey ?? categories[0]?.key ?? "");
+  // À la création, aucune ville ni catégorie présélectionnée : un choix
+  // conscient plutôt qu'une valeur par défaut acceptée sans la voir.
+  const [citySlug, setCitySlug] = useState(initialValues?.citySlug ?? "");
+  const [categoryKey, setCategoryKey] = useState(initialValues?.categoryKey ?? "");
   const [languageCodes, setLanguageCodes] = useState<string[]>(initialValues?.languageCodes ?? []);
 
   // Tout le reste est facultatif.
@@ -249,36 +277,85 @@ export function ProfileWizard({
   const [availableFrom, setAvailableFrom] = useState(d?.availableFrom ?? "");
   const [availableTo, setAvailableTo] = useState(d?.availableTo ?? "");
 
+  const [profileStatus, setProfileStatus] = useState(initialProfileStatus);
+  const [usablePhotoCount, setUsablePhotoCount] = useState(
+    initialPhotos.filter((p) => p.status !== "REJECTED").length,
+  );
+  const onPhotosChange = useCallback((count: number) => setUsablePhotoCount(count), []);
+
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   const step = STEP_IDS[stepIndex]!;
-  const maxUnlockedIndex = profileExists ? STEP_IDS.length - 1 : LAST_CORE_INDEX;
+  // Photos et Contact demandent un profil déjà enregistré (étape 1 validée).
+  const maxUnlockedIndex = profileExists ? STEP_IDS.length - 1 : 0;
 
-  function isStepValid(id: StepId): boolean {
+  /** Erreurs de l'étape, champ par champ (objet vide = étape valide). */
+  function validateStep(id: StepId): FieldErrors {
+    const errors: FieldErrors = {};
     if (id === "presentation") {
       const ageNum = Number(age);
-      return (
-        displayName.trim().length >= 2 &&
-        Number.isInteger(ageNum) &&
-        ageNum >= 18 &&
-        ageNum <= 99 &&
-        !!citySlug &&
-        !!categoryKey &&
-        languageCodes.length > 0 &&
-        description.trim().length >= 20
-      );
+      if (displayName.trim().length < 2) errors.displayName = t("errors.displayName");
+      if (!age.trim()) errors.age = t("errors.ageRequired");
+      else if (!Number.isInteger(ageNum) || ageNum < 18 || ageNum > 99) errors.age = t("errors.ageRange");
+      if (!citySlug) errors.city = t("errors.city");
+      if (!categoryKey) errors.category = t("errors.category");
+      if (languageCodes.length === 0) errors.languages = t("errors.languages");
+      if (description.trim().length < 20) {
+        errors.description = t("errors.description", {
+          missing: 20 - description.trim().length,
+        });
+      }
     }
-    if (id === "traits") return isOptionalIntInRange(heightCm, HEIGHT_MIN_CM, HEIGHT_MAX_CM);
-    if (id === "services") return RATE_FIELDS.every((field) => isOptionalIntInRange(rates[field], 0, RATE_MAX_CHF));
-    if (id === "availability") return (availableFrom === "") === (availableTo === "");
+    if (id === "traits" && !isOptionalIntInRange(heightCm, HEIGHT_MIN_CM, HEIGHT_MAX_CM)) {
+      errors.heightCm = t("errors.height", {
+        min: HEIGHT_MIN_CM,
+        max: HEIGHT_MAX_CM,
+      });
+    }
+    if (id === "services") {
+      for (const field of RATE_FIELDS) {
+        if (!isOptionalIntInRange(rates[field], 0, RATE_MAX_CHF)) errors[field] = t("errors.rate");
+      }
+    }
+    if (id === "availability" && (availableFrom === "") !== (availableTo === "")) {
+      errors[availableFrom ? "availableTo" : "availableFrom"] = t("hoursIncomplete");
+    }
+    if (id === "photos" && usablePhotoCount === 0) errors.photos = t("errors.photos");
+    return errors;
+  }
+
+  /** Affiche les erreurs et place le curseur sur le premier champ à corriger. */
+  function showErrors(errors: FieldErrors): boolean {
+    setFieldErrors(errors);
+    const first = Object.keys(errors)[0];
+    if (!first) return false;
+    const element = document.getElementById(first);
+    element?.scrollIntoView({ behavior: "smooth", block: "center" });
+    element?.focus({ preventScroll: true });
     return true;
   }
 
-  function goToStep(index: number) {
-    if (index < 0 || index > maxUnlockedIndex) return;
+  // Une fois les erreurs affichées, elles suivent la saisie : un champ
+  // corrigé perd son message aussitôt, sans attendre le prochain "Suivant".
+  const shownErrors: FieldErrors = {};
+  if (Object.keys(fieldErrors).length > 0) {
+    const current = validateStep(step);
+    for (const key of Object.keys(fieldErrors)) if (current[key]) shownErrors[key] = current[key];
+  }
+
+  const fieldProps = (id: string) => ({
+    id,
+    "aria-invalid": shownErrors[id] ? true : undefined,
+    "aria-describedby": shownErrors[id] ? `${id}-error` : undefined,
+  });
+
+  function showStep(index: number) {
     setError(null);
+    setFieldErrors({});
     setStepIndex(index);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   async function saveCoreProfile(): Promise<boolean> {
@@ -309,10 +386,10 @@ export function ProfileWizard({
       availableTo: availableTo || null,
     };
 
-    const response = await fetch("/api/provider/profile", {
+    const result = await sendRequest<{ status: typeof profileStatus }>("/api/provider/profile", {
       method: "PUT",
-      headers: { "Content-Type": "application/json", "x-csrf-token": csrfToken },
-      body: JSON.stringify({
+      csrfToken,
+      json: {
         displayName,
         age: Number(age),
         description,
@@ -321,63 +398,86 @@ export function ProfileWizard({
         languageCodes,
         serviceKeys,
         details,
-      }),
+      },
     });
 
     setSubmitting(false);
-    if (!response.ok) {
-      const body = (await response.json().catch(() => null)) as { error?: string } | null;
-      setError(body?.error === "invalid_input" ? t("invalidFieldsError") : t("saveError"));
+    if (!result.ok) {
+      setError(
+        result.status === 0
+          ? t("networkError")
+          : result.error === "invalid_input"
+            ? t("invalidFieldsError")
+            : t("saveError"),
+      );
       return false;
     }
+    setProfileStatus(result.data.status);
     setProfileExists(true);
-    router.refresh();
     return true;
   }
 
-  async function handleSaveAndContinue(nextIndex: number) {
-    if (languageCodes.length === 0) {
-      setError(t("selectAtLeastOneLanguage"));
-      return;
+  /**
+   * Quitter l'étape courante (Suivant, Précédent ou pastille d'étape) :
+   * elle est d'abord vérifiée, puis enregistrée si c'est une étape du
+   * profil. En cas d'erreur, on reste sur place avec les messages.
+   */
+  async function navigate(target: number) {
+    if (target === stepIndex || submitting) return;
+    const errors = validateStep(step);
+    // La photo n'est exigée que pour avancer : revenir en arrière reste libre.
+    if (target < stepIndex) delete errors.photos;
+    if (showErrors(errors)) return;
+    if (stepIndex <= LAST_CORE_INDEX) {
+      const ok = await saveCoreProfile();
+      if (!ok) return;
     }
-    const ok = await saveCoreProfile();
-    // Pas goToStep() : son verrou (maxUnlockedIndex) date d'avant la
-    // création du profil et bloquerait le passage à l'étape Photos.
-    if (ok) setStepIndex(nextIndex);
+    showStep(target);
   }
 
-  // À la création, le profil n'est enregistré qu'en quittant Disponibilité
-  // (tout le minimum est alors rempli) ; en modification, à chaque étape.
-  function handleNext(fromIndex: number) {
-    if (profileExists || fromIndex === LAST_CORE_INDEX) void handleSaveAndContinue(fromIndex + 1);
-    else goToStep(fromIndex + 1);
+  /** Fin du parcours : envoi à l'équipe si besoin, puis écran de confirmation. */
+  async function finish() {
+    if (csrfToken && (profileStatus === "DRAFT" || profileStatus === "REJECTED")) {
+      // Si un élément manque encore (vérification d'âge…), l'envoi est
+      // refusé : l'écran de confirmation dit alors exactement quoi faire.
+      await sendRequest("/api/provider/profile/submit", {
+        method: "POST",
+        csrfToken,
+      });
+    }
+    router.push(PROFILE_DONE_PATH);
   }
 
-  function coreStepButtons(index: number) {
-    const saves = profileExists || index === LAST_CORE_INDEX;
+  function stepButtons(index: number) {
+    const isLast = index === STEP_IDS.length - 1;
+    if (isLast) return null;
     return (
       <>
-        {error && <p className="text-sm text-danger">{error}</p>}
+        {error && (
+          <p role="alert" className="text-sm text-danger">
+            {error}
+          </p>
+        )}
         <div className="flex gap-2">
           {index > 0 && (
-            <Button variant="secondary" onClick={() => goToStep(index - 1)} size="lg">
+            <Button variant="secondary" onClick={() => navigate(index - 1)} disabled={submitting} size="lg">
               {t("wizard.back")}
             </Button>
           )}
           <Button
-            onClick={() => handleNext(index)}
-            disabled={!isStepValid(STEP_IDS[index]!) || submitting || (saves && !csrfToken)}
+            onClick={() => navigate(index + 1)}
+            disabled={submitting || !csrfToken}
             size="lg"
             className={index > 0 ? "flex-1 sm:flex-none" : "w-full sm:w-auto"}
           >
-            {saves ? t("wizard.saveAndContinue") : t("wizard.next")}
+            {submitting ? t("saving") : t("wizard.next")}
           </Button>
         </div>
       </>
     );
   }
 
-  const optionalHint = <p className="text-sm text-ink2-faint">{t("wizard.optionalHint")}</p>;
+  const stepIntro = <p className="text-sm text-ink2-muted">{t(`wizard.intro.${step}`)}</p>;
 
   const steps: { id: StepId; label: string }[] = [
     { id: "presentation", label: t("wizard.stepPresentation") },
@@ -403,8 +503,11 @@ export function ProfileWizard({
     <div className="flex w-full max-w-2xl flex-col gap-6">
       <div className="flex flex-col gap-2">
         <p className="text-sm font-medium text-ink2-muted">
-          {t("wizard.progress", { current: stepIndex + 1, total: steps.length })} ·{" "}
-          <span className="text-ink2">{steps[stepIndex]!.label}</span>
+          {t("wizard.progress", {
+            current: stepIndex + 1,
+            total: steps.length,
+          })}{" "}
+          · <span className="text-ink2">{steps[stepIndex]!.label}</span>
         </p>
         <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-raised">
           <div
@@ -419,8 +522,8 @@ export function ProfileWizard({
           <button
             key={s.id}
             type="button"
-            onClick={() => goToStep(index)}
-            disabled={index > maxUnlockedIndex}
+            onClick={() => navigate(index)}
+            disabled={index > maxUnlockedIndex || submitting}
             className={`rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
               index === stepIndex
                 ? "border-accent bg-accent text-accent-foreground"
@@ -434,37 +537,42 @@ export function ProfileWizard({
 
       {step === "presentation" && (
         <Card className="flex flex-col gap-5 p-5">
+          {stepIntro}
           <FieldGroup>
             <Label htmlFor="displayName">{t("displayNameLabel")}</Label>
             <TextInput
-              id="displayName"
-              required
-              minLength={2}
+              {...fieldProps("displayName")}
+              autoComplete="nickname"
               maxLength={80}
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
             />
+            <p className="text-xs text-ink2-faint">{t("displayNameHint")}</p>
+            <FieldError id="displayName" message={shownErrors.displayName} />
           </FieldGroup>
 
           <FieldGroup>
             <Label htmlFor="age">{t("ageLabel")}</Label>
             <TextInput
-              id="age"
+              {...fieldProps("age")}
               type="number"
               inputMode="numeric"
-              required
               min={18}
               max={99}
               value={age}
               onChange={(e) => setAge(e.target.value)}
               className="w-24"
             />
+            <FieldError id="age" message={shownErrors.age} />
           </FieldGroup>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <FieldGroup>
               <Label htmlFor="city">{t("cityLabel")}</Label>
-              <Select id="city" value={citySlug} onChange={(e) => setCitySlug(e.target.value)}>
+              <Select {...fieldProps("city")} value={citySlug} onChange={(e) => setCitySlug(e.target.value)}>
+                <option value="" disabled>
+                  {t("cityPlaceholder")}
+                </option>
                 {groupCitiesByCanton(cities).map((group) => (
                   <optgroup key={group.canton} label={group.canton}>
                     {group.cities.map((city) => (
@@ -475,57 +583,73 @@ export function ProfileWizard({
                   </optgroup>
                 ))}
               </Select>
+              <FieldError id="city" message={shownErrors.city} />
             </FieldGroup>
 
             <FieldGroup>
               <Label htmlFor="category">{t("categoryLabel")}</Label>
-              <Select id="category" value={categoryKey} onChange={(e) => setCategoryKey(e.target.value)}>
+              <Select
+                {...fieldProps("category")}
+                value={categoryKey}
+                onChange={(e) => setCategoryKey(e.target.value)}
+              >
+                <option value="" disabled>
+                  {t("categoryPlaceholder")}
+                </option>
                 {categories.map((category) => (
                   <option key={category.key} value={category.key}>
                     {getLocalizedLabel(category.label, locale)}
                   </option>
                 ))}
               </Select>
+              <FieldError id="category" message={shownErrors.category} />
             </FieldGroup>
           </div>
 
-          <ChipGroup legend={t("languagesLabel")}>
-            {languages.map((language) => (
-              <Chip
-                key={language.code}
-                on={languageCodes.includes(language.code)}
-                onClick={() => setLanguageCodes((prev) => toggle(prev, language.code))}
-              >
-                {getLocalizedLabel(language.label, locale)}
-              </Chip>
-            ))}
-          </ChipGroup>
+          <div id="languages" tabIndex={-1} className="flex flex-col gap-2 outline-none">
+            <ChipGroup legend={t("languagesLabel")}>
+              {languages.map((language) => (
+                <Chip
+                  key={language.code}
+                  on={languageCodes.includes(language.code)}
+                  onClick={() => setLanguageCodes((prev) => toggle(prev, language.code))}
+                >
+                  {getLocalizedLabel(language.label, locale)}
+                </Chip>
+              ))}
+            </ChipGroup>
+            <FieldError id="languages" message={shownErrors.languages} />
+          </div>
 
           <FieldGroup>
             <Label htmlFor="description">{t("descriptionLabel")}</Label>
             <TextArea
-              id="description"
-              required
-              minLength={20}
+              {...fieldProps("description")}
               maxLength={4000}
               rows={6}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
-            <p className="text-xs text-ink2-faint">{t("descriptionHint")}</p>
+            <p className="text-xs text-ink2-faint">
+              {t("descriptionHint")}{" "}
+              <span className={description.trim().length >= 20 ? "text-success" : ""}>
+                ({t("descriptionCount", { count: description.trim().length })})
+              </span>
+            </p>
+            <FieldError id="description" message={shownErrors.description} />
           </FieldGroup>
 
-          {coreStepButtons(0)}
+          {stepButtons(0)}
         </Card>
       )}
 
       {step === "traits" && (
         <Card className="flex flex-col gap-6 p-5">
-          {optionalHint}
+          {stepIntro}
           <FieldGroup>
             <Label htmlFor="heightCm">{t("heightLabel")}</Label>
             <TextInput
-              id="heightCm"
+              {...fieldProps("heightCm")}
               type="number"
               inputMode="numeric"
               min={HEIGHT_MIN_CM}
@@ -535,6 +659,7 @@ export function ProfileWizard({
               onChange={(e) => setHeightCm(e.target.value)}
               className="w-32"
             />
+            <FieldError id="heightCm" message={shownErrors.heightCm} />
           </FieldGroup>
           <ChoiceChips
             legend={t("bodyTypeLabel")}
@@ -558,7 +683,13 @@ export function ProfileWizard({
             labelFor={(o) => ta(`eyeColor.${o}`)}
           />
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <YesNoChips legend={t("tattoosLabel")} value={tattoos} onChange={setTattoos} yes={t("yes")} no={t("no")} />
+            <YesNoChips
+              legend={t("tattoosLabel")}
+              value={tattoos}
+              onChange={setTattoos}
+              yes={t("yes")}
+              no={t("no")}
+            />
             <YesNoChips
               legend={t("piercingsLabel")}
               value={piercings}
@@ -578,13 +709,13 @@ export function ProfileWizard({
               ))}
             </Select>
           </FieldGroup>
-          {coreStepButtons(1)}
+          {stepButtons(1)}
         </Card>
       )}
 
       {step === "services" && (
         <Card className="flex flex-col gap-6 p-5">
-          {optionalHint}
+          {stepIntro}
 
           <SectionTitle>{t("logisticsTitle")}</SectionTitle>
           <ChipGroup legend={t("meetingLabel")}>
@@ -598,7 +729,12 @@ export function ProfileWizard({
           {travels && (
             <FieldGroup>
               <Label htmlFor="travelRadiusKm">{t("travelRadiusLabel")}</Label>
-              <Select id="travelRadiusKm" fit value={travelRadiusKm} onChange={(e) => setTravelRadiusKm(e.target.value)}>
+              <Select
+                id="travelRadiusKm"
+                fit
+                value={travelRadiusKm}
+                onChange={(e) => setTravelRadiusKm(e.target.value)}
+              >
                 <option value="">{t("notSpecified")}</option>
                 {TRAVEL_RADII_KM.map((km) => (
                   <option key={km} value={km}>
@@ -651,7 +787,7 @@ export function ProfileWizard({
                 <Label htmlFor={field}>{t(`rates.${field}`)}</Label>
                 <div className="flex items-center gap-2">
                   <TextInput
-                    id={field}
+                    {...fieldProps(field)}
                     type="number"
                     inputMode="numeric"
                     min={0}
@@ -661,24 +797,29 @@ export function ProfileWizard({
                   />
                   <span className="text-sm text-ink2-muted">CHF</span>
                 </div>
+                <FieldError id={field} message={shownErrors[field]} />
               </FieldGroup>
             ))}
           </div>
           <ChipGroup legend={t("paymentLabel")} hint={t("paymentHint")}>
             {PAYMENT_METHODS.map((m) => (
-              <Chip key={m} on={paymentMethods.includes(m)} onClick={() => setPaymentMethods((prev) => toggle(prev, m))}>
+              <Chip
+                key={m}
+                on={paymentMethods.includes(m)}
+                onClick={() => setPaymentMethods((prev) => toggle(prev, m))}
+              >
                 {ta(`payment.${m}`)}
               </Chip>
             ))}
           </ChipGroup>
 
-          {coreStepButtons(2)}
+          {stepButtons(2)}
         </Card>
       )}
 
       {step === "availability" && (
         <Card className="flex flex-col gap-6 p-5">
-          {optionalHint}
+          {stepIntro}
           <ChipGroup legend={t("daysLabel")}>
             {WEEK_DAYS.map((day) => (
               <Chip
@@ -696,60 +837,70 @@ export function ProfileWizard({
             <div className="grid max-w-sm grid-cols-2 gap-3">
               <FieldGroup>
                 <Label htmlFor="availableFrom">{t("hoursFrom")}</Label>
-                <Select id="availableFrom" value={availableFrom} onChange={(e) => setAvailableFrom(e.target.value)}>
+                <Select
+                  {...fieldProps("availableFrom")}
+                  value={availableFrom}
+                  onChange={(e) => setAvailableFrom(e.target.value)}
+                >
                   {timeOptions}
                 </Select>
               </FieldGroup>
               <FieldGroup>
                 <Label htmlFor="availableTo">{t("hoursTo")}</Label>
-                <Select id="availableTo" value={availableTo} onChange={(e) => setAvailableTo(e.target.value)}>
+                <Select
+                  {...fieldProps("availableTo")}
+                  value={availableTo}
+                  onChange={(e) => setAvailableTo(e.target.value)}
+                >
                   {timeOptions}
                 </Select>
               </FieldGroup>
             </div>
             <p className="text-xs text-ink2-faint">{t("hoursHint")}</p>
-            {!isStepValid("availability") && <p className="text-sm text-warning">{t("hoursIncomplete")}</p>}
+            <FieldError id="availableFrom" message={shownErrors.availableFrom} />
+            <FieldError id="availableTo" message={shownErrors.availableTo} />
           </fieldset>
 
-          {coreStepButtons(LAST_CORE_INDEX)}
+          {stepButtons(LAST_CORE_INDEX)}
         </Card>
       )}
 
       {step === "photos" && profileExists && (
         <div className="flex flex-col gap-4">
-          <PhotoManager initialPhotos={initialPhotos} maxPhotos={maxPhotos} />
-          <div className="flex gap-2">
-            <Button variant="secondary" onClick={() => goToStep(STEP_IDS.indexOf("photos") - 1)} size="lg">
-              {t("wizard.back")}
-            </Button>
-            <Button
-              onClick={() => goToStep(STEP_IDS.indexOf("contact"))}
-              size="lg"
-              className="flex-1 sm:flex-none"
-            >
-              {t("wizard.next")}
-            </Button>
+          {stepIntro}
+          <PhotoManager
+            initialPhotos={initialPhotos}
+            maxPhotos={maxPhotos}
+            maxBytes={maxPhotoBytes}
+            onPhotosChange={onPhotosChange}
+          />
+          <div id="photos" tabIndex={-1} className="outline-none">
+            <FieldError id="photos" message={shownErrors.photos} />
           </div>
+          {stepButtons(PHOTOS_INDEX)}
         </div>
       )}
 
       {step === "contact" && profileExists && (
         <div className="flex flex-col gap-4">
+          {stepIntro}
           <ContactForm
             initialPhone={initialContact.phone}
             initialEmail={initialContact.email}
             initialWhatsapp={initialContact.whatsapp}
             initialInstagram={initialContact.instagram}
-            onSaved={() => router.push(DASHBOARD_PATH)}
+            submitLabel={
+              profileStatus === "DRAFT" || profileStatus === "REJECTED"
+                ? t("wizard.finishAndSend")
+                : t("wizard.finish")
+            }
+            secondaryAction={
+              <Button variant="secondary" type="button" onClick={() => navigate(PHOTOS_INDEX)} size="lg">
+                {t("wizard.back")}
+              </Button>
+            }
+            onSaved={finish}
           />
-          <Button
-            variant="secondary"
-            onClick={() => goToStep(STEP_IDS.indexOf("photos"))}
-            size="lg"
-            className="self-start"
-          >
-            {t("wizard.back")}
-          </Button>
         </div>
       )}
     </div>

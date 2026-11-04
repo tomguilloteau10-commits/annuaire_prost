@@ -152,8 +152,8 @@
     "emailTakenError": "Für diese E-Mail existiert bereits ein Konto."
   },
   "onboarding": {
-    "title": "Onboarding-Erklärung",
-    "intro": "Bevor Sie Ihr Profil erstellen, bestätigen Sie bitte Folgendes. Diese Erklärung wird zeitgestempelt gespeichert.",
+    "title": "Bevor Sie beginnen",
+    "intro": "Bitte bestätigen Sie die folgenden Punkte. Ihre Bestätigung wird mit dem heutigen Datum gespeichert.",
     "fields": {
       "attestedAdult": "Ich bin volljährig.",
       "attestedVoluntary": "Ich handle freiwillig, ohne Zwang.",
@@ -164,12 +164,13 @@
     "submitError": "Erklärung kann derzeit nicht gespeichert werden."
   },
   "verification": {
-    "title": "Altersverifizierung",
+    "title": "Altersprüfung",
     "intro": "Die Veröffentlichung Ihres Profils erfordert eine Verifizierung Ihrer Volljährigkeit. Dieser Schritt ist in der Beta simuliert (kein Dokument wird gespeichert).",
     "alreadyVerified": "Verifizierung bestanden.",
     "start": "Verifizierung starten",
     "running": "Verifizierung läuft…",
-    "error": "Verifizierung fehlgeschlagen. Bitte erneut versuchen."
+    "error": "Verifizierung fehlgeschlagen. Bitte erneut versuchen.",
+    "continue": "Weiter"
   },
   "dashboard": {
     "title": "Mein Dashboard",
@@ -239,33 +240,38 @@
       "stepContact": "Kontakt",
       "next": "Weiter",
       "back": "Zurück",
-      "saveAndContinue": "Speichern und weiter",
       "progress": "Schritt {current} von {total}",
-      "optionalHint": "Freiwillig: Füllen Sie aus, was Sie möchten, oder überspringen Sie diesen Schritt.",
       "stepTraits": "Merkmale",
-      "stepServices": "Leistungen & Preise"
+      "stepServices": "Leistungen & Preise",
+      "finish": "Speichern und abschliessen",
+      "finishAndSend": "Abschliessen und Profil senden",
+      "intro": {
+        "presentation": "Beginnen wir mit dem Wichtigsten. Diese Angaben erscheinen in Ihrer Anzeige. Sie können später alles ändern.",
+        "traits": "Alles auf dieser Seite ist freiwillig: Füllen Sie nur aus, was Sie zeigen möchten.",
+        "services": "Freiwillig: Wie Sie Kunden treffen und Ihre Preise. Sie können diesen Schritt überspringen.",
+        "availability": "Freiwillig: Ihre üblichen Tage und Zeiten. Sie können sie jederzeit ändern.",
+        "photos": "Fügen Sie mindestens ein Foto hinzu. Unser Team prüft jedes Foto, bevor es sichtbar wird.",
+        "contact": "Letzter Schritt! Ihre Nummer wird nie direkt auf der Website angezeigt: Ein Kunde sieht sie erst nach einem Klick auf „Kontakt anzeigen“."
+      }
     },
-    "displayNameLabel": "Anzeigename",
+    "displayNameLabel": "Ihr Anzeigename",
     "ageLabel": "Alter",
-    "descriptionLabel": "Beschreibung",
+    "descriptionLabel": "Ihre Vorstellung",
     "cityLabel": "Stadt",
     "categoryLabel": "Kategorie",
     "languagesLabel": "Gesprochene Sprachen",
     "servicesLabel": "Leistungen",
-    "save": "Speichern",
-    "saved": "Gespeichert.",
-    "saveError": "Kann derzeit nicht gespeichert werden.",
-    "selectAtLeastOneLanguage": "Wählen Sie mindestens eine gesprochene Sprache aus.",
-    "invalidFieldsError": "Überprüfen Sie die Formularfelder (Stadt, Kategorie und Sprachen müssen gültig sein).",
+    "saveError": "Das Speichern hat nicht funktioniert. Bitte gleich erneut versuchen.",
+    "invalidFieldsError": "Einige Angaben konnten nicht gespeichert werden. Prüfen Sie Stadt, Kategorie und Sprachen.",
     "contactTitle": "Kontakt",
-    "contactHint": "Nie öffentlich angezeigt — nur über die Schaltfläche „Kontakt anzeigen“ auf Ihrer öffentlichen Seite sichtbar.",
-    "whatsappLabel": "WhatsApp",
-    "whatsappHint": "Telefonnummer oder wa.me-Link — Ihr wichtigster Kontaktweg, erforderlich.",
+    "contactHint": "WhatsApp ist Pflicht, der Rest ist freiwillig. Um eine Angabe zu entfernen, leeren Sie einfach das Feld.",
+    "whatsappLabel": "WhatsApp-Nummer",
+    "whatsappHint": "Mit Ländervorwahl, zum Beispiel +41 79 123 45 67.",
     "instagramLabel": "Instagram (optional)",
     "phoneLabel": "Telefon (optional)",
     "contactEmailLabel": "Kontakt-E-Mail (optional)",
     "photosTitle": "Ihre Fotos",
-    "photosHint": "Jedes Foto wird von unserem Team geprüft, bevor es sichtbar wird.",
+    "photosHint": "JPG, PNG oder WebP. Sie können mehrere auf einmal auswählen.",
     "photoStatus": {
       "PENDING": "Wird geprüft",
       "APPROVED": "Sichtbar",
@@ -273,15 +279,11 @@
     },
     "photoDelete": "Löschen",
     "photoLimitReached": "Sie haben die maximale Anzahl Fotos erreicht. Löschen Sie eines, um ein neues hinzuzufügen.",
-    "photoUnsupportedType": "Nicht unterstütztes Bildformat (nur JPEG, PNG, WebP).",
-    "photoUploadError": "Foto-Upload fehlgeschlagen.",
-    "saveProfileFirstForPhotos": "Speichern Sie zuerst Ihr Profil, um Fotos hinzuzufügen.",
     "createTitle": "Profil erstellen",
     "backToDashboard": "Zurück zu meinem Dashboard",
     "contactSave": "Speichern und abschliessen",
-    "photoAdd": "Foto hinzufügen",
-    "photoAddHint": "Vom Telefon oder Computer · {count} von {max} Fotos",
-    "photoUploading": "Wird hochgeladen…",
+    "photoAdd": "Fotos hinzufügen",
+    "photoAddHint": "Maximal {size} MB pro Foto · {count} von {max} Fotos",
     "photoDeleteError": "Das Foto konnte nicht gelöscht werden. Bitte erneut versuchen.",
     "heightLabel": "Grösse (in cm)",
     "bodyTypeLabel": "Figur",
@@ -303,7 +305,7 @@
       "rate2Hours": "2 Stunden",
       "rateNight": "Nacht"
     },
-    "descriptionHint": "Ein paar Sätze über Sie und Ihre Art zu empfangen (mindestens 20 Zeichen).",
+    "descriptionHint": "Ein paar Sätze über Sie und Ihre Art zu empfangen.",
     "tattoosLabel": "Tattoos",
     "piercingsLabel": "Piercings",
     "yes": "Ja",
@@ -323,7 +325,42 @@
     "photoPrimary": "Hauptfoto",
     "photoMakePrimary": "Als Hauptfoto festlegen",
     "photoPrimaryError": "Das Hauptfoto konnte nicht geändert werden. Bitte erneut versuchen.",
-    "photoPendingHint": "Für Kunden sichtbar, sobald unser Team es freigegeben hat."
+    "photoPendingHint": "Für Kunden sichtbar, sobald unser Team es freigegeben hat.",
+    "saving": "Wird gespeichert…",
+    "networkError": "Im Moment keine Internetverbindung. Prüfen Sie die Verbindung und versuchen Sie es erneut: Ihre Eingaben gehen nicht verloren.",
+    "displayNameHint": "Der Vorname oder Spitzname, den Kunden sehen (wenn Sie möchten, nicht Ihr echter Name).",
+    "cityPlaceholder": "Wählen Sie Ihre Stadt",
+    "categoryPlaceholder": "Wählen Sie eine Kategorie",
+    "descriptionCount": "{count, plural, one {# Zeichen} other {# Zeichen}} von mindestens 20",
+    "errors": {
+      "displayName": "Geben Sie einen Anzeigenamen ein (mindestens 2 Buchstaben).",
+      "ageRequired": "Geben Sie Ihr Alter ein.",
+      "ageRange": "Ihr Alter muss zwischen 18 und 99 Jahren liegen.",
+      "city": "Wählen Sie Ihre Stadt.",
+      "category": "Wählen Sie eine Kategorie.",
+      "languages": "Wählen Sie mindestens eine Sprache.",
+      "description": "Ihr Text ist etwas kurz: noch {missing, plural, one {# Zeichen} other {# Zeichen}}.",
+      "height": "Die Grösse muss zwischen {min} und {max} cm liegen (oder leer lassen).",
+      "rate": "Geben Sie einen Betrag in CHF ein, nur Zahlen (oder leer lassen).",
+      "photos": "Fügen Sie mindestens ein Foto hinzu, um fortzufahren."
+    },
+    "contactErrors": {
+      "whatsappRequired": "Geben Sie Ihre WhatsApp-Nummer ein: So kontaktieren Sie die Kunden.",
+      "whatsappInvalid": "Diese Nummer scheint unvollständig. Schreiben Sie sie mit Vorwahl, zum Beispiel +41 79 123 45 67.",
+      "phoneInvalid": "Diese Nummer scheint unvollständig. Schreiben Sie sie mit Vorwahl, oder lassen Sie das Feld leer.",
+      "emailInvalid": "Diese E-Mail-Adresse scheint nicht korrekt (Beispiel: name@beispiel.ch), oder lassen Sie das Feld leer.",
+      "instagramInvalid": "Dieser Instagram-Name scheint nicht korrekt, oder lassen Sie das Feld leer."
+    },
+    "photoUploadingProgress": "Foto {current} von {total} wird gesendet…",
+    "photoErrors": {
+      "format": "„{name}“ ist kein akzeptiertes Foto. Verwenden Sie ein JPG-, PNG- oder WebP-Foto.",
+      "tooLarge": "„{name}“ ist zu gross. Maximal {max} MB pro Foto.",
+      "limit": "Sie haben bereits {max} Fotos, das Maximum. Löschen Sie eines, um ein neues hinzuzufügen.",
+      "tooMany": "Sie können noch {room, plural, =0 {keine Fotos} one {# Foto} other {# Fotos}} hinzufügen (maximal {max}). Die anderen wurden nicht gesendet.",
+      "network": "„{name}“ konnte nicht gesendet werden: keine Internetverbindung. Versuchen Sie es erneut, wenn die Verbindung zurück ist.",
+      "networkAction": "Im Moment keine Internetverbindung. Bitte gleich erneut versuchen.",
+      "generic": "„{name}“ konnte nicht gesendet werden. Versuchen Sie es erneut oder mit einem anderen Foto."
+    }
   },
   "moderation": {
     "title": "Zu prüfende Fotos",
@@ -486,5 +523,25 @@
     "taxonomiesBody": "{categories} aktive Kategorien und {cities} aktive Städte.",
     "auditLogBody": "{count, plural, one {# erfasste Aktion.} other {# erfasste Aktionen.}}",
     "geoBody": "{count, plural, one {# erlaubtes Land.} other {# erlaubte Länder.}}"
+  },
+  "profileDone": {
+    "sent": {
+      "title": "Ihr Profil ist erstellt und wartet auf Prüfung",
+      "body": "Danke! Unser Team prüft Ihr Profil, bevor es online geht. Sie müssen nichts weiter tun: Den Status sehen Sie in Ihrem Dashboard."
+    },
+    "updated": {
+      "title": "Ihre Änderungen sind gespeichert",
+      "body": "Ihr Profil ist aktuell. Neue Fotos erscheinen, sobald unser Team sie geprüft hat."
+    },
+    "incomplete": {
+      "title": "Ihr Profil ist gespeichert",
+      "body": "Das ist noch zu erledigen, bevor unser Team es prüfen kann:"
+    },
+    "notSent": {
+      "title": "Ihr Profil ist gespeichert",
+      "body": "Es konnte im Moment nicht an unser Team gesendet werden. Senden Sie es mit einem Klick aus Ihrem Dashboard."
+    },
+    "toDashboard": "Zu meinem Dashboard",
+    "editAgain": "Profil weiter bearbeiten"
   }
 }

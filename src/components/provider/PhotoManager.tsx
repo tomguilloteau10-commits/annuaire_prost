@@ -1,8 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
 import { useCsrfToken } from "@/lib/use-csrf-token";
+import { sendRequest } from "@/lib/send-request";
 import { Card } from "@/components/ui/Card";
 import { Badge, type BadgeVariant } from "@/components/ui/Badge";
 
@@ -15,6 +15,10 @@ export interface PhotoItem {
 export interface PhotoManagerProps {
   initialPhotos: PhotoItem[];
   maxPhotos: number;
+  /** Taille maximale d'une photo, en octets (même limite que le serveur). */
+  maxBytes: number;
+  /** Prévient le formulaire du nombre de photos utilisables (non refusées). */
+  onPhotosChange?: (usableCount: number) => void;
 }
 
 const STATUS_BADGE_VARIANT: Record<PhotoItem["status"], BadgeVariant> = {
@@ -23,101 +27,127 @@ const STATUS_BADGE_VARIANT: Record<PhotoItem["status"], BadgeVariant> = {
   REJECTED: "danger",
 };
 
+const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+function megabytes(bytes: number): string {
+  return (bytes / (1024 * 1024)).toLocaleString(undefined, {
+    maximumFractionDigits: 1,
+  });
+}
+
 /**
  * Gestion des photos pensée pour le téléphone : une grande zone "Ajouter
- * une photo" (ouvre la galerie ou l'appareil photo ; glisser-déposer sur
- * ordinateur) et un bouton "Supprimer" sous chaque photo, sans étape de
- * confirmation. La première photo est la photo principale (vignette de
- * l'annuaire) ; "Mettre en photo principale" la change. Une photo en
- * attente n'est visible des clients qu'après validation par l'équipe.
+ * des photos" (galerie ou appareil photo, plusieurs à la fois ;
+ * glisser-déposer sur ordinateur) et un bouton "Supprimer" sous chaque
+ * photo, sans étape de confirmation. Format et taille sont vérifiés avant
+ * l'envoi, avec un message clair par photo refusée ; le serveur revérifie.
+ * La première photo est la photo principale ; une photo en attente n'est
+ * visible des clients qu'après validation par l'équipe.
  */
-export function PhotoManager({ initialPhotos, maxPhotos }: PhotoManagerProps) {
+export function PhotoManager({ initialPhotos, maxPhotos, maxBytes, onPhotosChange }: PhotoManagerProps) {
   const t = useTranslations("profileEdit");
-  const router = useRouter();
   const csrfToken = useCsrfToken();
   const [photos, setPhotos] = useState(initialPhotos);
-  const [error, setError] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
+  const [progress, setProgress] = useState<{
+    current: number;
+    total: number;
+  } | null>(null);
   const [dragging, setDragging] = useState(false);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [promotingId, setPromotingId] = useState<string | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
 
+  const uploading = progress !== null;
   const canAdd = photos.length < maxPhotos;
 
-  async function upload(file: File) {
-    if (!csrfToken) return;
-    setUploading(true);
-    setError(null);
+  const usableCount = photos.filter((p) => p.status !== "REJECTED").length;
+  useEffect(() => {
+    onPhotosChange?.(usableCount);
+  }, [usableCount, onPhotosChange]);
 
-    const formData = new FormData();
-    formData.append("file", file);
+  function uploadErrorMessage(name: string, error?: string, status?: number): string {
+    if (status === 0) return t("photoErrors.network", { name });
+    if (error === "file_too_large") return t("photoErrors.tooLarge", { name, max: megabytes(maxBytes) });
+    if (error === "unsupported_content_type") return t("photoErrors.format", { name });
+    if (error === "photo_limit_reached") return t("photoErrors.limit", { max: maxPhotos });
+    return t("photoErrors.generic", { name });
+  }
 
-    const response = await fetch("/api/provider/profile/photos", {
-      method: "POST",
-      headers: { "x-csrf-token": csrfToken },
-      body: formData,
+  async function uploadFiles(files: File[]) {
+    if (!csrfToken || files.length === 0) return;
+    const room = maxPhotos - photos.length;
+    const messages: string[] = [];
+    if (files.length > room) messages.push(t("photoErrors.tooMany", { max: maxPhotos, room }));
+
+    // Contrôles avant envoi : réponse immédiate, sans attendre le serveur.
+    const accepted = files.slice(0, Math.max(room, 0)).filter((file) => {
+      if (!ACCEPTED_TYPES.includes(file.type)) {
+        messages.push(t("photoErrors.format", { name: file.name }));
+        return false;
+      }
+      if (file.size > maxBytes) {
+        messages.push(
+          t("photoErrors.tooLarge", { name: file.name, max: megabytes(maxBytes) }),
+        );
+        return false;
+      }
+      return true;
     });
 
-    setUploading(false);
-    if (!response.ok) {
-      const body = (await response.json().catch(() => null)) as { error?: string } | null;
-      setError(
-        body?.error === "photo_limit_reached"
-          ? t("photoLimitReached")
-          : body?.error === "unsupported_content_type"
-            ? t("photoUnsupportedType")
-            : t("photoUploadError"),
-      );
-      return;
+    setErrors(messages);
+    for (const [index, file] of accepted.entries()) {
+      setProgress({ current: index + 1, total: accepted.length });
+      const formData = new FormData();
+      formData.append("file", file);
+      const result = await sendRequest<{ mediaId: string }>("/api/provider/profile/photos", {
+        method: "POST",
+        csrfToken,
+        formData,
+      });
+      if (result.ok) {
+        setPhotos((prev) => [...prev, { id: result.data.mediaId, status: "PENDING", rejectionReason: null }]);
+      } else {
+        messages.push(uploadErrorMessage(file.name, result.error, result.status));
+        setErrors([...messages]);
+        if (result.error === "photo_limit_reached") break;
+      }
     }
-
-    const { mediaId } = (await response.json()) as { mediaId: string };
-    setPhotos((prev) => [...prev, { id: mediaId, status: "PENDING", rejectionReason: null }]);
-    router.refresh();
+    setProgress(null);
   }
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
+    const files = Array.from(event.target.files ?? []);
     event.target.value = "";
-    if (file) void upload(file);
+    void uploadFiles(files);
   }
 
   function handleDrop(event: React.DragEvent<HTMLLabelElement>) {
     event.preventDefault();
     setDragging(false);
-    const file = event.dataTransfer.files?.[0];
-    if (file && canAdd && !uploading) void upload(file);
+    if (canAdd && !uploading) void uploadFiles(Array.from(event.dataTransfer.files ?? []));
   }
 
   async function handleDelete(mediaId: string) {
     if (!csrfToken) return;
-    setDeletingId(mediaId);
-    const response = await fetch(`/api/provider/profile/photos/${mediaId}`, {
-      method: "DELETE",
-      headers: { "x-csrf-token": csrfToken },
-    });
-    setDeletingId(null);
-    if (response.ok) {
+    setBusyId(mediaId);
+    const result = await sendRequest(`/api/provider/profile/photos/${mediaId}`, { method: "DELETE", csrfToken });
+    setBusyId(null);
+    if (result.ok) {
       setPhotos((prev) => prev.filter((p) => p.id !== mediaId));
-      router.refresh();
+      setErrors([]);
     } else {
-      setError(t("photoDeleteError"));
+      setErrors([result.status === 0 ? t("photoErrors.networkAction") : t("photoDeleteError")]);
     }
   }
 
   async function handleMakePrimary(mediaId: string) {
     if (!csrfToken) return;
-    setPromotingId(mediaId);
-    const response = await fetch(`/api/provider/profile/photos/${mediaId}`, {
-      method: "PATCH",
-      headers: { "x-csrf-token": csrfToken },
-    });
-    setPromotingId(null);
-    if (response.ok) {
+    setBusyId(mediaId);
+    const result = await sendRequest(`/api/provider/profile/photos/${mediaId}`, { method: "PATCH", csrfToken });
+    setBusyId(null);
+    if (result.ok) {
       setPhotos((prev) => [...prev.filter((p) => p.id === mediaId), ...prev.filter((p) => p.id !== mediaId)]);
-      router.refresh();
     } else {
-      setError(t("photoPrimaryError"));
+      setErrors([result.status === 0 ? t("photoErrors.networkAction") : t("photoPrimaryError")]);
     }
   }
 
@@ -142,16 +172,28 @@ export function PhotoManager({ initialPhotos, maxPhotos }: PhotoManagerProps) {
         >
           <input
             type="file"
-            accept="image/jpeg,image/png,image/webp"
+            accept={ACCEPTED_TYPES.join(",")}
+            multiple
             onChange={handleFileChange}
             disabled={uploading || !csrfToken}
             className="sr-only"
           />
-          <span aria-hidden className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-2xl text-accent-foreground">
+          <span
+            aria-hidden
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-2xl text-accent-foreground"
+          >
             +
           </span>
-          <span className="text-base font-medium text-ink2">{uploading ? t("photoUploading") : t("photoAdd")}</span>
-          <span className="text-sm text-ink2-faint">{t("photoAddHint", { count: photos.length, max: maxPhotos })}</span>
+          <span className="text-base font-medium text-ink2" aria-live="polite">
+            {progress ? t("photoUploadingProgress", progress) : t("photoAdd")}
+          </span>
+          <span className="text-sm text-ink2-faint">
+            {t("photoAddHint", {
+              count: photos.length,
+              max: maxPhotos,
+              size: megabytes(maxBytes),
+            })}
+          </span>
         </label>
       ) : (
         <p className="rounded-xl border border-hairline bg-surface-raised px-4 py-3 text-sm text-ink2-muted">
@@ -159,7 +201,18 @@ export function PhotoManager({ initialPhotos, maxPhotos }: PhotoManagerProps) {
         </p>
       )}
 
-      {error && <p className="text-sm text-danger">{error}</p>}
+      {errors.length > 0 && (
+        <div
+          role="alert"
+          className="flex flex-col gap-1 rounded-xl border border-danger/40 bg-danger-soft px-4 py-3"
+        >
+          {errors.map((message) => (
+            <p key={message} className="text-sm text-ink2">
+              {message}
+            </p>
+          ))}
+        </div>
+      )}
 
       {photos.length > 0 && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -193,7 +246,7 @@ export function PhotoManager({ initialPhotos, maxPhotos }: PhotoManagerProps) {
                 <button
                   type="button"
                   onClick={() => handleMakePrimary(photo.id)}
-                  disabled={promotingId === photo.id}
+                  disabled={busyId === photo.id}
                   className="inline-flex items-center justify-center rounded-full border border-hairline2 px-3 py-2 text-sm text-ink2 transition-colors hover:border-accent/60 disabled:opacity-50"
                 >
                   {t("photoMakePrimary")}
@@ -202,7 +255,7 @@ export function PhotoManager({ initialPhotos, maxPhotos }: PhotoManagerProps) {
               <button
                 type="button"
                 onClick={() => handleDelete(photo.id)}
-                disabled={deletingId === photo.id}
+                disabled={busyId === photo.id}
                 className="inline-flex items-center justify-center gap-1.5 rounded-full border border-hairline2 px-3 py-2 text-sm text-ink2-muted transition-colors hover:border-danger/60 hover:text-danger disabled:opacity-50"
               >
                 <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden>

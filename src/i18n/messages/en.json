@@ -151,8 +151,8 @@
     "emailTakenError": "An account already exists with this email."
   },
   "onboarding": {
-    "title": "Onboarding attestation",
-    "intro": "Before creating your profile, please confirm the following. This attestation is timestamped and kept on record.",
+    "title": "Before you start",
+    "intro": "Please confirm the following points. Your confirmation is recorded with today's date.",
     "fields": {
       "attestedAdult": "I am an adult.",
       "attestedVoluntary": "I am acting voluntarily, without coercion.",
@@ -163,12 +163,13 @@
     "submitError": "Could not save the attestation right now."
   },
   "verification": {
-    "title": "Age verification",
+    "title": "Age check",
     "intro": "Publishing your profile requires verifying that you are an adult. This step is simulated in beta (no document is retained).",
     "alreadyVerified": "Verification passed.",
     "start": "Start verification",
     "running": "Verifying…",
-    "error": "Verification failed. Please try again."
+    "error": "Verification failed. Please try again.",
+    "continue": "Continue"
   },
   "dashboard": {
     "title": "My dashboard",
@@ -238,33 +239,38 @@
       "stepContact": "Contact",
       "next": "Next",
       "back": "Back",
-      "saveAndContinue": "Save and continue",
       "progress": "Step {current} of {total}",
-      "optionalHint": "Optional: fill in what you like, or skip this step.",
       "stepTraits": "Characteristics",
-      "stepServices": "Services & rates"
+      "stepServices": "Services & rates",
+      "finish": "Save and finish",
+      "finishAndSend": "Finish and send my profile",
+      "intro": {
+        "presentation": "Let's start with the essentials. This information will appear on your listing. You can change everything later.",
+        "traits": "Everything on this page is optional: only fill in what you want to show.",
+        "services": "Optional: say how you meet clients and your rates. You can skip this step.",
+        "availability": "Optional: your usual days and hours. You can change them at any time.",
+        "photos": "Add at least one photo. Our team checks every photo before it becomes visible.",
+        "contact": "Last step! Your number is never shown directly on the site: a client only sees it after clicking “Show contact”."
+      }
     },
-    "displayNameLabel": "Display name",
+    "displayNameLabel": "Your listing name",
     "ageLabel": "Age",
-    "descriptionLabel": "Description",
+    "descriptionLabel": "About you",
     "cityLabel": "City",
     "categoryLabel": "Category",
     "languagesLabel": "Languages spoken",
     "servicesLabel": "Services",
-    "save": "Save",
-    "saved": "Saved.",
-    "saveError": "Could not save right now.",
-    "selectAtLeastOneLanguage": "Select at least one language spoken.",
-    "invalidFieldsError": "Check the form fields (city, category and languages must be valid).",
+    "saveError": "Saving did not work. Please try again in a moment.",
+    "invalidFieldsError": "Some information could not be saved. Check your city, category and languages.",
     "contactTitle": "Contact",
-    "contactHint": "Never shown publicly — only revealed via the \"Show contact\" button on your public page.",
-    "whatsappLabel": "WhatsApp",
-    "whatsappHint": "Phone number or wa.me link — your main contact channel, required.",
+    "contactHint": "WhatsApp is required, the rest is optional. To remove a detail, just empty the box.",
+    "whatsappLabel": "WhatsApp number",
+    "whatsappHint": "With the country code, for example +41 79 123 45 67.",
     "instagramLabel": "Instagram (optional)",
     "phoneLabel": "Phone (optional)",
     "contactEmailLabel": "Contact email (optional)",
     "photosTitle": "Your photos",
-    "photosHint": "Each photo is checked by our team before it becomes visible.",
+    "photosHint": "JPG, PNG or WebP. You can pick several at once.",
     "photoStatus": {
       "PENDING": "Being checked",
       "APPROVED": "Visible",
@@ -272,15 +278,11 @@
     },
     "photoDelete": "Delete",
     "photoLimitReached": "You have reached the maximum number of photos. Delete one to add another.",
-    "photoUnsupportedType": "Unsupported image format (JPEG, PNG, WebP only).",
-    "photoUploadError": "Photo upload failed.",
-    "saveProfileFirstForPhotos": "Save your profile first to add photos.",
     "createTitle": "Create my profile",
     "backToDashboard": "Back to my dashboard",
     "contactSave": "Save and finish",
-    "photoAdd": "Add a photo",
-    "photoAddHint": "From your phone or computer · {count} of {max} photos",
-    "photoUploading": "Uploading…",
+    "photoAdd": "Add photos",
+    "photoAddHint": "{size} MB maximum per photo · {count} of {max} photos",
     "photoDeleteError": "The photo could not be deleted. Please try again.",
     "heightLabel": "Height (in cm)",
     "bodyTypeLabel": "Figure",
@@ -302,7 +304,7 @@
       "rate2Hours": "2 hours",
       "rateNight": "Night"
     },
-    "descriptionHint": "A few sentences about you and how you meet clients (at least 20 characters).",
+    "descriptionHint": "A few sentences about you and how you meet clients.",
     "tattoosLabel": "Tattoos",
     "piercingsLabel": "Piercings",
     "yes": "Yes",
@@ -322,7 +324,42 @@
     "photoPrimary": "Main photo",
     "photoMakePrimary": "Make main photo",
     "photoPrimaryError": "Could not change the main photo. Please try again.",
-    "photoPendingHint": "Visible to clients as soon as our team has approved it."
+    "photoPendingHint": "Visible to clients as soon as our team has approved it.",
+    "saving": "Saving…",
+    "networkError": "No internet connection right now. Check your connection and try again: nothing you typed is lost.",
+    "displayNameHint": "The first name or nickname shown to clients (not your real name if you prefer).",
+    "cityPlaceholder": "Choose your city",
+    "categoryPlaceholder": "Choose a category",
+    "descriptionCount": "{count, plural, one {# character} other {# characters}} of 20 minimum",
+    "errors": {
+      "displayName": "Enter a listing name (at least 2 letters).",
+      "ageRequired": "Enter your age.",
+      "ageRange": "Your age must be between 18 and 99.",
+      "city": "Choose your city.",
+      "category": "Choose a category.",
+      "languages": "Choose at least one language.",
+      "description": "Your text is a little short: {missing, plural, one {# more character} other {# more characters}}.",
+      "height": "Height must be between {min} and {max} cm (or leave it empty).",
+      "rate": "Enter an amount in CHF, numbers only (or leave it empty).",
+      "photos": "Add at least one photo to continue."
+    },
+    "contactErrors": {
+      "whatsappRequired": "Enter your WhatsApp number: this is how clients contact you.",
+      "whatsappInvalid": "This number does not look complete. Write it with the country code, for example +41 79 123 45 67.",
+      "phoneInvalid": "This number does not look complete. Write it with the country code, or leave the box empty.",
+      "emailInvalid": "This email address does not look right (example: name@example.ch), or leave the box empty.",
+      "instagramInvalid": "This Instagram name does not look right, or leave the box empty."
+    },
+    "photoUploadingProgress": "Uploading photo {current} of {total}…",
+    "photoErrors": {
+      "format": "“{name}” is not an accepted photo. Use a JPG, PNG or WebP photo.",
+      "tooLarge": "“{name}” is too large. The maximum is {max} MB per photo.",
+      "limit": "You already have {max} photos, the maximum. Delete one to add another.",
+      "tooMany": "You can add {room, plural, =0 {no more photos} one {# more photo} other {# more photos}} (maximum {max}). The others were not sent.",
+      "network": "“{name}” could not be sent: no internet connection. Try again when the connection is back.",
+      "networkAction": "No internet connection right now. Please try again in a moment.",
+      "generic": "“{name}” could not be sent. Try again, or try another photo."
+    }
   },
   "moderation": {
     "title": "Photos to review",
@@ -485,5 +522,25 @@
     "taxonomiesBody": "{categories} active categories and {cities} active cities.",
     "auditLogBody": "{count, plural, one {# recorded action.} other {# recorded actions.}}",
     "geoBody": "{count, plural, one {# allowed country.} other {# allowed countries.}}"
+  },
+  "profileDone": {
+    "sent": {
+      "title": "Your profile is created and waiting for review",
+      "body": "Thank you! Our team will check your profile before putting it online. There is nothing else to do: follow its status from your dashboard."
+    },
+    "updated": {
+      "title": "Your changes are saved",
+      "body": "Your profile is up to date. New photos will appear once our team has checked them."
+    },
+    "incomplete": {
+      "title": "Your profile is saved",
+      "body": "This still needs to be done before our team can review it:"
+    },
+    "notSent": {
+      "title": "Your profile is saved",
+      "body": "It could not be sent to our team right now. Send it from your dashboard in one click."
+    },
+    "toDashboard": "Go to my dashboard",
+    "editAgain": "Edit my profile again"
   }
 }

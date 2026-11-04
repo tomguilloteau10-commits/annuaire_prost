@@ -10,6 +10,7 @@ import type { Role } from "@/modules/auth/rbac";
  */
 export const DASHBOARD_PATH = "/dashboard";
 export const PROFILE_EDIT_PATH = "/dashboard/profile";
+export const PROFILE_DONE_PATH = "/dashboard/profile/done";
 export const ONBOARDING_PATH = "/dashboard/onboarding";
 export const VERIFICATION_PATH = "/dashboard/verification";
 export const ADMIN_PATH = "/admin";

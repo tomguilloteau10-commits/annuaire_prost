@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { Link } from "@/i18n/navigation";
 import { ProfileWizard } from "@/components/provider/ProfileWizard";
 import { DEMO_SALONS } from "@/modules/showcase/demo-salons";
+import { MAX_MEDIA_UPLOAD_BYTES } from "@/modules/media/types";
 import { DASHBOARD_PATH } from "@/lib/spaces";
 
 export default async function ProfileEditPage({
@@ -101,6 +102,8 @@ export default async function ProfileEditPage({
           })) ?? []
         }
         maxPhotos={entitlements.maxPhotos}
+        maxPhotoBytes={MAX_MEDIA_UPLOAD_BYTES}
+        initialProfileStatus={profile?.status}
         initialStep={step}
       />
     </main>

@@ -39,11 +39,12 @@ export interface ProfileDetailsInput {
   salonSlug: string | null;
 }
 
+/** null efface le champ (la prestataire a vidé la case). */
 export interface UpsertContactInput {
-  phone?: string;
-  email?: string;
+  phone?: string | null;
+  email?: string | null;
   whatsapp?: string;
-  instagram?: string;
+  instagram?: string | null;
 }
 
 export interface ListPublishedProfilesFilters {

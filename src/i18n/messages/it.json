@@ -152,8 +152,8 @@
     "emailTakenError": "Esiste già un account con questa email."
   },
   "onboarding": {
-    "title": "Dichiarazione di onboarding",
-    "intro": "Prima di creare il tuo profilo, conferma quanto segue. Questa dichiarazione viene registrata con data e ora.",
+    "title": "Prima di iniziare",
+    "intro": "Conferma i punti seguenti. La tua conferma viene registrata con la data di oggi.",
     "fields": {
       "attestedAdult": "Sono maggiorenne.",
       "attestedVoluntary": "Agisco volontariamente, senza costrizioni.",
@@ -164,12 +164,13 @@
     "submitError": "Impossibile salvare la dichiarazione al momento."
   },
   "verification": {
-    "title": "Verifica della maggiore età",
+    "title": "Verifica dell'età",
     "intro": "La pubblicazione del tuo profilo richiede la verifica della maggiore età. Questo passaggio è simulato in beta (nessun documento viene conservato).",
     "alreadyVerified": "Verifica superata.",
     "start": "Avvia verifica",
     "running": "Verifica in corso…",
-    "error": "Verifica fallita. Riprova."
+    "error": "Verifica fallita. Riprova.",
+    "continue": "Continua"
   },
   "dashboard": {
     "title": "La mia bacheca",
@@ -239,33 +240,38 @@
       "stepContact": "Contatto",
       "next": "Avanti",
       "back": "Indietro",
-      "saveAndContinue": "Salva e continua",
       "progress": "Passaggio {current} di {total}",
-      "optionalHint": "Facoltativo: compila ciò che vuoi, oppure salta questo passaggio.",
       "stepTraits": "Caratteristiche",
-      "stepServices": "Prestazioni e tariffe"
+      "stepServices": "Prestazioni e tariffe",
+      "finish": "Salva e termina",
+      "finishAndSend": "Termina e invia il mio profilo",
+      "intro": {
+        "presentation": "Iniziamo dall'essenziale. Queste informazioni appariranno nel tuo annuncio. Potrai modificare tutto in seguito.",
+        "traits": "Tutto in questa pagina è facoltativo: compila solo ciò che vuoi mostrare.",
+        "services": "Facoltativo: come incontri i clienti e le tue tariffe. Puoi saltare questo passaggio.",
+        "availability": "Facoltativo: i tuoi giorni e orari abituali. Puoi cambiarli in qualsiasi momento.",
+        "photos": "Aggiungi almeno una foto. Il nostro team controlla ogni foto prima che sia visibile.",
+        "contact": "Ultimo passaggio! Il tuo numero non è mai mostrato direttamente sul sito: un cliente lo vede solo cliccando su «Mostra contatto»."
+      }
     },
-    "displayNameLabel": "Nome visualizzato",
+    "displayNameLabel": "Il tuo nome nell'annuncio",
     "ageLabel": "Età",
-    "descriptionLabel": "Descrizione",
+    "descriptionLabel": "La tua presentazione",
     "cityLabel": "Città",
     "categoryLabel": "Categoria",
     "languagesLabel": "Lingue parlate",
     "servicesLabel": "Servizi",
-    "save": "Salva",
-    "saved": "Salvato.",
-    "saveError": "Impossibile salvare al momento.",
-    "selectAtLeastOneLanguage": "Seleziona almeno una lingua parlata.",
-    "invalidFieldsError": "Controlla i campi del modulo (città, categoria e lingue devono essere validi).",
+    "saveError": "Il salvataggio non è riuscito. Riprova tra un momento.",
+    "invalidFieldsError": "Alcune informazioni non sono state salvate. Controlla città, categoria e lingue.",
     "contactTitle": "Contatto",
-    "contactHint": "Mai mostrato pubblicamente — visibile solo tramite il pulsante \"Mostra contatto\" sulla tua pagina pubblica.",
-    "whatsappLabel": "WhatsApp",
-    "whatsappHint": "Numero di telefono o link wa.me — il tuo canale di contatto principale, obbligatorio.",
+    "contactHint": "WhatsApp è obbligatorio, il resto è facoltativo. Per togliere un'informazione, svuota semplicemente la casella.",
+    "whatsappLabel": "Numero WhatsApp",
+    "whatsappHint": "Con il prefisso del paese, ad esempio +41 79 123 45 67.",
     "instagramLabel": "Instagram (opzionale)",
     "phoneLabel": "Telefono (opzionale)",
     "contactEmailLabel": "Email di contatto (opzionale)",
     "photosTitle": "Le tue foto",
-    "photosHint": "Ogni foto viene controllata dal nostro team prima di essere visibile.",
+    "photosHint": "JPG, PNG o WebP. Puoi sceglierne diverse in una volta.",
     "photoStatus": {
       "PENDING": "In verifica",
       "APPROVED": "Visibile",
@@ -273,15 +279,11 @@
     },
     "photoDelete": "Elimina",
     "photoLimitReached": "Hai raggiunto il numero massimo di foto. Eliminane una per aggiungerne un'altra.",
-    "photoUnsupportedType": "Formato immagine non supportato (solo JPEG, PNG, WebP).",
-    "photoUploadError": "Caricamento della foto non riuscito.",
-    "saveProfileFirstForPhotos": "Salva prima il tuo profilo per poter aggiungere foto.",
     "createTitle": "Crea il mio profilo",
     "backToDashboard": "Torna alla mia bacheca",
     "contactSave": "Salva e termina",
-    "photoAdd": "Aggiungi una foto",
-    "photoAddHint": "Dal telefono o dal computer · {count} su {max} foto",
-    "photoUploading": "Invio in corso…",
+    "photoAdd": "Aggiungi foto",
+    "photoAddHint": "Massimo {size} MB per foto · {count} su {max} foto",
     "photoDeleteError": "Non è stato possibile eliminare la foto. Riprova.",
     "heightLabel": "Altezza (in cm)",
     "bodyTypeLabel": "Corporatura",
@@ -303,7 +305,7 @@
       "rate2Hours": "2 ore",
       "rateNight": "Notte"
     },
-    "descriptionHint": "Qualche frase su di te e sul tuo modo di ricevere (almeno 20 caratteri).",
+    "descriptionHint": "Qualche frase su di te e sul tuo modo di ricevere.",
     "tattoosLabel": "Tatuaggi",
     "piercingsLabel": "Piercing",
     "yes": "Sì",
@@ -323,7 +325,42 @@
     "photoPrimary": "Foto principale",
     "photoMakePrimary": "Imposta come foto principale",
     "photoPrimaryError": "Impossibile cambiare la foto principale. Riprova.",
-    "photoPendingHint": "Visibile ai clienti appena il nostro team l'avrà convalidata."
+    "photoPendingHint": "Visibile ai clienti appena il nostro team l'avrà convalidata.",
+    "saving": "Salvataggio…",
+    "networkError": "Nessuna connessione internet al momento. Controlla la connessione e riprova: nulla di ciò che hai scritto è perso.",
+    "displayNameHint": "Il nome o soprannome mostrato ai clienti (non il tuo vero nome, se preferisci).",
+    "cityPlaceholder": "Scegli la tua città",
+    "categoryPlaceholder": "Scegli una categoria",
+    "descriptionCount": "{count, plural, one {# carattere} other {# caratteri}} su almeno 20",
+    "errors": {
+      "displayName": "Indica un nome per l'annuncio (almeno 2 lettere).",
+      "ageRequired": "Indica la tua età.",
+      "ageRange": "La tua età deve essere tra 18 e 99 anni.",
+      "city": "Scegli la tua città.",
+      "category": "Scegli una categoria.",
+      "languages": "Scegli almeno una lingua.",
+      "description": "La tua presentazione è un po' corta: ancora {missing, plural, one {# carattere} other {# caratteri}}.",
+      "height": "L'altezza deve essere tra {min} e {max} cm (oppure lascia vuoto).",
+      "rate": "Indica un importo in CHF, solo cifre (oppure lascia vuoto).",
+      "photos": "Aggiungi almeno una foto per continuare."
+    },
+    "contactErrors": {
+      "whatsappRequired": "Indica il tuo numero WhatsApp: è così che i clienti ti contattano.",
+      "whatsappInvalid": "Questo numero non sembra completo. Scrivilo con il prefisso, ad esempio +41 79 123 45 67.",
+      "phoneInvalid": "Questo numero non sembra completo. Scrivilo con il prefisso, oppure lascia la casella vuota.",
+      "emailInvalid": "Questo indirizzo e-mail non sembra corretto (esempio: nome@esempio.ch), oppure lascia la casella vuota.",
+      "instagramInvalid": "Questo nome Instagram non sembra corretto, oppure lascia la casella vuota."
+    },
+    "photoUploadingProgress": "Invio della foto {current} di {total}…",
+    "photoErrors": {
+      "format": "«{name}» non è una foto accettata. Usa una foto JPG, PNG o WebP.",
+      "tooLarge": "«{name}» è troppo pesante. Il massimo è {max} MB per foto.",
+      "limit": "Hai già {max} foto, il massimo. Eliminane una per aggiungerne un'altra.",
+      "tooMany": "Puoi aggiungere ancora {room, plural, =0 {nessuna foto} one {# foto} other {# foto}} (massimo {max}). Le altre non sono state inviate.",
+      "network": "«{name}» non è stata inviata: nessuna connessione internet. Riprova quando la connessione torna.",
+      "networkAction": "Nessuna connessione internet al momento. Riprova tra un momento.",
+      "generic": "«{name}» non è stata inviata. Riprova, oppure prova con un'altra foto."
+    }
   },
   "moderation": {
     "title": "Foto da convalidare",
@@ -486,5 +523,25 @@
     "taxonomiesBody": "{categories} categorie e {cities} città attive.",
     "auditLogBody": "{count, plural, one {# azione registrata.} other {# azioni registrate.}}",
     "geoBody": "{count, plural, one {# paese autorizzato.} other {# paesi autorizzati.}}"
+  },
+  "profileDone": {
+    "sent": {
+      "title": "Il tuo profilo è creato e in attesa di verifica",
+      "body": "Grazie! Il nostro team controllerà il tuo profilo prima di pubblicarlo. Non devi fare altro: segui lo stato dalla tua bacheca."
+    },
+    "updated": {
+      "title": "Le tue modifiche sono salvate",
+      "body": "Il tuo profilo è aggiornato. Le nuove foto appariranno appena il nostro team le avrà controllate."
+    },
+    "incomplete": {
+      "title": "Il tuo profilo è salvato",
+      "body": "Resta ancora da fare questo prima che il nostro team possa verificarlo:"
+    },
+    "notSent": {
+      "title": "Il tuo profilo è salvato",
+      "body": "Al momento non è stato possibile inviarlo al nostro team. Invialo dalla tua bacheca con un clic."
+    },
+    "toDashboard": "Vai alla mia bacheca",
+    "editAgain": "Modifica ancora il profilo"
   }
 }
