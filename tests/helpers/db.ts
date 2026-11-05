@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import { PrismaClient } from "@prisma/client";
 
 /**
@@ -49,12 +50,18 @@ export async function ensureBaseFixtures(): Promise<BaseFixtures> {
 
 let counter = 0;
 
-export function uniqueSlug(prefix: string): string {
+// Les fichiers de test tournent en parallèle dans des processus séparés :
+// horodatage + compteur ne suffisent pas (deux fichiers peuvent produire
+// la même valeur à la même milliseconde), d'où le suffixe aléatoire.
+function uniqueSuffix(): string {
   counter += 1;
-  return `${prefix}-${Date.now()}-${counter}`;
+  return `${Date.now()}-${counter}-${randomBytes(3).toString("hex")}`;
+}
+
+export function uniqueSlug(prefix: string): string {
+  return `${prefix}-${uniqueSuffix()}`;
 }
 
 export function uniqueEmail(prefix: string): string {
-  counter += 1;
-  return `${prefix}-${Date.now()}-${counter}@example.test`;
+  return `${prefix}-${uniqueSuffix()}@example.test`;
 }
