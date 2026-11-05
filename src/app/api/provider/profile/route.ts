@@ -11,12 +11,15 @@ import { checkCsrf } from "@/lib/route-helpers";
 import {
   BODY_TYPES,
   CLIENTELE,
+  CONTACT_METHODS,
+  CUP_SIZES,
   EYE_COLORS,
   HAIR_COLORS,
   HEIGHT_MAX_CM,
   HEIGHT_MIN_CM,
   ORIGINS,
   PAYMENT_METHODS,
+  PUBIC_HAIR,
   RATE_MAX_CHF,
   TIME_SLOTS,
   TRAVEL_RADII_KM,
@@ -83,6 +86,14 @@ const detailsSchema = z
       .string()
       .refine((slug) => DEMO_SALONS.some((salon) => salon.slug === slug))
       .nullable(),
+    cupSize: z.enum(CUP_SIZES).nullable().default(null),
+    pubicHair: z.enum(PUBIC_HAIR).nullable().default(null),
+    rateFrom: rate.default(null),
+    contactMethods: z
+      .array(z.enum(CONTACT_METHODS))
+      .max(CONTACT_METHODS.length)
+      .default([])
+      .transform((v) => [...new Set(v)]),
   })
   // Le rayon de déplacement n'a de sens que si la prestataire se déplace.
   .transform((d) => (d.travels ? d : { ...d, travelRadiusKm: null }))
@@ -98,7 +109,7 @@ const upsertSchema = z.object({
   citySlug: z.string().min(1),
   categoryKey: z.string().min(1),
   languageCodes: z.array(z.string()).min(1).max(10),
-  serviceKeys: z.array(z.string()).max(20),
+  serviceKeys: z.array(z.string()).max(80),
   onlineStatus: z.enum(["ONLINE", "AWAY", "OFFLINE"]).optional(),
   details: detailsSchema.optional(),
 });

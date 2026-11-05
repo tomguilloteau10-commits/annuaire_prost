@@ -51,20 +51,37 @@
       "reset": "Effacer les filtres",
       "more": "Plus de filtres",
       "bodyType": "Silhouette",
-      "meeting": "Se déplace / Reçoit",
+      "meeting": "Reçoit / Se déplace",
       "meetingOptions": {
         "receives": "Reçoit",
         "travels": "Se déplace"
       },
-      "price": "Tarif (1 heure)",
-      "priceOptions": {
-        "LOW": "Moins de 250 CHF",
-        "MID": "250 à 350 CHF",
-        "HIGH": "Plus de 350 CHF"
-      },
+      "price": "Tarif (à partir de)",
       "clientele": "Clientèle",
       "canton": "Canton",
-      "allCities": "Toutes les villes"
+      "allCities": "Toutes les villes",
+      "age": "Âge",
+      "height": "Taille",
+      "cup": "Poitrine",
+      "hair": "Cheveux",
+      "eyes": "Yeux",
+      "origin": "Origine",
+      "pubicHair": "Poils du pubis",
+      "tattoos": "Tatouages",
+      "payment": "Paiement accepté",
+      "contact": "Joignable par",
+      "services": "Services",
+      "yes": "Oui",
+      "no": "Non",
+      "ageValue": "{n} ans",
+      "agePlus": "{n} ans et +",
+      "heightValue": "{m} m",
+      "heightPlus": "{m} m et +",
+      "priceValue": "{n} CHF",
+      "pricePlus": "{n} CHF et +",
+      "showMore": "Afficher plus ({count})",
+      "showLess": "Afficher moins",
+      "selectedHidden": "— {count, plural, one {# cochée} other {# cochées}} plus bas"
     },
     "storiesTitle": "Stories",
     "seeAll": "Voir tout",
@@ -134,7 +151,11 @@
       "eyes": "Yeux",
       "tattoos": "Tatouages",
       "piercings": "Piercings",
-      "origin": "Origine"
+      "origin": "Origine",
+      "cup": "Poitrine",
+      "pubicHair": "Poils du pubis",
+      "heightMeters": "{m} m",
+      "heightPlus": "{m} m et +"
     },
     "yes": "Oui",
     "no": "Non",
@@ -143,7 +164,9 @@
     "servicesTitle": "Prestations",
     "meetingLabel": "Lieu",
     "clienteleLabel": "Clientèle",
-    "salonLabel": "Salon"
+    "salonLabel": "Salon",
+    "contactByLabel": "Joignable par",
+    "rateFrom": "À partir de {price}"
   },
   "auth": {
     "loginTitle": "Connexion",
@@ -412,7 +435,18 @@
     },
     "cantonLabel": "Canton",
     "cantonPlaceholder": "Choisissez votre canton",
-    "cityChooseCantonFirst": "Choisissez d'abord le canton"
+    "cityChooseCantonFirst": "Choisissez d'abord le canton",
+    "cupLabel": "Tour de poitrine",
+    "pubicHairLabel": "Poils du pubis",
+    "heightOption": "{m} m",
+    "heightPlusOption": "{m} m et +",
+    "contactMethodsLabel": "Moyens de contact",
+    "contactMethodsHint": "Seuls les moyens que vous renseignez à la dernière étape seront proposés aux clients.",
+    "contactMethodsReminder": "Vous avez indiqué être joignable par : {methods}. Renseignez-les ci-dessous pour qu'ils soient proposés aux clients.",
+    "rateFromLabel": "Tarif indicatif « à partir de »",
+    "rateFromHint": "Facultatif. Sert aussi au filtre de prix des clients.",
+    "showMore": "Afficher plus ({count})",
+    "showLess": "Afficher moins"
   },
   "moderation": {
     "title": "Photos à valider",
@@ -614,6 +648,27 @@
       "CASH": "Espèces",
       "TWINT": "TWINT",
       "CARD": "Carte"
+    },
+    "cupSize": {
+      "A": "A",
+      "B": "B",
+      "C": "C",
+      "D": "D",
+      "E": "E",
+      "F": "F",
+      "G": "G",
+      "H_PLUS": "H+"
+    },
+    "pubicHair": {
+      "SHAVED": "Rasés",
+      "TRIMMED": "Taillés",
+      "NATURAL": "Naturels"
+    },
+    "contactMethod": {
+      "WHATSAPP": "WhatsApp",
+      "PHONE": "Téléphone",
+      "EMAIL": "E-mail",
+      "INSTAGRAM": "Instagram"
     }
   },
   "adminHome": {

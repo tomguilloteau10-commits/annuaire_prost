@@ -1,13 +1,23 @@
 import { prisma } from "@/lib/prisma";
 import { slugifyWithSuffix } from "@/lib/slugify";
 import { DEMO_SALONS } from "@/modules/showcase/demo-salons";
+import type { Prisma } from "@prisma/client";
 import {
+  AGE_SLIDER,
   BODY_TYPES,
   CLIENTELE,
-  PRICE_RANGES,
-  PRICE_RANGE_KEYS,
-  priceRangeOf,
-  type PriceRange,
+  CONTACT_METHODS,
+  CONTACT_METHOD_FIELD,
+  CUP_SIZES,
+  EYE_COLORS,
+  HAIR_COLORS,
+  HEIGHT_TOP_CM,
+  ORIGINS,
+  PAYMENT_METHODS,
+  PRICE_SLIDER,
+  PUBIC_HAIR,
+  referencePrice,
+  type ContactMethod,
 } from "./attributes";
 import { hasCompletedOnboardingAttestation } from "@/modules/onboarding/attestation.service";
 import { hasPassedAdultVerification } from "@/modules/verification/verification.service";
@@ -17,7 +27,9 @@ import {
   ProfileIncompleteError,
   UnknownTaxonomyReferenceError,
   VerificationIncompleteError,
+  type FacetRange,
   type ListPublishedProfilesFilters,
+  type NumberRange,
   type PublishedProfileFacets,
   type UpsertProfileInput,
   type UpsertContactInput,
@@ -240,6 +252,9 @@ function publicProfileSelect(mediaLimit?: number) {
     onlineStatus: true,
     publishedAt: true,
     heightCm: true,
+    cupSize: true,
+    pubicHair: true,
+    rateFrom: true,
     bodyType: true,
     hairColor: true,
     eyeColor: true,
@@ -272,62 +287,177 @@ function publicProfileSelect(mediaLimit?: number) {
   };
 }
 
+/** Condition Prisma "entre min et max" (bornes facultatives, incluses). */
+function between(range: NumberRange | undefined, openTop?: number) {
+  if (!range || (range.min === undefined && range.max === undefined)) return undefined;
+  const max = range.max !== undefined && range.max !== openTop ? { lte: range.max } : {};
+  return { ...(range.min !== undefined ? { gte: range.min } : {}), ...max };
+}
+
+const nonEmpty = (list: string[] | undefined) => (list && list.length > 0 ? list : undefined);
+
+/**
+ * Critères de la recherche publique, traduits en condition Prisma. Chaque
+ * critère ne retient que les profils qui ont renseigné le champ : un champ
+ * vide ne correspond jamais à un filtre actif.
+ */
+function publicProfileWhere(filters: ListPublishedProfilesFilters): Prisma.ProviderProfileWhereInput {
+  const and: Prisma.ProviderProfileWhereInput[] = [];
+
+  const price = between(filters.price, PRICE_SLIDER.max);
+  if (price) {
+    // Tarif de référence : « à partir de » s'il est donné, sinon 1 heure.
+    and.push({ OR: [{ rateFrom: price }, { rateFrom: null, rate1Hour: price }] });
+  }
+  const cup = filters.cup && between(filters.cup);
+  if (cup) {
+    const from = filters.cup?.min ?? 0;
+    const to = filters.cup?.max ?? CUP_SIZES.length - 1;
+    and.push({ cupSize: { in: CUP_SIZES.slice(from, to + 1) } });
+  }
+  const meetings = nonEmpty(filters.meetings);
+  if (meetings) {
+    and.push({ OR: meetings.map((m) => (m === "receives" ? { receives: true } : { travels: true })) });
+  }
+  const contactMethods = nonEmpty(filters.contactMethods);
+  if (contactMethods) {
+    // Canal coché ET coordonnée réellement renseignée (jamais renvoyée ici).
+    and.push({
+      OR: contactMethods.map((m) => ({
+        contactMethods: { has: m },
+        contact: { [CONTACT_METHOD_FIELD[m as ContactMethod]]: { not: null } },
+      })),
+    });
+  }
+  for (const key of nonEmpty(filters.serviceKeys) ?? []) {
+    and.push({ services: { some: { service: { key } } } });
+  }
+
+  return {
+    status: "PUBLISHED",
+    city: filters.citySlug ? { slug: filters.citySlug } : filters.canton ? { canton: filters.canton } : undefined,
+    category: filters.categoryKey ? { key: filters.categoryKey } : undefined,
+    languages: filters.languageCode ? { some: { language: { code: filters.languageCode } } } : undefined,
+    onlineStatus: filters.onlineOnly ? "ONLINE" : undefined,
+    age: between(filters.age, AGE_SLIDER.max),
+    heightCm: between(filters.heightCm, HEIGHT_TOP_CM),
+    bodyType: nonEmpty(filters.bodyTypes) && { in: filters.bodyTypes },
+    hairColor: nonEmpty(filters.hairColors) && { in: filters.hairColors },
+    eyeColor: nonEmpty(filters.eyeColors) && { in: filters.eyeColors },
+    origin: nonEmpty(filters.origins) && { in: filters.origins },
+    pubicHair: nonEmpty(filters.pubicHair) && { in: filters.pubicHair },
+    tattoos: filters.tattoos,
+    paymentMethods: nonEmpty(filters.paymentMethods) && { hasSome: filters.paymentMethods },
+    clientele: nonEmpty(filters.clientele) && { hasSome: filters.clientele },
+    AND: and,
+  };
+}
+
 export async function listPublishedProfiles(filters: ListPublishedProfilesFilters) {
-  const priceRange =
-    filters.priceRange && filters.priceRange in PRICE_RANGES
-      ? PRICE_RANGES[filters.priceRange as PriceRange]
-      : undefined;
   return prisma.providerProfile.findMany({
-    where: {
-      status: "PUBLISHED",
-      city: filters.citySlug
-        ? { slug: filters.citySlug }
-        : filters.canton
-          ? { canton: filters.canton }
-          : undefined,
-      category: filters.categoryKey ? { key: filters.categoryKey } : undefined,
-      languages: filters.languageCode
-        ? { some: { language: { code: filters.languageCode } } }
-        : undefined,
-      onlineStatus: filters.onlineOnly ? "ONLINE" : undefined,
-      bodyType: filters.bodyType || undefined,
-      receives: filters.meeting === "receives" ? true : undefined,
-      travels: filters.meeting === "travels" ? true : undefined,
-      rate1Hour: priceRange ? { gte: priceRange.min, ...(priceRange.max !== null ? { lte: priceRange.max } : {}) } : undefined,
-      clientele: filters.clientele ? { has: filters.clientele } : undefined,
-    },
+    where: publicProfileWhere(filters),
     select: publicProfileSelect(1),
     orderBy: { publishedAt: "desc" },
   });
 }
 
 /**
+ * Canaux de contact réellement joignables d'un profil publié (coché par la
+ * prestataire ET coordonnée renseignée). Renvoie uniquement des clés
+ * ("WHATSAPP"…), jamais la coordonnée (ENGINEERING_RULES.md §5).
+ */
+export async function getPublicContactChannels(profileId: string): Promise<ContactMethod[]> {
+  const [profile, contact] = await Promise.all([
+    prisma.providerProfile.findUnique({ where: { id: profileId }, select: { contactMethods: true } }),
+    prisma.profileContact.findUnique({ where: { profileId } }),
+  ]);
+  return channelsOf(profile?.contactMethods ?? [], contact);
+}
+
+function channelsOf(
+  declared: string[],
+  contact: { whatsapp: string | null; phone: string | null; email: string | null; instagram: string | null } | null,
+): ContactMethod[] {
+  return CONTACT_METHODS.filter((m) => declared.includes(m) && !!contact?.[CONTACT_METHOD_FIELD[m]]);
+}
+
+function rangeOf(values: number[]): FacetRange | null {
+  return values.length > 0 ? { min: Math.min(...values), max: Math.max(...values) } : null;
+}
+
+/**
  * Valeurs réellement renseignées par au moins un profil publié : l'annuaire
  * n'affiche un filtre (et ses options) que si des profils peuvent y
- * correspondre. Ne lit que des champs publics, jamais le contact.
+ * correspondre. Le contact n'est lu que pour savoir quels canaux existent :
+ * aucune coordonnée ne sort de cette fonction.
  */
 export async function getPublishedProfileFacets(): Promise<PublishedProfileFacets> {
   const rows = await prisma.providerProfile.findMany({
     where: { status: "PUBLISHED" },
-    select: { bodyType: true, receives: true, travels: true, rate1Hour: true, clientele: true },
+    select: {
+      age: true,
+      heightCm: true,
+      rateFrom: true,
+      rate1Hour: true,
+      cupSize: true,
+      bodyType: true,
+      hairColor: true,
+      eyeColor: true,
+      origin: true,
+      pubicHair: true,
+      tattoos: true,
+      receives: true,
+      travels: true,
+      paymentMethods: true,
+      contactMethods: true,
+      clientele: true,
+      contact: { select: { whatsapp: true, phone: true, email: true, instagram: true } },
+      services: { select: { service: { select: { key: true, label: true, isActive: true } } } },
+    },
   });
-  const bodyTypes = new Set<string>();
-  const priceRanges = new Set<PriceRange>();
-  const clientele = new Set<string>();
-  let receives = false;
-  let travels = false;
+
+  const seen = (pick: (row: (typeof rows)[number]) => (string | null)[]) =>
+    new Set(rows.flatMap(pick).filter((v): v is string => !!v));
+  const bodyTypes = seen((r) => [r.bodyType]);
+  const hairColors = seen((r) => [r.hairColor]);
+  const eyeColors = seen((r) => [r.eyeColor]);
+  const origins = seen((r) => [r.origin]);
+  const pubicHair = seen((r) => [r.pubicHair]);
+  const payments = seen((r) => r.paymentMethods);
+  const clientele = seen((r) => r.clientele);
+  const contacts = seen((r) => channelsOf(r.contactMethods, r.contact));
+  const services = new Map<string, unknown>();
   for (const row of rows) {
-    if (row.bodyType) bodyTypes.add(row.bodyType);
-    if (row.rate1Hour !== null) priceRanges.add(priceRangeOf(row.rate1Hour));
-    row.clientele.forEach((c) => clientele.add(c));
-    receives ||= row.receives;
-    travels ||= row.travels;
+    for (const { service } of row.services) if (service.isActive) services.set(service.key, service.label);
   }
+
   return {
-    bodyTypes: BODY_TYPES.filter((b) => bodyTypes.has(b)),
-    meetings: [...(receives ? ["receives" as const] : []), ...(travels ? ["travels" as const] : [])],
-    priceRanges: PRICE_RANGE_KEYS.filter((p) => priceRanges.has(p)),
-    clientele: CLIENTELE.filter((c) => clientele.has(c)),
+    age: rangeOf(rows.flatMap((r) => (r.age !== null ? [r.age] : []))),
+    heightCm: rangeOf(rows.flatMap((r) => (r.heightCm !== null ? [Math.min(r.heightCm, HEIGHT_TOP_CM)] : []))),
+    price: rangeOf(rows.flatMap((r) => {
+      const price = referencePrice(r);
+      return price !== null ? [price] : [];
+    })),
+    cup: rangeOf(
+      rows.flatMap((r) => {
+        const index = r.cupSize ? CUP_SIZES.indexOf(r.cupSize as (typeof CUP_SIZES)[number]) : -1;
+        return index >= 0 ? [index] : [];
+      }),
+    ),
+    bodyTypes: BODY_TYPES.filter((v) => bodyTypes.has(v)),
+    hairColors: HAIR_COLORS.filter((v) => hairColors.has(v)),
+    eyeColors: EYE_COLORS.filter((v) => eyeColors.has(v)),
+    origins: ORIGINS.filter((v) => origins.has(v)),
+    pubicHair: PUBIC_HAIR.filter((v) => pubicHair.has(v)),
+    tattoos: [true, false].filter((v) => rows.some((r) => r.tattoos === v)),
+    meetings: [
+      ...(rows.some((r) => r.receives) ? ["receives" as const] : []),
+      ...(rows.some((r) => r.travels) ? ["travels" as const] : []),
+    ],
+    paymentMethods: PAYMENT_METHODS.filter((v) => payments.has(v)),
+    contactMethods: CONTACT_METHODS.filter((v) => contacts.has(v)),
+    clientele: CLIENTELE.filter((v) => clientele.has(v)),
+    services: [...services].map(([key, label]) => ({ key, label })),
   };
 }
 

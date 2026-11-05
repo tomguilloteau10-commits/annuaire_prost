@@ -51,20 +51,37 @@
       "reset": "Clear filters",
       "more": "More filters",
       "bodyType": "Figure",
-      "meeting": "Outcall / Incall",
+      "meeting": "Incall / Outcall",
       "meetingOptions": {
         "receives": "Incall",
         "travels": "Outcall"
       },
-      "price": "Rate (1 hour)",
-      "priceOptions": {
-        "LOW": "Under CHF 250",
-        "MID": "CHF 250 to 350",
-        "HIGH": "Over CHF 350"
-      },
+      "price": "Rate (from)",
       "clientele": "Clientele",
       "canton": "Canton",
-      "allCities": "All cities"
+      "allCities": "All cities",
+      "age": "Age",
+      "height": "Height",
+      "cup": "Cup size",
+      "hair": "Hair",
+      "eyes": "Eyes",
+      "origin": "Origin",
+      "pubicHair": "Pubic hair",
+      "tattoos": "Tattoos",
+      "payment": "Payment accepted",
+      "contact": "Reachable by",
+      "services": "Services",
+      "yes": "Yes",
+      "no": "No",
+      "ageValue": "{n}",
+      "agePlus": "{n}+",
+      "heightValue": "{m} m",
+      "heightPlus": "{m} m+",
+      "priceValue": "CHF {n}",
+      "pricePlus": "CHF {n}+",
+      "showMore": "Show more ({count})",
+      "showLess": "Show less",
+      "selectedHidden": "— {count} selected below"
     },
     "storiesTitle": "Stories",
     "seeAll": "See all",
@@ -134,7 +151,11 @@
       "eyes": "Eyes",
       "tattoos": "Tattoos",
       "piercings": "Piercings",
-      "origin": "Origin"
+      "origin": "Origin",
+      "cup": "Cup size",
+      "pubicHair": "Pubic hair",
+      "heightMeters": "{m} m",
+      "heightPlus": "{m} m+"
     },
     "yes": "Yes",
     "no": "No",
@@ -143,7 +164,9 @@
     "servicesTitle": "Services",
     "meetingLabel": "Where",
     "clienteleLabel": "Clientele",
-    "salonLabel": "Salon"
+    "salonLabel": "Salon",
+    "contactByLabel": "Reachable by",
+    "rateFrom": "From {price}"
   },
   "auth": {
     "loginTitle": "Log in",
@@ -412,7 +435,18 @@
     },
     "cantonLabel": "Canton",
     "cantonPlaceholder": "Choose your canton",
-    "cityChooseCantonFirst": "Choose the canton first"
+    "cityChooseCantonFirst": "Choose the canton first",
+    "cupLabel": "Cup size",
+    "pubicHairLabel": "Pubic hair",
+    "heightOption": "{m} m",
+    "heightPlusOption": "{m} m and over",
+    "contactMethodsLabel": "Contact methods",
+    "contactMethodsHint": "Only the methods you fill in at the last step will be offered to clients.",
+    "contactMethodsReminder": "You said you can be reached by: {methods}. Fill them in below so clients can use them.",
+    "rateFromLabel": "Indicative rate “from”",
+    "rateFromHint": "Optional. Also used by the clients' price filter.",
+    "showMore": "Show more ({count})",
+    "showLess": "Show less"
   },
   "moderation": {
     "title": "Photos to review",
@@ -614,6 +648,27 @@
       "CASH": "Cash",
       "TWINT": "TWINT",
       "CARD": "Card"
+    },
+    "cupSize": {
+      "A": "A",
+      "B": "B",
+      "C": "C",
+      "D": "D",
+      "E": "E",
+      "F": "F",
+      "G": "G",
+      "H_PLUS": "H+"
+    },
+    "pubicHair": {
+      "SHAVED": "Shaved",
+      "TRIMMED": "Trimmed",
+      "NATURAL": "Natural"
+    },
+    "contactMethod": {
+      "WHATSAPP": "WhatsApp",
+      "PHONE": "Phone",
+      "EMAIL": "Email",
+      "INSTAGRAM": "Instagram"
     }
   },
   "adminHome": {

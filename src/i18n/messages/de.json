@@ -52,20 +52,37 @@
       "reset": "Filter zurücksetzen",
       "more": "Weitere Filter",
       "bodyType": "Figur",
-      "meeting": "Hausbesuche / Empfängt",
+      "meeting": "Empfängt / Besucht",
       "meetingOptions": {
         "receives": "Empfängt",
         "travels": "Hausbesuche"
       },
-      "price": "Preis (1 Stunde)",
-      "priceOptions": {
-        "LOW": "Unter 250 CHF",
-        "MID": "250 bis 350 CHF",
-        "HIGH": "Über 350 CHF"
-      },
+      "price": "Preis (ab)",
       "clientele": "Kundschaft",
       "canton": "Kanton",
-      "allCities": "Alle Orte"
+      "allCities": "Alle Orte",
+      "age": "Alter",
+      "height": "Grösse",
+      "cup": "Oberweite",
+      "hair": "Haare",
+      "eyes": "Augen",
+      "origin": "Herkunft",
+      "pubicHair": "Intimbehaarung",
+      "tattoos": "Tattoos",
+      "payment": "Zahlung",
+      "contact": "Erreichbar über",
+      "services": "Services",
+      "yes": "Ja",
+      "no": "Nein",
+      "ageValue": "{n} Jahre",
+      "agePlus": "{n}+ Jahre",
+      "heightValue": "{m} m",
+      "heightPlus": "{m} m und mehr",
+      "priceValue": "{n} CHF",
+      "pricePlus": "{n} CHF und mehr",
+      "showMore": "Mehr anzeigen ({count})",
+      "showLess": "Weniger anzeigen",
+      "selectedHidden": "— {count} weiter unten ausgewählt"
     },
     "storiesTitle": "Stories",
     "seeAll": "Alle ansehen",
@@ -135,7 +152,11 @@
       "eyes": "Augen",
       "tattoos": "Tattoos",
       "piercings": "Piercings",
-      "origin": "Herkunft"
+      "origin": "Herkunft",
+      "cup": "Oberweite",
+      "pubicHair": "Intimbehaarung",
+      "heightMeters": "{m} m",
+      "heightPlus": "{m} m und mehr"
     },
     "yes": "Ja",
     "no": "Nein",
@@ -144,7 +165,9 @@
     "servicesTitle": "Leistungen",
     "meetingLabel": "Ort",
     "clienteleLabel": "Kundschaft",
-    "salonLabel": "Salon"
+    "salonLabel": "Salon",
+    "contactByLabel": "Erreichbar über",
+    "rateFrom": "Ab {price}"
   },
   "auth": {
     "loginTitle": "Anmelden",
@@ -413,7 +436,18 @@
     },
     "cantonLabel": "Kanton",
     "cantonPlaceholder": "Wählen Sie Ihren Kanton",
-    "cityChooseCantonFirst": "Zuerst den Kanton wählen"
+    "cityChooseCantonFirst": "Zuerst den Kanton wählen",
+    "cupLabel": "Oberweite (Körbchen)",
+    "pubicHairLabel": "Intimbehaarung",
+    "heightOption": "{m} m",
+    "heightPlusOption": "{m} m und mehr",
+    "contactMethodsLabel": "Kontaktwege",
+    "contactMethodsHint": "Kunden sehen nur die Wege, die Sie im letzten Schritt ausfüllen.",
+    "contactMethodsReminder": "Sie sind erreichbar über: {methods}. Füllen Sie diese unten aus, damit Kunden sie nutzen können.",
+    "rateFromLabel": "Richtpreis „ab“",
+    "rateFromHint": "Freiwillig. Wird auch für den Preisfilter der Kunden verwendet.",
+    "showMore": "Mehr anzeigen ({count})",
+    "showLess": "Weniger anzeigen"
   },
   "moderation": {
     "title": "Zu prüfende Fotos",
@@ -615,6 +649,27 @@
       "CASH": "Bargeld",
       "TWINT": "TWINT",
       "CARD": "Karte"
+    },
+    "cupSize": {
+      "A": "A",
+      "B": "B",
+      "C": "C",
+      "D": "D",
+      "E": "E",
+      "F": "F",
+      "G": "G",
+      "H_PLUS": "H+"
+    },
+    "pubicHair": {
+      "SHAVED": "Rasiert",
+      "TRIMMED": "Gestutzt",
+      "NATURAL": "Natürlich"
+    },
+    "contactMethod": {
+      "WHATSAPP": "WhatsApp",
+      "PHONE": "Telefon",
+      "EMAIL": "E-Mail",
+      "INSTAGRAM": "Instagram"
     }
   },
   "adminHome": {

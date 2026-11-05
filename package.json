@@ -18,7 +18,8 @@
     "db:seed": "tsx --env-file-if-exists=.env prisma/seed.ts",
     "db:purge-expired": "tsx --env-file-if-exists=.env scripts/purge-expired-data.ts",
     "accounts:list": "tsx --env-file-if-exists=.env scripts/list-accounts.ts",
-    "demo:remove": "tsx --env-file-if-exists=.env scripts/remove-demo-profiles.ts"
+    "demo:remove": "tsx --env-file-if-exists=.env scripts/remove-demo-profiles.ts",
+    "test-profiles:fill": "tsx --env-file-if-exists=.env scripts/fill-test-profiles.ts"
   },
   "dependencies": {
     "@node-rs/argon2": "^2.0.2",

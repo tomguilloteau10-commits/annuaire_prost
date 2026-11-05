@@ -119,6 +119,10 @@ Nettoyage :
 - `npm run accounts:list` — liste tous les comptes (lecture seule) ;
 - `npm run demo:remove` — aperçu des comptes fictifs qui seraient
   supprimés et de ceux conservés (rien n'est effacé) ;
+- `npm run test-profiles:fill` — liste les comptes prestataires ; avec
+  `-- adresse1 adresse2`, complète ces profils de test avec toutes les
+  caractéristiques filtrables (seuls les champs vides sont remplis, le
+  statut n'est jamais modifié), pour montrer les filtres en démo ;
 - `npm run demo:remove -- --confirm` — suppression réelle. Les comptes
   fictifs sont reconnus **uniquement par leur adresse de connexion**,
   jamais par leur prénom ; un compte ADMIN n'est jamais supprimé.

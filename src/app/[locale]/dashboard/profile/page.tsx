@@ -67,6 +67,10 @@ export default async function ProfileEditPage({
           clientele: profile.clientele,
           paymentMethods: profile.paymentMethods,
           salonSlug: profile.salonSlug,
+          cupSize: profile.cupSize,
+          pubicHair: profile.pubicHair,
+          rateFrom: profile.rateFrom,
+          contactMethods: profile.contactMethods,
         },
       }
     : null;

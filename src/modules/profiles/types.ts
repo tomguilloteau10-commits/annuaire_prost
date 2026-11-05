@@ -37,6 +37,10 @@ export interface ProfileDetailsInput {
   clientele: string[];
   paymentMethods: string[];
   salonSlug: string | null;
+  cupSize: string | null;
+  pubicHair: string | null;
+  rateFrom: number | null;
+  contactMethods: string[];
 }
 
 /** null efface le champ (la prestataire a vidé la case). */
@@ -47,6 +51,17 @@ export interface UpsertContactInput {
   instagram?: string | null;
 }
 
+/** Bornes d'un curseur (incluses) ; une borne absente n'est pas appliquée. */
+export interface NumberRange {
+  min?: number;
+  max?: number;
+}
+
+/**
+ * Critères de recherche de l'annuaire. Dans une même liste, un profil est
+ * retenu s'il correspond à L'UNE des valeurs (ex. cheveux blonds OU bruns),
+ * sauf `serviceKeys` : il doit proposer TOUS les services cochés.
+ */
 export interface ListPublishedProfilesFilters {
   /** Code canton (GE, VD…) : tous les profils du canton si aucune ville n'est choisie. */
   canton?: string;
@@ -54,10 +69,24 @@ export interface ListPublishedProfilesFilters {
   categoryKey?: string;
   languageCode?: string;
   onlineOnly?: boolean;
-  bodyType?: string;
-  meeting?: "receives" | "travels";
-  priceRange?: string;
-  clientele?: string;
+  age?: NumberRange;
+  /** Le haut de l'échelle (199) signifie « 1,99 m et plus ». */
+  heightCm?: NumberRange;
+  /** Sur le tarif de référence (« à partir de », sinon 1 heure). */
+  price?: NumberRange;
+  /** Indices dans CUP_SIZES (0 = A … 7 = H+). */
+  cup?: NumberRange;
+  bodyTypes?: string[];
+  hairColors?: string[];
+  eyeColors?: string[];
+  origins?: string[];
+  pubicHair?: string[];
+  tattoos?: boolean;
+  meetings?: string[];
+  paymentMethods?: string[];
+  contactMethods?: string[];
+  clientele?: string[];
+  serviceKeys?: string[];
 }
 
 export class UnknownTaxonomyReferenceError extends Error {
@@ -99,10 +128,31 @@ export class ProfileIncompleteError extends Error {
   }
 }
 
-/** Valeurs renseignées par au moins un profil publié : filtres affichés dans l'annuaire. */
+/** Plus petite et plus grande valeur renseignées (curseurs de l'annuaire). */
+export interface FacetRange {
+  min: number;
+  max: number;
+}
+
+/**
+ * Valeurs renseignées par au moins un profil publié : l'annuaire n'affiche
+ * un filtre (et ses options) que si des profils peuvent y correspondre.
+ */
 export interface PublishedProfileFacets {
+  age: FacetRange | null;
+  heightCm: FacetRange | null;
+  price: FacetRange | null;
+  /** Indices dans CUP_SIZES. */
+  cup: FacetRange | null;
   bodyTypes: string[];
+  hairColors: string[];
+  eyeColors: string[];
+  origins: string[];
+  pubicHair: string[];
+  tattoos: boolean[];
   meetings: ("receives" | "travels")[];
-  priceRanges: ("LOW" | "MID" | "HIGH")[];
+  paymentMethods: string[];
+  contactMethods: string[];
   clientele: string[];
+  services: { key: string; label: unknown }[];
 }

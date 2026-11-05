@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { getPublishedProfileBySlug } from "@/modules/profiles/profile.service";
+import { getPublicContactChannels, getPublishedProfileBySlug } from "@/modules/profiles/profile.service";
 import { getPublicPhotoUrl } from "@/modules/media/media.service";
 import { getLocalizedLabel } from "@/modules/taxonomies/types";
-import { RATE_FIELDS, WEEK_DAYS, groupWeekDays } from "@/modules/profiles/attributes";
+import { HEIGHT_TOP_CM, RATE_FIELDS, WEEK_DAYS, groupWeekDays } from "@/modules/profiles/attributes";
 import { DEMO_SALONS } from "@/modules/showcase/demo-salons";
 import { ProfileGallery } from "@/components/public/ProfileGallery";
 import { ContactBlock } from "@/components/public/ContactBlock";
@@ -89,18 +89,32 @@ export default async function PublicProfilePage({
   ].filter((m): m is string => !!m);
   const clientele = profile.clientele.map((c) => ta(`clientele.${c}`));
   const payments = profile.paymentMethods.map((m) => ta(`payment.${m}`));
+  // Canaux seulement (WhatsApp, e-mail…) : la coordonnée n'arrive qu'au clic.
+  const contactChannels = (await getPublicContactChannels(profile.id)).map((m) => ta(`contactMethod.${m}`));
   const salon = profile.salonSlug ? DEMO_SALONS.find((s) => s.slug === profile.salonSlug) : undefined;
-  const hasServices = meeting.length > 0 || clientele.length > 0 || profile.services.length > 0 || !!salon;
+  const hasServices =
+    meeting.length > 0 || clientele.length > 0 || contactChannels.length > 0 || profile.services.length > 0 || !!salon;
+  const services = [...profile.services]
+    .map((s) => ({ key: s.service.key, label: getLocalizedLabel(s.service.label, locale) }))
+    .sort((a, b) => a.label.localeCompare(b.label, locale));
   const yesNo = (value: boolean) => (value ? t("yes") : t("no"));
 
   const traits = [
-    profile.heightCm && { label: t("traits.height"), value: t("traits.heightValue", { cm: profile.heightCm }) },
+    profile.heightCm && {
+      label: t("traits.height"),
+      value:
+        profile.heightCm >= HEIGHT_TOP_CM
+          ? t("traits.heightPlus", { m: (HEIGHT_TOP_CM / 100).toLocaleString(locale, { minimumFractionDigits: 2 }) })
+          : t("traits.heightMeters", { m: (profile.heightCm / 100).toLocaleString(locale, { minimumFractionDigits: 2 }) }),
+    },
     profile.bodyType && { label: t("traits.bodyType"), value: ta(`bodyType.${profile.bodyType}`) },
     profile.hairColor && { label: t("traits.hair"), value: ta(`hairColor.${profile.hairColor}`) },
     profile.eyeColor && { label: t("traits.eyes"), value: ta(`eyeColor.${profile.eyeColor}`) },
     profile.tattoos !== null && { label: t("traits.tattoos"), value: yesNo(profile.tattoos) },
     profile.piercings !== null && { label: t("traits.piercings"), value: yesNo(profile.piercings) },
     profile.origin && { label: t("traits.origin"), value: ta(`origin.${profile.origin}`) },
+    profile.cupSize && { label: t("traits.cup"), value: ta(`cupSize.${profile.cupSize}`) },
+    profile.pubicHair && { label: t("traits.pubicHair"), value: ta(`pubicHair.${profile.pubicHair}`) },
   ].filter((trait): trait is { label: string; value: string } => !!trait);
 
   return (
@@ -142,9 +156,12 @@ export default async function PublicProfilePage({
             <p className="whitespace-pre-wrap text-[15px] leading-relaxed text-ink2-muted">{profile.description}</p>
           </section>
 
-          {(rates.length > 0 || payments.length > 0) && (
+          {(rates.length > 0 || payments.length > 0 || profile.rateFrom !== null) && (
             <section className="flex flex-col gap-3">
               <SectionTitle>{t("ratesTitle")}</SectionTitle>
+              {profile.rateFrom !== null && (
+                <p className="text-lg text-ink2">{t("rateFrom", { price: chf.format(profile.rateFrom) })}</p>
+              )}
               {rates.length > 0 && (
                 <dl className="divide-y divide-hairline overflow-hidden rounded-xl2 border border-hairline bg-surface">
                   {rates.map(({ field, amount }) => (
@@ -170,6 +187,9 @@ export default async function PublicProfilePage({
               <dl className="flex flex-col gap-2.5 text-[15px]">
                 {meeting.length > 0 && <InfoRow label={t("meetingLabel")}>{meeting.join(" · ")}</InfoRow>}
                 {clientele.length > 0 && <InfoRow label={t("clienteleLabel")}>{clientele.join(" · ")}</InfoRow>}
+                {contactChannels.length > 0 && (
+                  <InfoRow label={t("contactByLabel")}>{contactChannels.join(" · ")}</InfoRow>
+                )}
                 {salon && (
                   <InfoRow label={t("salonLabel")}>
                     <Link href="/salons" className="underline-offset-4 hover:underline">
@@ -179,10 +199,10 @@ export default async function PublicProfilePage({
                   </InfoRow>
                 )}
               </dl>
-              {profile.services.length > 0 && (
+              {services.length > 0 && (
                 <div className="flex flex-wrap gap-2">
-                  {profile.services.map((s) => (
-                    <Pill key={s.service.key}>{getLocalizedLabel(s.service.label, locale)}</Pill>
+                  {services.map((s) => (
+                    <Pill key={s.key}>{s.label}</Pill>
                   ))}
                 </div>
               )}

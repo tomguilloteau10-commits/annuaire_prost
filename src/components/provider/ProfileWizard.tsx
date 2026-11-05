@@ -13,12 +13,17 @@ import { ContactForm } from "@/components/provider/ContactForm";
 import {
   BODY_TYPES,
   CLIENTELE,
+  CONTACT_METHODS,
+  CUP_SIZES,
   EYE_COLORS,
   HAIR_COLORS,
   HEIGHT_MAX_CM,
   HEIGHT_MIN_CM,
+  HEIGHT_OPTIONS_CM,
+  HEIGHT_TOP_CM,
   ORIGINS,
   PAYMENT_METHODS,
+  PUBIC_HAIR,
   RATE_FIELDS,
   RATE_MAX_CHF,
   TIME_SLOTS,
@@ -178,6 +183,92 @@ function YesNoChips({
   );
 }
 
+/** Interrupteur oui/non (grande cible au doigt). */
+function Switch({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={() => onChange(!checked)}
+      className="flex w-full items-center justify-between gap-4 rounded-xl border border-hairline2 bg-surface-raised px-4 py-3 text-left text-sm text-ink2 transition-colors hover:border-accent/60"
+    >
+      <span>{label}</span>
+      <span
+        aria-hidden
+        className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${
+          checked ? "bg-accent" : "bg-surface-hover"
+        }`}
+      >
+        <span
+          className={`inline-block h-5 w-5 rounded-full bg-ink2 shadow transition-transform ${
+            checked ? "translate-x-5" : "translate-x-0.5"
+          }`}
+        />
+      </span>
+    </button>
+  );
+}
+
+/** Cases à cocher sur deux colonnes, avec « Afficher plus / moins » au-delà de `preview` éléments. */
+function CheckboxGrid({
+  legend,
+  hint,
+  options,
+  selected,
+  onToggle,
+  preview,
+  showMoreLabel,
+  showLessLabel,
+}: {
+  legend: string;
+  hint?: string;
+  options: { value: string; label: string }[];
+  selected: string[];
+  onToggle: (value: string) => void;
+  preview?: number;
+  showMoreLabel?: (count: number) => string;
+  showLessLabel?: string;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const collapsible = preview !== undefined && options.length > preview;
+  const visible = collapsible && !expanded ? options.slice(0, preview) : options;
+  return (
+    <fieldset className="flex flex-col gap-2">
+      <legend className="mb-2 text-sm font-medium text-ink2-muted">
+        {legend}
+        {selected.length > 0 && <span className="ml-1.5 text-accent">({selected.length})</span>}
+      </legend>
+      <div className="grid grid-cols-1 gap-x-6 gap-y-0.5 sm:grid-cols-2">
+        {visible.map((option) => (
+          <label
+            key={option.value}
+            className="flex cursor-pointer items-center gap-3 rounded-lg px-1.5 py-2 text-[15px] text-ink2 hover:bg-surface-hover"
+          >
+            <input
+              type="checkbox"
+              checked={selected.includes(option.value)}
+              onChange={() => onToggle(option.value)}
+              className="h-[18px] w-[18px] shrink-0 accent-accent"
+            />
+            {option.label}
+          </label>
+        ))}
+      </div>
+      {collapsible && (
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          className="self-start text-sm text-accent underline-offset-4 hover:underline"
+        >
+          {expanded ? showLessLabel : showMoreLabel?.(options.length - preview!)}
+        </button>
+      )}
+      {hint && <p className="text-xs text-ink2-faint">{hint}</p>}
+    </fieldset>
+  );
+}
+
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return <h3 className="font-serif text-lg font-medium text-ink2">{children}</h3>;
 }
@@ -261,7 +352,9 @@ export function ProfileWizard({
 
   // Tout le reste est facultatif.
   const d = initialValues?.details;
-  const [heightCm, setHeightCm] = useState(d?.heightCm ? String(d.heightCm) : "");
+  const [heightCm, setHeightCm] = useState(d?.heightCm ? String(Math.min(d.heightCm, HEIGHT_TOP_CM)) : "");
+  const [cupSize, setCupSize] = useState<string | null>(d?.cupSize ?? null);
+  const [pubicHair, setPubicHair] = useState<string | null>(d?.pubicHair ?? null);
   const [bodyType, setBodyType] = useState<string | null>(d?.bodyType ?? null);
   const [hairColor, setHairColor] = useState<string | null>(d?.hairColor ?? null);
   const [eyeColor, setEyeColor] = useState<string | null>(d?.eyeColor ?? null);
@@ -279,6 +372,8 @@ export function ProfileWizard({
     return Object.fromEntries(entries) as Record<RateField, string>;
   });
   const [paymentMethods, setPaymentMethods] = useState<string[]>(d?.paymentMethods ?? []);
+  const [contactMethods, setContactMethods] = useState<string[]>(d?.contactMethods ?? []);
+  const [rateFrom, setRateFrom] = useState(d?.rateFrom?.toString() ?? "");
   const [salonSlug, setSalonSlug] = useState(d?.salonSlug ?? "");
 
   const [availableDays, setAvailableDays] = useState<string[]>(d?.availableDays ?? []);
@@ -324,6 +419,7 @@ export function ProfileWizard({
       });
     }
     if (id === "services") {
+      if (!isOptionalIntInRange(rateFrom, 0, RATE_MAX_CHF)) errors.rateFrom = t("errors.rate");
       for (const field of RATE_FIELDS) {
         if (!isOptionalIntInRange(rates[field], 0, RATE_MAX_CHF)) errors[field] = t("errors.rate");
       }
@@ -390,6 +486,10 @@ export function ProfileWizard({
       rateNight: toInt(rates.rateNight),
       paymentMethods,
       salonSlug: salonSlug || null,
+      cupSize,
+      pubicHair,
+      rateFrom: toInt(rateFrom),
+      contactMethods,
       availableDays,
       availableFrom: availableFrom || null,
       availableTo: availableTo || null,
@@ -683,17 +783,17 @@ export function ProfileWizard({
           {stepIntro}
           <FieldGroup>
             <Label htmlFor="heightCm">{t("heightLabel")}</Label>
-            <TextInput
-              {...fieldProps("heightCm")}
-              type="number"
-              inputMode="numeric"
-              min={HEIGHT_MIN_CM}
-              max={HEIGHT_MAX_CM}
-              placeholder="165"
-              value={heightCm}
-              onChange={(e) => setHeightCm(e.target.value)}
-              className="w-32"
-            />
+            <Select {...fieldProps("heightCm")} fit value={heightCm} onChange={(e) => setHeightCm(e.target.value)}>
+              <option value="">{t("notSpecified")}</option>
+              {HEIGHT_OPTIONS_CM.map((cm) => {
+                const m = (cm / 100).toLocaleString(locale, { minimumFractionDigits: 2 });
+                return (
+                  <option key={cm} value={cm}>
+                    {cm === HEIGHT_TOP_CM ? t("heightPlusOption", { m }) : t("heightOption", { m })}
+                  </option>
+                );
+              })}
+            </Select>
             <FieldError id="heightCm" message={shownErrors.heightCm} />
           </FieldGroup>
           <ChoiceChips
@@ -716,6 +816,20 @@ export function ProfileWizard({
             value={eyeColor}
             onChange={setEyeColor}
             labelFor={(o) => ta(`eyeColor.${o}`)}
+          />
+          <ChoiceChips
+            legend={t("cupLabel")}
+            options={CUP_SIZES}
+            value={cupSize}
+            onChange={setCupSize}
+            labelFor={(o) => ta(`cupSize.${o}`)}
+          />
+          <ChoiceChips
+            legend={t("pubicHairLabel")}
+            options={PUBIC_HAIR}
+            value={pubicHair}
+            onChange={setPubicHair}
+            labelFor={(o) => ta(`pubicHair.${o}`)}
           />
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <YesNoChips
@@ -753,14 +867,13 @@ export function ProfileWizard({
           {stepIntro}
 
           <SectionTitle>{t("logisticsTitle")}</SectionTitle>
-          <ChipGroup legend={t("meetingLabel")}>
-            <Chip on={receives} onClick={() => setReceives((v) => !v)}>
-              {t("receivesLabel")}
-            </Chip>
-            <Chip on={travels} onClick={() => setTravels((v) => !v)}>
-              {t("travelsLabel")}
-            </Chip>
-          </ChipGroup>
+          <fieldset className="flex flex-col gap-2">
+            <legend className="mb-2 text-sm font-medium text-ink2-muted">{t("meetingLabel")}</legend>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <Switch checked={receives} onChange={setReceives} label={t("receivesLabel")} />
+              <Switch checked={travels} onChange={setTravels} label={t("travelsLabel")} />
+            </div>
+          </fieldset>
           {travels && (
             <FieldGroup>
               <Label htmlFor="travelRadiusKm">{t("travelRadiusLabel")}</Label>
@@ -787,18 +900,25 @@ export function ProfileWizard({
               </Chip>
             ))}
           </ChipGroup>
+          <CheckboxGrid
+            legend={t("contactMethodsLabel")}
+            hint={t("contactMethodsHint")}
+            options={CONTACT_METHODS.map((m) => ({ value: m, label: ta(`contactMethod.${m}`) }))}
+            selected={contactMethods}
+            onToggle={(m) => setContactMethods((prev) => toggle(prev, m))}
+          />
           {services.length > 0 && (
-            <ChipGroup legend={t("servicesLabel")}>
-              {services.map((service) => (
-                <Chip
-                  key={service.key}
-                  on={serviceKeys.includes(service.key)}
-                  onClick={() => setServiceKeys((prev) => toggle(prev, service.key))}
-                >
-                  {getLocalizedLabel(service.label, locale)}
-                </Chip>
-              ))}
-            </ChipGroup>
+            <CheckboxGrid
+              legend={t("servicesLabel")}
+              options={services
+                .map((service) => ({ value: service.key, label: getLocalizedLabel(service.label, locale) }))
+                .sort((a, b) => a.label.localeCompare(b.label, locale))}
+              selected={serviceKeys}
+              onToggle={(key) => setServiceKeys((prev) => toggle(prev, key))}
+              preview={12}
+              showMoreLabel={(count) => t("showMore", { count })}
+              showLessLabel={t("showLess")}
+            />
           )}
           {cantonSalons.length > 0 && (
             <FieldGroup>
@@ -816,6 +936,25 @@ export function ProfileWizard({
 
           <SectionTitle>{t("ratesTitle")}</SectionTitle>
           <p className="text-sm text-ink2-muted">{t("ratesHint")}</p>
+          <FieldGroup>
+            <Label htmlFor="rateFrom">{t("rateFromLabel")}</Label>
+            <div className="flex items-center gap-2">
+              <TextInput
+                {...fieldProps("rateFrom")}
+                type="number"
+                inputMode="numeric"
+                min={0}
+                max={RATE_MAX_CHF}
+                placeholder="200"
+                value={rateFrom}
+                onChange={(e) => setRateFrom(e.target.value)}
+                className="w-36"
+              />
+              <span className="text-sm text-ink2-muted">CHF</span>
+            </div>
+            <p className="text-xs text-ink2-faint">{t("rateFromHint")}</p>
+            <FieldError id="rateFrom" message={shownErrors.rateFrom} />
+          </FieldGroup>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {RATE_FIELDS.map((field) => (
               <FieldGroup key={field}>
@@ -836,17 +975,13 @@ export function ProfileWizard({
               </FieldGroup>
             ))}
           </div>
-          <ChipGroup legend={t("paymentLabel")} hint={t("paymentHint")}>
-            {PAYMENT_METHODS.map((m) => (
-              <Chip
-                key={m}
-                on={paymentMethods.includes(m)}
-                onClick={() => setPaymentMethods((prev) => toggle(prev, m))}
-              >
-                {ta(`payment.${m}`)}
-              </Chip>
-            ))}
-          </ChipGroup>
+          <CheckboxGrid
+            legend={t("paymentLabel")}
+            hint={t("paymentHint")}
+            options={PAYMENT_METHODS.map((m) => ({ value: m, label: ta(`payment.${m}`) }))}
+            selected={paymentMethods}
+            onToggle={(m) => setPaymentMethods((prev) => toggle(prev, m))}
+          />
 
           {stepButtons(2)}
         </Card>
@@ -919,6 +1054,15 @@ export function ProfileWizard({
       {step === "contact" && profileExists && (
         <div className="flex flex-col gap-4">
           {stepIntro}
+          {contactMethods.length > 0 && (
+            <p className="text-sm text-ink2-muted">
+              {t("contactMethodsReminder", {
+                methods: CONTACT_METHODS.filter((m) => contactMethods.includes(m))
+                  .map((m) => ta(`contactMethod.${m}`))
+                  .join(", "),
+              })}
+            </p>
+          )}
           <ContactForm
             initialPhone={initialContact.phone}
             initialEmail={initialContact.email}

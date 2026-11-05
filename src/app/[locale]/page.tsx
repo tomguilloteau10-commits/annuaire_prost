@@ -8,7 +8,12 @@ import { withThumbnails } from "@/modules/profiles/profile-thumbnails";
 import { listCategories, listCities, listLanguages } from "@/modules/taxonomies/taxonomy.service";
 import { Link } from "@/i18n/navigation";
 import { FilterBar } from "@/components/public/FilterBar";
-import { parseDirectoryFilters, toProfileFilters, type DirectorySearchParams } from "@/lib/directory-filters";
+import {
+  hasActiveFilters,
+  parseDirectoryFilters,
+  toProfileFilters,
+  type DirectorySearchParams,
+} from "@/lib/directory-filters";
 import { ProfileCard } from "@/components/public/ProfileCard";
 import { ProfileMapLoader } from "@/components/public/ProfileMapLoader";
 import { WhyUsSection } from "@/components/public/WhyUsSection";
@@ -29,7 +34,7 @@ export default async function HomePage({
   setRequestLocale(locale);
   const searchQuery = await searchParams;
   const filters = parseDirectoryFilters(searchQuery);
-  const isFiltering = Object.values(filters).some(Boolean);
+  const isFiltering = hasActiveFilters(filters);
   const t = await getTranslations("home");
   const common = await getTranslations("common");
 

@@ -161,24 +161,49 @@ async function seedCategories() {
 }
 
 async function seedServices() {
+  // Liste standard du secteur, affichée par ordre alphabétique (dans la
+  // langue de l'interface) au formulaire et dans les filtres. Prestations
+  // protégées uniquement. "Reçoit" / "Se déplace" ne sont pas des services
+  // mais des champs du profil (receives / travels).
   const services: { key: string; label: Record<string, string> }[] = [
-    // "Reçoit" / "Se déplace" ne sont plus des services mais des champs du
-    // profil (receives / travels) — voir la migration *_add_profile_details.
+    { key: "69", label: { fr: "69", en: "69", de: "69", it: "69" } },
+    { key: "gfe", label: { fr: "GFE (Girlfriend Experience)", en: "GFE (Girlfriend Experience)", de: "GFE (Girlfriend Experience)", it: "GFE (Girlfriend Experience)" } },
+    { key: "pse", label: { fr: "PSE (Porn Star Experience)", en: "PSE (Porn Star Experience)", de: "PSE (Porn Star Experience)", it: "PSE (Porn Star Experience)" } },
+    { key: "french_kiss", label: { fr: "French kiss", en: "French kiss", de: "Zungenküsse", it: "Bacio alla francese" } },
+    { key: "kissing", label: { fr: "Bisous", en: "Kissing", de: "Küssen", it: "Baci" } },
+    { key: "cuddling", label: { fr: "Câlins & tendresse", en: "Cuddling", de: "Kuscheln & Zärtlichkeit", it: "Coccole e tenerezza" } },
     { key: "massage", label: { fr: "Massage", en: "Massage", de: "Massage", it: "Massaggio" } },
-    {
-      key: "evenements",
-      label: {
-        fr: "Accompagnement événementiel",
-        en: "Event companionship",
-        de: "Begleitung bei Veranstaltungen",
-        it: "Accompagnamento eventi",
-      },
-    },
+    { key: "erotic_massage", label: { fr: "Massage érotique", en: "Erotic massage", de: "Erotische Massage", it: "Massaggio erotico" } },
+    { key: "tantric_massage", label: { fr: "Massage tantrique", en: "Tantric massage", de: "Tantra-Massage", it: "Massaggio tantrico" } },
+    { key: "body_to_body", label: { fr: "Massage body-body", en: "Body-to-body massage", de: "Body-to-Body-Massage", it: "Massaggio body to body" } },
+    { key: "prostate_massage", label: { fr: "Massage prostatique", en: "Prostate massage", de: "Prostatamassage", it: "Massaggio prostatico" } },
+    { key: "shower_together", label: { fr: "Douche à deux", en: "Shower together", de: "Gemeinsames Duschen", it: "Doccia insieme" } },
+    { key: "striptease", label: { fr: "Striptease", en: "Striptease", de: "Striptease", it: "Spogliarello" } },
+    { key: "lingerie", label: { fr: "Lingerie", en: "Lingerie", de: "Dessous", it: "Lingerie" } },
+    { key: "role_play", label: { fr: "Jeux de rôles", en: "Role play", de: "Rollenspiele", it: "Giochi di ruolo" } },
+    { key: "dirty_talk", label: { fr: "Dirty talk", en: "Dirty talk", de: "Dirty Talk", it: "Dirty talk" } },
+    { key: "sex_toys", label: { fr: "Sex toys", en: "Sex toys", de: "Sexspielzeug", it: "Sex toys" } },
+    { key: "handjob", label: { fr: "Masturbation", en: "Handjob", de: "Handentspannung", it: "Masturbazione" } },
+    { key: "protected_oral", label: { fr: "Fellation protégée", en: "Protected oral", de: "Französisch mit Gummi", it: "Orale protetto" } },
+    { key: "cunnilingus", label: { fr: "Cunnilingus", en: "Cunnilingus", de: "Cunnilingus", it: "Cunnilingus" } },
+    { key: "facesitting", label: { fr: "Facesitting", en: "Facesitting", de: "Facesitting", it: "Facesitting" } },
+    { key: "titjob", label: { fr: "Branlette espagnole", en: "Titjob", de: "Busenverkehr", it: "Spagnola" } },
+    { key: "anal_giving", label: { fr: "Sodomie (donne)", en: "Anal (giving)", de: "Anal (aktiv)", it: "Anale (attivo)" } },
+    { key: "anal_receiving", label: { fr: "Sodomie (reçoit)", en: "Anal (receiving)", de: "Anal (passiv)", it: "Anale (passivo)" } },
+    { key: "soft_domination", label: { fr: "Domination soft", en: "Soft domination", de: "Soft-Dominanz", it: "Dominazione soft" } },
+    { key: "soft_submission", label: { fr: "Soumission soft", en: "Soft submission", de: "Soft-Unterwerfung", it: "Sottomissione soft" } },
+    { key: "spanking", label: { fr: "Fessées", en: "Spanking", de: "Spanking", it: "Sculacciate" } },
+    { key: "fetishism", label: { fr: "Fétichisme", en: "Fetishism", de: "Fetisch", it: "Feticismo" } },
+    { key: "foot_fetish", label: { fr: "Fétichisme des pieds", en: "Foot fetish", de: "Fussfetisch", it: "Feticismo dei piedi" } },
+    { key: "duo", label: { fr: "Duo (avec une autre prestataire)", en: "Duo (with another provider)", de: "Duo (mit einer Kollegin)", it: "Duo (con un'altra prestatrice)" } },
+    { key: "couple", label: { fr: "Couple", en: "Couples", de: "Paare", it: "Coppie" } },
+    { key: "dinner_date", label: { fr: "Dîner & sortie", en: "Dinner date", de: "Dinner-Date", it: "Cena e uscita" } },
+    { key: "evenements", label: { fr: "Accompagnement événementiel", en: "Event companionship", de: "Begleitung bei Veranstaltungen", it: "Accompagnamento eventi" } },
   ];
   for (const service of services) {
     await prisma.service.upsert({
       where: { key: service.key },
-      update: {},
+      update: { label: service.label, isActive: true },
       create: service,
     });
   }

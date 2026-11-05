@@ -242,6 +242,13 @@ model ProviderProfile {
   // Moyens de paiement acceptés directement par la prestataire : simple
   // information, aucun paiement ne transite par la plateforme (§4).
   paymentMethods String[]      @default([]) // "CASH" | "TWINT" | "CARD"
+  cupSize        String? // tour de poitrine déclaré : "A" … "G", "H_PLUS"
+  pubicHair      String? // "SHAVED" | "TRIMMED" | "NATURAL"
+  // Tarif indicatif « à partir de » (CHF), affiché seulement (§4).
+  rateFrom       Int?
+  // Moyens de contact acceptés (WHATSAPP, PHONE, EMAIL, INSTAGRAM) : seule
+  // l'existence du canal est publique, jamais la coordonnée (contrainte #5).
+  contactMethods String[]      @default([])
   // Salon de rattachement : slug d'un salon de modules/showcase/demo-salons
   // (pas encore de modèle Salon en base).
   salonSlug      String?
