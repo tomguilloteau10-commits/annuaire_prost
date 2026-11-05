@@ -1,4 +1,4 @@
-# Annuaire Prost — bêta privée
+# VelvetGirl — bêta privée
 
 Annuaire suisse d'annonceuses indépendantes. Version bêta privée, hébergée
 mais non référencée publiquement, testée avec 2-3 prestataires.
