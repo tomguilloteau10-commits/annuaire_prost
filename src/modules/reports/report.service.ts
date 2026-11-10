@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { publiclyVisibleProfileWhere } from "@/modules/subscriptions/visibility";
 import { recordAuditLog } from "@/modules/moderation/audit-log.service";
 import type { ReportReason } from "@prisma/client";
 
@@ -28,7 +29,7 @@ export interface CreateProfileReportInput {
  */
 export async function createProfileReport({ slug, reason, details }: CreateProfileReportInput) {
   const profile = await prisma.providerProfile.findFirst({
-    where: { slug, status: "PUBLISHED" },
+    where: { ...publiclyVisibleProfileWhere(), slug },
     select: { id: true },
   });
   if (!profile) return null;

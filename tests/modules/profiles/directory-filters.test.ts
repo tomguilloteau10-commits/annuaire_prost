@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { prisma, ensureBaseFixtures, uniqueSlug, uniqueEmail, type BaseFixtures } from "../../helpers/db";
+import { prisma, ensureBaseFixtures, uniqueSlug, uniqueEmail, type BaseFixtures, listedTrial } from "../../helpers/db";
 import { parseDirectoryFilters, toDirectoryQuery, toProfileFilters } from "@/lib/directory-filters";
 import { getPublishedProfileFacets, listPublishedProfiles } from "@/modules/profiles/profile.service";
 
@@ -48,6 +48,7 @@ describe("filtres de la fiche prestataire (base réelle)", () => {
     createdUserIds.push(user.id);
     await prisma.providerProfile.create({
       data: {
+        subscription: listedTrial(),
         userId: user.id,
         slug,
         displayName: prefix,

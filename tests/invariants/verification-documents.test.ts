@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { prisma, ensureBaseFixtures, uniqueEmail, uniqueSlug, type BaseFixtures } from "../helpers/db";
+import { prisma, ensureBaseFixtures, uniqueEmail, uniqueSlug, type BaseFixtures, listedTrial } from "../helpers/db";
 import { decryptDocument, encryptDocument } from "@/modules/verification/document-crypto";
 import {
   decideIdentity,
@@ -59,6 +59,7 @@ describe("invariant: documents de vérification temporaires et validation par l'
     });
     const profile = await prisma.providerProfile.create({
       data: {
+        subscription: listedTrial(),
         userId: user.id,
         slug: uniqueSlug("invariant-docs"),
         displayName: "Profil de test documents",

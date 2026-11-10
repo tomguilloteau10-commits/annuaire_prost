@@ -9,6 +9,7 @@ const TABS = [
   { href: "/admin/profiles", key: "adminProfiles" },
   { href: "/admin/moderation", key: "moderation" },
   { href: "/admin/reports", key: "adminReports" },
+  { href: "/admin/subscriptions", key: "adminSubscriptions" },
   { href: "/admin/taxonomies", key: "taxonomies" },
   { href: "/admin/audit-log", key: "auditLog" },
   { href: "/admin/geo-settings", key: "geoSettings" },

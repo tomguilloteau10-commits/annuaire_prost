@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { slugifyWithSuffix } from "@/lib/slugify";
 import { DEMO_SALONS } from "@/modules/showcase/demo-salons";
+import { publiclyVisibleProfileWhere } from "@/modules/subscriptions/visibility";
+import { trialSubscriptionData } from "@/modules/subscriptions/subscription.service";
 import type { Prisma } from "@prisma/client";
 import {
   AGE_SLIDER,
@@ -113,6 +115,8 @@ export async function upsertOwnProfile(userId: string, input: UpsertProfileInput
       ...input.details,
       languages: { create: languageIds.map((languageId) => ({ languageId })) },
       services: { create: serviceIds.map((serviceId) => ({ serviceId })) },
+      // Essai gratuit de 30 jours, démarré à la création du profil.
+      subscription: { create: trialSubscriptionData() },
     },
   });
 }
@@ -334,7 +338,7 @@ function publicProfileWhere(filters: ListPublishedProfilesFilters): Prisma.Provi
   }
 
   return {
-    status: "PUBLISHED",
+    ...publiclyVisibleProfileWhere(),
     city: filters.citySlug ? { slug: filters.citySlug } : filters.canton ? { canton: filters.canton } : undefined,
     category: filters.categoryKey ? { key: filters.categoryKey } : undefined,
     languages: filters.languageCode ? { some: { language: { code: filters.languageCode } } } : undefined,
@@ -393,7 +397,7 @@ function rangeOf(values: number[]): FacetRange | null {
  */
 export async function getPublishedProfileFacets(): Promise<PublishedProfileFacets> {
   const rows = await prisma.providerProfile.findMany({
-    where: { status: "PUBLISHED" },
+    where: publiclyVisibleProfileWhere(),
     select: {
       age: true,
       heightCm: true,
@@ -464,7 +468,7 @@ export async function getPublishedProfileFacets(): Promise<PublishedProfileFacet
 /** Profils publiés rattachés à un salon (page Salons) : nom et lien seulement. */
 export async function listPublishedProfilesBySalon(): Promise<Record<string, { slug: string; displayName: string }[]>> {
   const rows = await prisma.providerProfile.findMany({
-    where: { status: "PUBLISHED", salonSlug: { not: null } },
+    where: { ...publiclyVisibleProfileWhere(), salonSlug: { not: null } },
     select: { slug: true, displayName: true, salonSlug: true },
     orderBy: { displayName: "asc" },
   });
@@ -477,7 +481,7 @@ export async function listPublishedProfilesBySalon(): Promise<Record<string, { s
 
 export async function getPublishedProfileBySlug(slug: string) {
   return prisma.providerProfile.findFirst({
-    where: { slug, status: "PUBLISHED" },
+    where: { ...publiclyVisibleProfileWhere(), slug },
     select: publicProfileSelect(),
   });
 }
@@ -502,7 +506,7 @@ export interface PublishedCityPoint {
 export async function listPublishedProfileCityCounts(): Promise<PublishedCityPoint[]> {
   const grouped = await prisma.providerProfile.groupBy({
     by: ["cityId"],
-    where: { status: "PUBLISHED" },
+    where: publiclyVisibleProfileWhere(),
     _count: { _all: true },
   });
   if (grouped.length === 0) return [];

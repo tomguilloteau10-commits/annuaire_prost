@@ -65,3 +65,12 @@ export function uniqueSlug(prefix: string): string {
 export function uniqueEmail(prefix: string): string {
   return `${prefix}-${uniqueSuffix()}@example.test`;
 }
+
+/**
+ * Abonnement en cours d'essai (visible dans l'annuaire) : à imbriquer dans
+ * la création d'un profil de test — sans abonnement, un profil publié
+ * n'est pas visible (voir modules/subscriptions).
+ */
+export function listedTrial() {
+  return { create: { status: "TRIAL" as const, trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) } };
+}

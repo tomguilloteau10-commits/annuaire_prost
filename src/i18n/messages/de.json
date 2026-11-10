@@ -32,7 +32,8 @@
     "adminIdentities": "Identitäten",
     "adminPermits": "Bewilligungen",
     "adminProfiles": "Profile",
-    "adminReports": "Meldungen"
+    "adminReports": "Meldungen",
+    "adminSubscriptions": "Abonnements"
   },
   "home": {
     "title": "Finden Sie eine unabhängige Anbieterin in der Schweiz",
@@ -261,7 +262,8 @@
       "pendingIdentity": "Ihre Dokumente und Ihr Profil werden geprüft. Sie müssen nichts tun: Ihr Profil geht nach der Bestätigung online.",
       "readyToSubmitIdentityPending": "Ihr Profil ist bereit: Senden Sie es. Es geht online, sobald unser Team Ihre Dokumente geprüft hat.",
       "identityRejected": "Ihre Ausweisdokumente konnten nicht bestätigt werden. Laden Sie neue hoch, um fortzufahren.",
-      "resendDocuments": "Neue Dokumente hochladen"
+      "resendDocuments": "Neue Dokumente hochladen",
+      "hiddenSubscription": "Ihr Profil wurde aus dem Verzeichnis entfernt, weil Ihr Abonnement nicht bezahlt ist. Es bleibt gespeichert und bearbeitbar: Es erscheint wieder, sobald die Zahlung eingegangen ist."
     },
     "preview": {
       "title": "Mein Profil aus Kundensicht",
@@ -292,18 +294,38 @@
       "error": "Die Änderung konnte nicht gespeichert werden. Bitte erneut versuchen.",
       "needsVerification": "Möglich, sobald Ihre Dokumente geprüft sind."
     },
-    "plan": {
-      "title": "Mein Abo",
-      "name": "Startangebot — kostenlos",
-      "body": "Ihre Anzeige ist während des Starts kostenlos, mit bis zu {maxPhotos} Fotos. Es wird keine Zahlung verlangt."
-    },
     "submitForReview": "Profil zur Prüfung senden",
     "submitErrorOnboarding": "Die Startbestätigung fehlt. Füllen Sie sie in Ihrem Dashboard aus.",
     "submitErrorVerification": "Ihre Altersprüfung ist noch nicht bestätigt.",
     "submitErrorPhoto": "Fügen Sie mindestens ein Foto hinzu, bevor Sie Ihr Profil senden.",
     "submitErrorWhatsapp": "Fügen Sie Ihre WhatsApp-Nummer hinzu, bevor Sie Ihr Profil senden.",
     "submitErrorGeneric": "Das Senden hat nicht funktioniert. Bitte gleich erneut versuchen.",
-    "verifiedBadge": "Profil verifiziert"
+    "verifiedBadge": "Profil verifiziert",
+    "subscription": {
+      "title": "Mein Abonnement",
+      "status": {
+        "TRIAL": "Gratis-Testphase",
+        "PAYMENT_DUE": "Zahlung fällig",
+        "ACTIVE": "Aktiv",
+        "PAUSED": "Pausiert"
+      },
+      "headline": {
+        "TRIAL": "Gratis-Testphase bis {date}",
+        "PAYMENT_DUE": "Zahlung fällig seit {date}",
+        "ACTIVE": "Aktiv bis {date}",
+        "PAUSED": "Pausiert seit {date}"
+      },
+      "beforeProfile": "Ihre {days}-tägige Gratis-Testphase beginnt, sobald Sie Ihr Profil erstellen.",
+      "trialBody": "Ihre Anzeige ist während der Testphase gratis. Danach wird das Abonnement direkt bei unserem Team bezahlt.",
+      "activeBody": "Danke! Ihr Abonnement ist bezahlt, Ihr Profil bleibt sichtbar.",
+      "dueBodyTrial": "Ihr Gratismonat ist zu Ende. Um sichtbar zu bleiben, bezahlen Sie Ihr Abonnement (Rechnung / TWINT / Überweisung).",
+      "dueBodyRenewal": "Ihre Abonnementsperiode ist zu Ende. Um sichtbar zu bleiben, bezahlen Sie Ihr Abonnement (Rechnung / TWINT / Überweisung).",
+      "hiddenOn": "Ohne Zahlung wird Ihr Profil am {date} aus dem Verzeichnis entfernt. Es wird nicht gelöscht.",
+      "hiddenNow": "Ihr Profil ist im Verzeichnis nicht mehr sichtbar. Es bleibt gespeichert und bearbeitbar: Es erscheint wieder, sobald die Zahlung eingegangen ist.",
+      "pausedBody": "Ihr Profil ist im Verzeichnis nicht sichtbar. Es bleibt gespeichert und bearbeitbar; es wird nach Zahlungseingang wieder aktiviert.",
+      "photos": "Bis zu {maxPhotos} Fotos.",
+      "offline": "Keine Zahlung auf der Website: Sie bezahlen direkt bei unserem Team."
+    }
   },
   "profileEdit": {
     "title": "Profil bearbeiten",
@@ -732,5 +754,45 @@
     "title": "Seite nicht gefunden",
     "body": "Diese Seite existiert nicht oder ist nicht mehr online.",
     "home": "Zur Startseite"
+  },
+  "adminSubscriptions": {
+    "title": "Abonnements",
+    "intro": "{trialDays} Tage gratis ab Profilerstellung. Zahlung ausserhalb der Plattform erhalten → „Als bezahlt markieren“: {periodDays} Tage aktiv, Profil wieder veröffentlicht. Ohne Zahlung wird das Profil {graceDays} Tage nach Fälligkeit aus dem Verzeichnis entfernt (nie gelöscht).",
+    "dueCount": "{count, plural, one {# Zahlung fällig.} other {# Zahlungen fällig.}}",
+    "nothingDue": "Keine offenen Zahlungen.",
+    "empty": "Noch keine Anbieterin hat ein Profil erstellt.",
+    "paymentsDueTile": "Fällige Zahlungen",
+    "status": {
+      "TRIAL": "Gratis-Testphase",
+      "PAYMENT_DUE": "Zahlung fällig",
+      "ACTIVE": "Aktiv",
+      "PAUSED": "Pausiert"
+    },
+    "keyDate": {
+      "TRIAL": "Gratis-Testphase bis {date}",
+      "PAYMENT_DUE": "Zahlung fällig seit {date}",
+      "ACTIVE": "Aktiv bis {date}",
+      "PAUSED": "Pausiert seit {date}"
+    },
+    "profileStatus": {
+      "DRAFT": "Profil-Entwurf",
+      "PENDING_REVIEW": "Profil wartet auf Prüfung",
+      "PUBLISHED": "Profil bestätigt",
+      "REJECTED": "Profil abgelehnt",
+      "SUSPENDED": "Profil von der Moderation ausgeblendet"
+    },
+    "visible": "Im Verzeichnis sichtbar",
+    "hidden": "Nicht sichtbar",
+    "hiddenOn": "Ohne Zahlung am {date} aus dem Verzeichnis entfernt.",
+    "hiddenSince": "Seit {date} aus dem Verzeichnis entfernt.",
+    "lastPayment": "letzte Zahlung am {date}",
+    "viewPublic": "Öffentliches Profil ansehen",
+    "markPaid": "Als bezahlt markieren",
+    "pause": "Pausieren",
+    "confirmPaid": "Zahlungseingang für {name} bestätigen? Das Abonnement ist 30 Tage aktiv und das Profil wird wieder veröffentlicht.",
+    "confirmPause": "Abonnement von {name} pausieren? Das Profil wird aus dem Verzeichnis entfernt (nichts wird gelöscht).",
+    "actionError": "Die Aktion konnte nicht gespeichert werden. Bitte erneut versuchen.",
+    "networkError": "Verbindung unterbrochen. Prüfen Sie Ihr Netz und versuchen Sie es erneut.",
+    "noOnlinePayment": "Über die Plattform fliesst kein Geld: Die Zahlung (Rechnung, TWINT, Überweisung) erfolgt direkt, hier wird nur ihr Status erfasst."
   }
 }

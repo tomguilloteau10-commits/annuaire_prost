@@ -31,7 +31,8 @@
     "adminIdentities": "Identities",
     "adminPermits": "Permits",
     "adminProfiles": "Profiles",
-    "adminReports": "Reports"
+    "adminReports": "Reports",
+    "adminSubscriptions": "Subscriptions"
   },
   "home": {
     "title": "Find an independent provider in Switzerland",
@@ -260,7 +261,8 @@
       "pendingIdentity": "Your documents and profile are being checked. Nothing to do: your profile goes online as soon as it's validated.",
       "readyToSubmitIdentityPending": "Your profile is ready: send it. It goes online once our team has verified your documents.",
       "identityRejected": "Your ID documents could not be validated. Upload new ones to continue.",
-      "resendDocuments": "Upload new documents"
+      "resendDocuments": "Upload new documents",
+      "hiddenSubscription": "Your profile has been removed from the directory because your subscription isn't up to date. It's still saved and editable: it reappears as soon as payment is received."
     },
     "preview": {
       "title": "My profile as clients see it",
@@ -291,18 +293,38 @@
       "error": "The change could not be saved. Please try again.",
       "needsVerification": "Available once your documents are verified."
     },
-    "plan": {
-      "title": "My plan",
-      "name": "Launch offer — free",
-      "body": "Your listing is free during the launch, with up to {maxPhotos} photos. No payment is requested."
-    },
     "submitForReview": "Send my profile for review",
     "submitErrorOnboarding": "The starting declaration is missing. Complete it from your dashboard.",
     "submitErrorVerification": "Your age check is not approved yet.",
     "submitErrorPhoto": "Add at least one photo before sending your profile.",
     "submitErrorWhatsapp": "Add your WhatsApp number before sending your profile.",
     "submitErrorGeneric": "Sending did not work. Please try again in a moment.",
-    "verifiedBadge": "Verified profile"
+    "verifiedBadge": "Verified profile",
+    "subscription": {
+      "title": "My subscription",
+      "status": {
+        "TRIAL": "Free trial",
+        "PAYMENT_DUE": "Payment due",
+        "ACTIVE": "Active",
+        "PAUSED": "Paused"
+      },
+      "headline": {
+        "TRIAL": "Free trial until {date}",
+        "PAYMENT_DUE": "Payment due since {date}",
+        "ACTIVE": "Active until {date}",
+        "PAUSED": "Paused since {date}"
+      },
+      "beforeProfile": "Your {days}-day free trial starts when you create your profile.",
+      "trialBody": "Your listing is free during the trial. After that, the subscription is paid directly to our team.",
+      "activeBody": "Thank you! Your subscription is paid, your profile stays visible.",
+      "dueBodyTrial": "Your free month is over. To stay visible, pay your subscription (invoice / TWINT / bank transfer).",
+      "dueBodyRenewal": "Your subscription period is over. To stay visible, pay your subscription (invoice / TWINT / bank transfer).",
+      "hiddenOn": "Without payment, your profile will be removed from the directory on {date}. It will not be deleted.",
+      "hiddenNow": "Your profile is no longer visible in the directory. It's still saved and editable: it reappears as soon as payment is received.",
+      "pausedBody": "Your profile isn't visible in the directory. It's still saved and editable; it will be reactivated once payment is received.",
+      "photos": "Up to {maxPhotos} photos.",
+      "offline": "No payment on the website: you pay our team directly."
+    }
   },
   "profileEdit": {
     "title": "Edit my profile",
@@ -731,5 +753,45 @@
     "title": "Page not found",
     "body": "This page doesn't exist or is no longer online.",
     "home": "Back to home"
+  },
+  "adminSubscriptions": {
+    "title": "Subscriptions",
+    "intro": "{trialDays}-day free trial when the profile is created. Payment received off-platform → “Mark as paid”: active for {periodDays} days, profile republished. Without payment, the profile is removed from the directory {graceDays} days after the due date (never deleted).",
+    "dueCount": "{count, plural, one {# payment due.} other {# payments due.}}",
+    "nothingDue": "No pending payments.",
+    "empty": "No provider has created a profile yet.",
+    "paymentsDueTile": "Payments due",
+    "status": {
+      "TRIAL": "Free trial",
+      "PAYMENT_DUE": "Payment due",
+      "ACTIVE": "Active",
+      "PAUSED": "Paused"
+    },
+    "keyDate": {
+      "TRIAL": "Free trial until {date}",
+      "PAYMENT_DUE": "Payment due since {date}",
+      "ACTIVE": "Active until {date}",
+      "PAUSED": "Paused since {date}"
+    },
+    "profileStatus": {
+      "DRAFT": "draft profile",
+      "PENDING_REVIEW": "profile awaiting review",
+      "PUBLISHED": "approved profile",
+      "REJECTED": "rejected profile",
+      "SUSPENDED": "profile hidden by moderation"
+    },
+    "visible": "Visible in the directory",
+    "hidden": "Not visible",
+    "hiddenOn": "Removed from the directory on {date} without payment.",
+    "hiddenSince": "Removed from the directory since {date}.",
+    "lastPayment": "last payment on {date}",
+    "viewPublic": "View public profile",
+    "markPaid": "Mark as paid",
+    "pause": "Pause",
+    "confirmPaid": "Confirm payment received for {name}? The subscription will be active for 30 days and the profile republished.",
+    "confirmPause": "Pause {name}'s subscription? Their profile will be removed from the directory (nothing is deleted).",
+    "actionError": "The action could not be saved. Please try again.",
+    "networkError": "Connection lost. Check your network and try again.",
+    "noOnlinePayment": "No payment goes through the platform: payment (invoice, TWINT, bank transfer) is made directly; only its status is recorded here."
   }
 }

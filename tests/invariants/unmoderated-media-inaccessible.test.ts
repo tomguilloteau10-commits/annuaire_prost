@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { prisma, ensureBaseFixtures, uniqueSlug, uniqueEmail, type BaseFixtures } from "../helpers/db";
+import { prisma, ensureBaseFixtures, uniqueSlug, uniqueEmail, type BaseFixtures, listedTrial } from "../helpers/db";
 import { getPublicPhotoUrl } from "@/modules/media/media.service";
 
 // ENGINEERING_RULES.md §6 : un média non modéré (status !== APPROVED)
@@ -23,6 +23,7 @@ describe("invariant: un média non modéré n'est jamais accessible via getPubli
 
     const profile = await prisma.providerProfile.create({
       data: {
+        subscription: listedTrial(),
         userId: user.id,
         slug: uniqueSlug("invariant-media"),
         displayName: "Profil de test média",

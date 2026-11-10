@@ -17,6 +17,8 @@ export interface ProviderDashboardInput {
   /** Photos non refusées (en attente ou validées). */
   photoCount: number;
   hasWhatsapp: boolean;
+  /** Abonnement à jour (essai, actif ou délai de grâce) ; false = profil retiré de l'annuaire. */
+  subscriptionListed?: boolean;
 }
 
 export type ChecklistKey = "ageVerification" | "photo" | "cityCategory" | "whatsapp";
@@ -36,6 +38,7 @@ export type StatusReason =
   | "pendingReview"
   | "identityRejected"
   | "suspended"
+  | "hiddenSubscription"
   | "rejected"
   | "readyToSubmit"
   | "incomplete";
@@ -90,6 +93,9 @@ export function computeProviderDashboardState(input: ProviderDashboardInput): Pr
 
   switch (input.profileStatus) {
     case "PUBLISHED":
+      // Validé par la modération mais abonnement en pause / impayé trop
+      // longtemps : retiré de l'annuaire, toujours modifiable.
+      if (input.subscriptionListed === false) return { ...base, tone: "action", reason: "hiddenSubscription" };
       return { ...base, tone: "online", reason: "published" };
     case "PENDING_REVIEW":
       if (identityRejected) return { ...base, tone: "action", reason: "identityRejected" };

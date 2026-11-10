@@ -32,7 +32,8 @@
     "adminIdentities": "Identità",
     "adminPermits": "Permessi",
     "adminProfiles": "Profili",
-    "adminReports": "Segnalazioni"
+    "adminReports": "Segnalazioni",
+    "adminSubscriptions": "Abbonamenti"
   },
   "home": {
     "title": "Trova una fornitrice indipendente in Svizzera",
@@ -261,7 +262,8 @@
       "pendingIdentity": "I tuoi documenti e il tuo profilo sono in verifica. Non devi fare nulla: il profilo andrà online appena convalidato.",
       "readyToSubmitIdentityPending": "Il tuo profilo è pronto: invialo. Andrà online quando il nostro team avrà verificato i tuoi documenti.",
       "identityRejected": "I tuoi documenti d'identità non hanno potuto essere convalidati. Caricane di nuovi per continuare.",
-      "resendDocuments": "Carica nuovi documenti"
+      "resendDocuments": "Carica nuovi documenti",
+      "hiddenSubscription": "Il tuo profilo è stato tolto dall'elenco perché l'abbonamento non è in regola. Resta salvato e modificabile: riapparirà appena ricevuto il pagamento."
     },
     "preview": {
       "title": "Il mio profilo visto dai clienti",
@@ -292,18 +294,38 @@
       "error": "Non è stato possibile salvare la modifica. Riprova.",
       "needsVerification": "Possibile appena i tuoi documenti sono verificati."
     },
-    "plan": {
-      "title": "Il mio abbonamento",
-      "name": "Offerta di lancio — gratuita",
-      "body": "Il tuo annuncio è gratuito durante il lancio, con fino a {maxPhotos} foto. Nessun pagamento richiesto."
-    },
     "submitForReview": "Invia il mio profilo per la verifica",
     "submitErrorOnboarding": "Manca la dichiarazione iniziale. Completala dalla tua bacheca.",
     "submitErrorVerification": "La verifica della maggiore età non è ancora approvata.",
     "submitErrorPhoto": "Aggiungi almeno una foto prima di inviare il profilo.",
     "submitErrorWhatsapp": "Aggiungi il tuo numero WhatsApp prima di inviare il profilo.",
     "submitErrorGeneric": "L'invio non è riuscito. Riprova tra un momento.",
-    "verifiedBadge": "Profilo verificato"
+    "verifiedBadge": "Profilo verificato",
+    "subscription": {
+      "title": "Il mio abbonamento",
+      "status": {
+        "TRIAL": "Prova gratuita",
+        "PAYMENT_DUE": "Pagamento dovuto",
+        "ACTIVE": "Attivo",
+        "PAUSED": "In pausa"
+      },
+      "headline": {
+        "TRIAL": "Prova gratuita fino al {date}",
+        "PAYMENT_DUE": "Pagamento dovuto dal {date}",
+        "ACTIVE": "Attivo fino al {date}",
+        "PAUSED": "In pausa dal {date}"
+      },
+      "beforeProfile": "La tua prova gratuita di {days} giorni inizierà alla creazione del profilo.",
+      "trialBody": "Il tuo annuncio è gratuito durante la prova. In seguito l'abbonamento si paga direttamente al nostro team.",
+      "activeBody": "Grazie! Il tuo abbonamento è pagato, il tuo profilo resta visibile.",
+      "dueBodyTrial": "Il tuo mese gratuito è terminato. Per restare visibile, paga il tuo abbonamento (fattura / TWINT / bonifico).",
+      "dueBodyRenewal": "Il tuo periodo di abbonamento è terminato. Per restare visibile, paga il tuo abbonamento (fattura / TWINT / bonifico).",
+      "hiddenOn": "Senza pagamento, il tuo profilo sarà tolto dall'elenco il {date}. Non sarà eliminato.",
+      "hiddenNow": "Il tuo profilo non è più visibile nell'elenco. Resta salvato e modificabile: riapparirà appena ricevuto il pagamento.",
+      "pausedBody": "Il tuo profilo non è visibile nell'elenco. Resta salvato e modificabile; sarà riattivato appena ricevuto il pagamento.",
+      "photos": "Fino a {maxPhotos} foto.",
+      "offline": "Nessun pagamento sul sito: paghi direttamente il nostro team."
+    }
   },
   "profileEdit": {
     "title": "Modifica il mio profilo",
@@ -732,5 +754,45 @@
     "title": "Pagina non trovata",
     "body": "Questa pagina non esiste o non è più online.",
     "home": "Torna alla home"
+  },
+  "adminSubscriptions": {
+    "title": "Abbonamenti",
+    "intro": "Prova gratuita di {trialDays} giorni alla creazione del profilo. Pagamento ricevuto fuori piattaforma → «Segna come pagato»: attivo {periodDays} giorni, profilo ripubblicato. Senza pagamento, il profilo è tolto dall'elenco {graceDays} giorni dopo la scadenza (mai eliminato).",
+    "dueCount": "{count, plural, one {# pagamento da saldare.} other {# pagamenti da saldare.}}",
+    "nothingDue": "Nessun pagamento in sospeso.",
+    "empty": "Nessuna prestatrice ha ancora creato un profilo.",
+    "paymentsDueTile": "Pagamenti dovuti",
+    "status": {
+      "TRIAL": "Prova gratuita",
+      "PAYMENT_DUE": "Pagamento dovuto",
+      "ACTIVE": "Attivo",
+      "PAUSED": "In pausa"
+    },
+    "keyDate": {
+      "TRIAL": "Prova gratuita fino al {date}",
+      "PAYMENT_DUE": "Pagamento dovuto dal {date}",
+      "ACTIVE": "Attivo fino al {date}",
+      "PAUSED": "In pausa dal {date}"
+    },
+    "profileStatus": {
+      "DRAFT": "profilo in bozza",
+      "PENDING_REVIEW": "profilo in attesa di verifica",
+      "PUBLISHED": "profilo convalidato",
+      "REJECTED": "profilo rifiutato",
+      "SUSPENDED": "profilo nascosto dalla moderazione"
+    },
+    "visible": "Visibile nell'elenco",
+    "hidden": "Non visibile",
+    "hiddenOn": "Tolto dall'elenco il {date} senza pagamento.",
+    "hiddenSince": "Tolto dall'elenco dal {date}.",
+    "lastPayment": "ultimo pagamento il {date}",
+    "viewPublic": "Vedi il profilo pubblico",
+    "markPaid": "Segna come pagato",
+    "pause": "Metti in pausa",
+    "confirmPaid": "Confermare il pagamento ricevuto per {name}? L'abbonamento sarà attivo per 30 giorni e il profilo ripubblicato.",
+    "confirmPause": "Mettere in pausa l'abbonamento di {name}? Il suo profilo sarà tolto dall'elenco (nulla viene eliminato).",
+    "actionError": "L'azione non è stata salvata. Riprova.",
+    "networkError": "Connessione persa. Controlla la rete e riprova.",
+    "noOnlinePayment": "Nessun pagamento transita dalla piattaforma: il pagamento (fattura, TWINT, bonifico) avviene direttamente, qui se ne registra solo lo stato."
   }
 }

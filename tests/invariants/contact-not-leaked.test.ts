@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { prisma, ensureBaseFixtures, uniqueSlug, uniqueEmail, type BaseFixtures } from "../helpers/db";
+import { prisma, ensureBaseFixtures, uniqueSlug, uniqueEmail, type BaseFixtures, listedTrial } from "../helpers/db";
 import { getPublishedProfileBySlug, listPublishedProfiles } from "@/modules/profiles/profile.service";
 import { revealContact } from "@/modules/profiles/contact-reveal.service";
 
@@ -27,6 +27,7 @@ describe("invariant: le contact n'apparaît jamais dans une lecture publique", (
 
     const profile = await prisma.providerProfile.create({
       data: {
+        subscription: listedTrial(),
         userId: user.id,
         slug,
         displayName: "Profil de test contact",
@@ -80,6 +81,7 @@ describe("invariant: le contact n'apparaît jamais dans une lecture publique", (
     createdUserIds.push(draftUser.id);
     const draftProfile = await prisma.providerProfile.create({
       data: {
+        subscription: listedTrial(),
         userId: draftUser.id,
         slug: draftSlug,
         displayName: "Profil brouillon",

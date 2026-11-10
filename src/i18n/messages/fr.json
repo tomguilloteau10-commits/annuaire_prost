@@ -31,7 +31,8 @@
     "adminIdentities": "Identités",
     "adminPermits": "Permis",
     "adminProfiles": "Profils",
-    "adminReports": "Signalements"
+    "adminReports": "Signalements",
+    "adminSubscriptions": "Abonnements"
   },
   "home": {
     "title": "Trouvez une annonceuse indépendante en Suisse",
@@ -260,7 +261,8 @@
       "pendingIdentity": "Vos documents et votre profil sont en cours de vérification. Vous n'avez rien à faire : votre profil sera mis en ligne dès la validation.",
       "readyToSubmitIdentityPending": "Votre profil est prêt : envoyez-le. Il sera mis en ligne une fois vos documents vérifiés par notre équipe.",
       "identityRejected": "Vos documents d'identité n'ont pas pu être validés. Déposez-en de nouveaux pour continuer.",
-      "resendDocuments": "Déposer de nouveaux documents"
+      "resendDocuments": "Déposer de nouveaux documents",
+      "hiddenSubscription": "Votre profil est retiré de l'annuaire car votre abonnement n'est pas à jour. Il reste enregistré et modifiable : il réapparaîtra dès le règlement reçu."
     },
     "preview": {
       "title": "Mon profil vu par les clients",
@@ -291,18 +293,38 @@
       "error": "Le changement n'a pas pu être enregistré. Réessayez.",
       "needsVerification": "Possible dès que vos documents sont vérifiés."
     },
-    "plan": {
-      "title": "Mon abonnement",
-      "name": "Offre de lancement — gratuit",
-      "body": "Votre annonce est gratuite pendant le lancement, avec jusqu'à {maxPhotos} photos. Aucun paiement ne vous est demandé."
-    },
     "submitForReview": "Envoyer mon profil pour vérification",
     "submitErrorOnboarding": "Il manque l'attestation de départ. Complétez-la depuis votre tableau de bord.",
     "submitErrorVerification": "Votre vérification de majorité n'est pas encore validée.",
     "submitErrorPhoto": "Ajoutez au moins une photo avant d'envoyer votre profil.",
     "submitErrorWhatsapp": "Ajoutez votre numéro WhatsApp avant d'envoyer votre profil.",
     "submitErrorGeneric": "L'envoi n'a pas fonctionné. Réessayez dans un instant.",
-    "verifiedBadge": "Profil vérifié"
+    "verifiedBadge": "Profil vérifié",
+    "subscription": {
+      "title": "Mon abonnement",
+      "status": {
+        "TRIAL": "Essai gratuit",
+        "PAYMENT_DUE": "Paiement dû",
+        "ACTIVE": "Actif",
+        "PAUSED": "En pause"
+      },
+      "headline": {
+        "TRIAL": "Essai gratuit jusqu'au {date}",
+        "PAYMENT_DUE": "Paiement dû depuis le {date}",
+        "ACTIVE": "Actif jusqu'au {date}",
+        "PAUSED": "En pause depuis le {date}"
+      },
+      "beforeProfile": "Votre essai gratuit de {days} jours démarrera à la création de votre profil.",
+      "trialBody": "Votre annonce est gratuite pendant l'essai. Ensuite, l'abonnement se règle directement auprès de notre équipe.",
+      "activeBody": "Merci ! Votre abonnement est réglé, votre profil reste visible.",
+      "dueBodyTrial": "Votre mois gratuit est terminé. Pour rester visible, réglez votre abonnement (facture / TWINT / virement).",
+      "dueBodyRenewal": "Votre période d'abonnement est terminée. Pour rester visible, réglez votre abonnement (facture / TWINT / virement).",
+      "hiddenOn": "Sans règlement, votre profil sera retiré de l'annuaire le {date}. Il ne sera pas supprimé.",
+      "hiddenNow": "Votre profil n'est plus visible dans l'annuaire. Il reste enregistré et modifiable : il réapparaîtra dès le règlement reçu.",
+      "pausedBody": "Votre profil n'est pas visible dans l'annuaire. Il reste enregistré et modifiable ; il sera réactivé dès le règlement reçu.",
+      "photos": "Jusqu'à {maxPhotos} photos.",
+      "offline": "Aucun paiement sur le site : le règlement se fait directement avec notre équipe."
+    }
   },
   "profileEdit": {
     "title": "Modifier mon profil",
@@ -731,5 +753,45 @@
     "title": "Page introuvable",
     "body": "Cette page n'existe pas ou n'est plus en ligne.",
     "home": "Retour à l'accueil"
+  },
+  "adminSubscriptions": {
+    "title": "Abonnements",
+    "intro": "Essai gratuit de {trialDays} jours à la création du profil. Paiement reçu hors plateforme → « Marquer comme payé » : actif {periodDays} jours, profil republié. Sans règlement, le profil est retiré de l'annuaire {graceDays} jours après l'échéance (jamais supprimé).",
+    "dueCount": "{count, plural, one {# paiement à régler.} other {# paiements à régler.}}",
+    "nothingDue": "Aucun paiement en attente.",
+    "empty": "Aucune prestataire n'a encore créé de profil.",
+    "paymentsDueTile": "Paiements dus",
+    "status": {
+      "TRIAL": "Essai gratuit",
+      "PAYMENT_DUE": "Paiement dû",
+      "ACTIVE": "Actif",
+      "PAUSED": "En pause"
+    },
+    "keyDate": {
+      "TRIAL": "Essai gratuit jusqu'au {date}",
+      "PAYMENT_DUE": "Paiement dû depuis le {date}",
+      "ACTIVE": "Actif jusqu'au {date}",
+      "PAUSED": "En pause depuis le {date}"
+    },
+    "profileStatus": {
+      "DRAFT": "profil en brouillon",
+      "PENDING_REVIEW": "profil en attente de validation",
+      "PUBLISHED": "profil validé",
+      "REJECTED": "profil refusé",
+      "SUSPENDED": "profil masqué par la modération"
+    },
+    "visible": "Visible dans l'annuaire",
+    "hidden": "Non visible",
+    "hiddenOn": "Retiré de l'annuaire le {date} sans règlement.",
+    "hiddenSince": "Retiré de l'annuaire depuis le {date}.",
+    "lastPayment": "dernier paiement le {date}",
+    "viewPublic": "Voir le profil public",
+    "markPaid": "Marquer comme payé",
+    "pause": "Mettre en pause",
+    "confirmPaid": "Confirmer le paiement reçu pour {name} ? L'abonnement sera actif pendant 30 jours et le profil republié.",
+    "confirmPause": "Mettre en pause l'abonnement de {name} ? Son profil sera retiré de l'annuaire (rien n'est supprimé).",
+    "actionError": "L'action n'a pas pu être enregistrée. Réessayez.",
+    "networkError": "Connexion perdue. Vérifiez votre réseau puis réessayez.",
+    "noOnlinePayment": "Aucun paiement ne transite par la plateforme : le règlement (facture, TWINT, virement) se fait directement, seul son statut est enregistré ici."
   }
 }

@@ -9,6 +9,8 @@ import { ProfileCard } from "@/components/public/ProfileCard";
 import { SubmitProfileButton } from "@/components/provider/SubmitProfileButton";
 import { AvailabilityToggle } from "@/components/provider/AvailabilityToggle";
 import { Card } from "@/components/ui/Card";
+import { SubscriptionCard } from "@/components/provider/SubscriptionCard";
+import { getSubscriptionView } from "@/modules/subscriptions/subscription.service";
 import { PROFILE_EDIT_PATH, VERIFICATION_PATH } from "@/lib/spaces";
 
 const TONE_CLASSES: Record<StatusTone, { box: string; dot: string; title: string }> = {
@@ -51,6 +53,12 @@ export default async function ProviderDashboardPage({
     ? await getProviderEntitlements(profile.id)
     : await getPlanFeatures((await prisma.plan.findUniqueOrThrow({ where: { code: "founder" } })).id);
 
+  // Abonnement (paiement hors plateforme) : statut déduit des dates.
+  const subscription = profile ? await getSubscriptionView(profile.id) : null;
+  const wasPaid = subscription?.wasPaid ?? false;
+  const subscriptionNeedsAction = subscription?.status === "PAYMENT_DUE" || subscription?.status === "PAUSED";
+  const isPublic = profile?.status === "PUBLISHED" && subscription?.listed === true;
+
   const visiblePhotos = profile?.media.filter((m) => m.status !== "REJECTED") ?? [];
   // L'aperçu montre exactement ce que voient les clients : uniquement les
   // photos validées (une photo en attente n'est pas encore publique).
@@ -62,6 +70,7 @@ export default async function ProviderDashboardPage({
     verificationStatus: verification?.status ?? null,
     photoCount: visiblePhotos.length,
     hasWhatsapp: extras.hasWhatsapp,
+    subscriptionListed: subscription?.listed ?? true,
   });
   const tone = TONE_CLASSES[state.tone];
   const doneCount = state.checklist.filter((item) => item.done).length;
@@ -126,6 +135,11 @@ export default async function ProviderDashboardPage({
         )}
       </section>
 
+      {/* Abonnement à régler / en pause : juste sous le statut, impossible à manquer. */}
+      {subscriptionNeedsAction && (
+        <SubscriptionCard locale={locale} view={subscription} wasPaid={wasPaid} maxPhotos={plan.maxPhotos} />
+      )}
+
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* 2. Aperçu du profil tel que les clients le voient. */}
         <Card className="flex flex-col gap-4 p-5">
@@ -148,7 +162,7 @@ export default async function ProviderDashboardPage({
                 />
               </div>
               <div className="flex flex-col gap-2.5">
-                {profile.status === "PUBLISHED" ? (
+                {isPublic ? (
                   <Link href={`/profiles/${profile.slug}`} className={`${SECONDARY_BUTTON} sm:w-full`}>
                     {t("preview.viewPublic")}
                   </Link>
@@ -226,12 +240,10 @@ export default async function ProviderDashboardPage({
           disabledReason={!profile ? "needsProfile" : !state.identityVerified ? "needsVerification" : undefined}
         />
 
-        {/* 5. Abonnement : offre de lancement, aucun paiement. */}
-        <Card className="flex flex-col gap-1.5 p-5">
-          <h2 className="font-sans text-sm font-medium text-ink2-muted">{t("plan.title")}</h2>
-          <p className="font-serif text-lg font-medium text-ink2">{t("plan.name")}</p>
-          <p className="text-sm text-ink2-muted">{t("plan.body", { maxPhotos: plan.maxPhotos })}</p>
-        </Card>
+        {/* 5. Abonnement (essai, actif, ou rappel si pas encore de profil). */}
+        {!subscriptionNeedsAction && (
+          <SubscriptionCard locale={locale} view={subscription} wasPaid={wasPaid} maxPhotos={plan.maxPhotos} />
+        )}
       </div>
     </main>
   );

@@ -3,6 +3,7 @@ import { requirePageRole } from "@/lib/page-guards";
 import { prisma } from "@/lib/prisma";
 import { Link } from "@/i18n/navigation";
 import { countPendingVerificationDossiers } from "@/modules/verification/manual-review.service";
+import { countPaymentsDue } from "@/modules/subscriptions/subscription.service";
 
 // Accueil de l'espace admin : une tuile par file, avec ce qui attend une
 // décision (mises en évidence), puis les réglages. Réservé au rôle ADMIN.
@@ -13,8 +14,9 @@ export default async function AdminHomePage({ params }: { params: Promise<{ loca
   const t = await getTranslations("adminHome");
   const nav = await getTranslations("nav");
   const queueT = await getTranslations("moderation.queues");
+  const subT = await getTranslations("adminSubscriptions");
 
-  const [dossiers, pendingProfiles, pendingMedia, openReports, activeCategories, activeCities, actionCount, allowedCountries] =
+  const [dossiers, pendingProfiles, pendingMedia, openReports, activeCategories, activeCities, actionCount, allowedCountries, paymentsDue] =
     await Promise.all([
       countPendingVerificationDossiers(),
       prisma.providerProfile.count({ where: { status: "PENDING_REVIEW" } }),
@@ -24,6 +26,7 @@ export default async function AdminHomePage({ params }: { params: Promise<{ loca
       prisma.city.count({ where: { isActive: true } }),
       prisma.auditLog.count(),
       prisma.allowedCountry.count({ where: { isAllowed: true } }),
+      countPaymentsDue(),
     ]);
 
   const queues = [
@@ -32,6 +35,7 @@ export default async function AdminHomePage({ params }: { params: Promise<{ loca
     { href: "/admin/profiles", title: queueT("profiles"), count: pendingProfiles },
     { href: "/admin/moderation", title: queueT("photos"), count: pendingMedia },
     { href: "/admin/reports", title: queueT("reports"), count: openReports },
+    { href: "/admin/subscriptions", title: subT("paymentsDueTile"), count: paymentsDue },
   ];
   const toReview = queues.reduce((sum, q) => sum + q.count, 0);
   const settings = [

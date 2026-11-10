@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import type { ProfileStatus } from "@prisma/client";
-import { prisma, ensureBaseFixtures, uniqueSlug, uniqueEmail, type BaseFixtures } from "../helpers/db";
+import { prisma, ensureBaseFixtures, uniqueSlug, uniqueEmail, type BaseFixtures, listedTrial } from "../helpers/db";
 import { getPublishedProfileBySlug, listPublishedProfiles } from "@/modules/profiles/profile.service";
 
 // ENGINEERING_RULES.md §2 : un profil ne doit jamais être visible
@@ -32,6 +32,7 @@ describe("invariant: un profil non PUBLISHED n'est jamais lisible publiquement",
 
     await prisma.providerProfile.create({
       data: {
+        subscription: listedTrial(),
         userId: user.id,
         slug,
         displayName: "Profil de test d'invariant",

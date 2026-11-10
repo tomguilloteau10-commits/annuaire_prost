@@ -421,6 +421,8 @@ async function seedDemoProfile(spec: DemoProfileSpec, passwordHash: string, mode
       travels: spec.serviceKeys.includes("outcall"),
       languages: { create: languages.map((l) => ({ languageId: l.id })) },
       services: { create: services.map((s) => ({ serviceId: s.id })) },
+      // Profils de démo : essai gratuit de 30 jours, comme une vraie inscription.
+      subscription: { create: { status: "TRIAL", trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) } },
     },
   });
 

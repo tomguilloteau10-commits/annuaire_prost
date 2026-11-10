@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { prisma, ensureBaseFixtures, uniqueSlug, uniqueEmail, type BaseFixtures } from "../../helpers/db";
+import { prisma, ensureBaseFixtures, uniqueSlug, uniqueEmail, type BaseFixtures, listedTrial } from "../../helpers/db";
 import { setPrimaryPhoto } from "@/modules/media/media.service";
 import { getPublishedProfileBySlug } from "@/modules/profiles/profile.service";
 
@@ -23,6 +23,7 @@ describe("photo principale", () => {
     createdUserIds.push(user.id);
     const profile = await prisma.providerProfile.create({
       data: {
+        subscription: listedTrial(),
         userId: user.id,
         slug,
         displayName: "Photo principale",

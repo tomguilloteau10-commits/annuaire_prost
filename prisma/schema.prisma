@@ -261,6 +261,7 @@ model ProviderProfile {
   services  ProfileService[]
   media     Media[]
   contact   ProfileContact? // 1:1, table séparée à dessein — voir ci-dessous
+  subscription Subscription? // 1:1, voir model Subscription
   reports   ProfileReport[]
 
   createdAt   DateTime  @default(now())
@@ -275,6 +276,37 @@ model ProviderProfile {
 // contact via un `select` large sur ProviderProfile. La liste publique et
 // l'API de liste/détail ne joignent jamais ce modèle ; seul
 // modules/profiles/contact-reveal.service.ts y accède.
+// ── Abonnement ────────────────────────────────────────────────────────────
+//
+// Abonnement de publicité forfaitaire, réglé HORS plateforme (facture,
+// TWINT, virement) : aucun montant, moyen de paiement ni donnée bancaire
+// n'est stocké ici, aucun flux d'argent ne passe par l'application
+// (ENGINEERING_RULES.md §4). L'admin enregistre seulement « payé ».
+// Le statut affiché se déduit des dates (modules/subscriptions) ;
+// `status` est tenu à jour pour la vue admin.
+enum SubscriptionStatus {
+  TRIAL // essai gratuit, jusqu'à trialEndsAt
+  PAYMENT_DUE // essai ou période payée terminés, sans nouveau paiement
+  ACTIVE // payé jusqu'à paidUntil
+  PAUSED // mis en pause par l'admin : profil retiré de l'annuaire
+}
+
+model Subscription {
+  id              String             @id @default(cuid())
+  profileId       String             @unique
+  profile         ProviderProfile    @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  status          SubscriptionStatus @default(TRIAL)
+  trialEndsAt     DateTime
+  paidUntil       DateTime?
+  paymentDueSince DateTime?
+  pausedAt        DateTime?
+  lastPaymentAt   DateTime?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@index([status])
+}
+
 model ProfileContact {
   id        String          @id @default(cuid())
   profileId String          @unique

@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { prisma, ensureBaseFixtures, uniqueSlug, uniqueEmail, type BaseFixtures } from "../helpers/db";
+import { prisma, ensureBaseFixtures, uniqueSlug, uniqueEmail, type BaseFixtures, listedTrial } from "../helpers/db";
 import {
   createProfileReport,
   resolveReport,
@@ -32,6 +32,7 @@ describe("invariant: un signalement ne déclenche aucune action automatique", ()
 
     const profile = await prisma.providerProfile.create({
       data: {
+        subscription: listedTrial(),
         userId: provider.id,
         slug,
         displayName: "Profil de test signalement",

@@ -98,10 +98,19 @@ signalée et refusée plutôt que codée.
 
 ## 4. Aucun paiement de service sur la plateforme
 
-Aucun flux d'argent entre client et prestataire. Aucun module de paiement
-dans cette bêta. Aucune intégration Stripe/PayPal/autre PSP. L'abonnement
-B2B futur (prestataire → plateforme, jamais client → prestataire via la
-plateforme) est prévu dans le modèle (`Plan`) mais non implémenté.
+Aucun flux d'argent entre client et prestataire. Aucun module de paiement.
+Aucune intégration Stripe/PayPal/autre PSP, aucun formulaire de carte.
+
+**Abonnement de publicité (prestataire → plateforme)** : géré par statut
+uniquement (`model Subscription`, `src/modules/subscriptions`). Essai
+gratuit de 30 jours à la création du profil ; le règlement se fait HORS
+plateforme (facture, TWINT, virement) et l'admin enregistre seulement
+« payé » (30 jours actifs) ou « en pause ». Aucun montant, moyen de
+paiement ni donnée bancaire n'est stocké. Un abonnement en pause, ou
+impayé plus de 7 jours après l'échéance, retire le profil de toutes les
+lectures publiques (`publiclyVisibleProfileWhere`) sans le supprimer ni
+le modifier. Un paiement ne remplace jamais la vérification d'âge ni la
+modération (§2). Tests : `tests/invariants/subscription-visibility.test.ts`.
 
 ## 5. Protection des données sensibles
 

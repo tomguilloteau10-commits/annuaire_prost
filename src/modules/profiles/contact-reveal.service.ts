@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { publiclyVisibleProfileWhere } from "@/modules/subscriptions/visibility";
 import { hashIp } from "@/lib/ip-hash";
 import { computePurgeAt, DATA_CATEGORIES } from "@/modules/retention/retention-policy.service";
 
@@ -21,7 +22,7 @@ export async function revealContact(
   requesterIp: string | null,
 ): Promise<RevealedContact | null> {
   const profile = await prisma.providerProfile.findFirst({
-    where: { slug, status: "PUBLISHED" },
+    where: { ...publiclyVisibleProfileWhere(), slug },
     select: { id: true },
   });
   if (!profile) return null;
