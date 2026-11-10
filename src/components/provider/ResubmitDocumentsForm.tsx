@@ -52,6 +52,7 @@ export function ResubmitDocumentsForm({ kind }: { kind: "identity" | "workPermit
     setSubmitting(false);
     if (!result.ok) {
       if (result.status === 0) setFormError(td("errors.network"));
+      else if (result.error === "payload_too_large") setFormError(td("errors.tooLarge"));
       else if (result.error === "invalid_document" && result.field) {
         setErrors({ [result.field]: result.reason === "too_large" ? td("errors.tooLarge") : td("errors.format") });
       } else setFormError(t("resubmitError"));

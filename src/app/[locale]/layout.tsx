@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
+import { withoutAdminMessages } from "@/i18n/admin-messages";
 import "../globals.css";
 
 const fraunces = Fraunces({
@@ -55,7 +56,9 @@ export default async function LocaleLayout({
   }
 
   setRequestLocale(locale);
-  const messages = await getMessages();
+  // Les libellés de l'espace admin ne partent pas vers les pages publiques :
+  // ils sont fournis par app/[locale]/admin/layout.tsx, seulement là.
+  const messages = withoutAdminMessages(await getMessages());
 
   return (
     <html lang={locale} className={`${fraunces.variable} ${inter.variable}`}>

@@ -19,7 +19,8 @@
     "db:purge-expired": "tsx --env-file-if-exists=.env scripts/purge-expired-data.ts",
     "accounts:list": "tsx --env-file-if-exists=.env scripts/list-accounts.ts",
     "demo:remove": "tsx --env-file-if-exists=.env scripts/remove-demo-profiles.ts",
-    "test-profiles:fill": "tsx --env-file-if-exists=.env scripts/fill-test-profiles.ts"
+    "test-profiles:fill": "tsx --env-file-if-exists=.env scripts/fill-test-profiles.ts",
+    "admin:reset-password": "tsx --env-file-if-exists=.env scripts/reset-admin-password.ts"
   },
   "dependencies": {
     "@node-rs/argon2": "^2.0.2",

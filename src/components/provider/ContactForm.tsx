@@ -3,7 +3,7 @@ import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 import { useCsrfToken } from "@/lib/use-csrf-token";
 import { sendRequest } from "@/lib/send-request";
-import { isValidEmail, isValidPhoneNumber, isValidWhatsapp } from "@/modules/profiles/contact-validation";
+import { isValidEmail, isValidPhoneNumber, isValidWhatsapp, isValidInstagram } from "@/modules/profiles/contact-validation";
 import { FieldGroup, Label, TextInput } from "@/components/ui/Field";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -62,6 +62,7 @@ export function ContactForm({
     else if (!isValidWhatsapp(whatsapp)) next.whatsapp = t("contactErrors.whatsappInvalid");
     if (phone.trim() && !isValidPhoneNumber(phone)) next.phone = t("contactErrors.phoneInvalid");
     if (email.trim() && !isValidEmail(email)) next.email = t("contactErrors.emailInvalid");
+    if (instagram.trim() && !isValidInstagram(instagram)) next.instagram = t("contactErrors.instagramInvalid");
     return next;
   }
 
@@ -111,7 +112,7 @@ export function ContactForm({
   for (const key of Object.keys(errors) as Field[]) {
     const local = live[key];
     if (local) shown[key] = local;
-    else if (!["whatsapp", "phone", "email"].includes(key)) shown[key] = errors[key];
+    else if (!["whatsapp", "phone", "email", "instagram"].includes(key)) shown[key] = errors[key];
   }
 
   const inputProps = (field: Field) => ({

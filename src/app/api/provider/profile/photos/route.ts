@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { rejectOversizedUpload } from "@/lib/form-upload";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/modules/auth/session";
 import { assertRole, ForbiddenError } from "@/modules/auth/rbac";
@@ -7,7 +8,7 @@ import {
   PhotoLimitReachedError,
   MediaTooLargeError,
 } from "@/modules/media/media.service";
-import { ALLOWED_MEDIA_CONTENT_TYPES } from "@/modules/media";
+import { ALLOWED_MEDIA_CONTENT_TYPES, MAX_MEDIA_UPLOAD_BYTES } from "@/modules/media";
 import { checkCsrf } from "@/lib/route-helpers";
 
 // multipart/form-data (pas de JSON) : le champ "file" porte l'image.
@@ -41,6 +42,8 @@ export async function POST(request: Request) {
   });
   if (!profile) return NextResponse.json({ error: "profile_not_found" }, { status: 404 });
 
+  const tooLarge = rejectOversizedUpload(request, MAX_MEDIA_UPLOAD_BYTES);
+  if (tooLarge) return tooLarge;
   const formData = await request.formData().catch(() => null);
   const file = formData?.get("file");
   if (!file || !(file instanceof File)) {

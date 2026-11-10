@@ -16,6 +16,23 @@ const nextConfig = {
   // chargé via require() côté serveur, pas bundlé par webpack.
   // Anciennes adresses de l'espace prestataire (avant /dashboard) : gardées
   // en redirection pour les favoris et liens déjà envoyés.
+  // En-têtes de sécurité des réponses d'API (les pages les reçoivent du
+  // middleware, qui ne s'applique pas à /api). Aucune réponse d'API ne doit
+  // être interprétée autrement que son type déclaré, ni affichée dans un
+  // cadre, ni transmettre son adresse à un site tiers.
+  async headers() {
+    return [
+      {
+        source: "/api/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Referrer-Policy", value: "no-referrer" },
+          { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       { source: "/:locale/provider/dashboard", destination: "/:locale/dashboard", permanent: false },
@@ -31,6 +48,8 @@ const nextConfig = {
     // suivante montre toujours l'état réel, jamais une copie périmée
     // (bug des photos restées "en attente").
     staleTimes: { dynamic: 0 },
+    // src/instrumentation.ts : purge périodique des données expirées.
+    instrumentationHook: true,
   },
 };
 

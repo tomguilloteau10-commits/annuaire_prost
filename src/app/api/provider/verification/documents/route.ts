@@ -5,10 +5,11 @@ import {
   InvalidDocumentError,
   submitIdentityDocuments,
   submitWorkPermit,
+  MAX_DOCUMENT_BYTES,
 } from "@/modules/verification/manual-review.service";
 import { hasPassedAdultVerification } from "@/modules/verification/verification.service";
 import { checkCsrf, requireRole } from "@/lib/route-helpers";
-import { readUpload } from "@/lib/form-upload";
+import { readUpload, rejectOversizedUpload } from "@/lib/form-upload";
 
 /**
  * Nouveau dépôt après un refus (ou un dossier expiré) : pièce d'identité
@@ -26,6 +27,8 @@ export async function POST(request: Request) {
   const attestation = await prisma.onboardingAttestation.findUnique({ where: { providerId } });
   if (!attestation) return NextResponse.json({ error: "onboarding_required" }, { status: 409 });
 
+  const tooLarge = rejectOversizedUpload(request, MAX_DOCUMENT_BYTES, 3);
+  if (tooLarge) return tooLarge;
   const formData = await request.formData().catch(() => null);
   if (!formData) return NextResponse.json({ error: "invalid_input" }, { status: 400 });
   const [front, back, permit] = await Promise.all([

@@ -6,10 +6,11 @@ import {
   InvalidDocumentError,
   submitIdentityDocuments,
   submitWorkPermit,
+  MAX_DOCUMENT_BYTES,
 } from "@/modules/verification/manual-review.service";
 import { checkCsrf, requireRole } from "@/lib/route-helpers";
 import { extractClientIp } from "@/lib/ip-hash";
-import { readCheckbox, readUpload } from "@/lib/form-upload";
+import { readCheckbox, readUpload, rejectOversizedUpload } from "@/lib/form-upload";
 
 /**
  * Étape "Majorité & autorisation" : cases d'attestation + pièce d'identité
@@ -25,6 +26,8 @@ export async function POST(request: Request) {
   if (guard.error) return guard.error;
   const providerId = guard.user.id;
 
+  const tooLarge = rejectOversizedUpload(request, MAX_DOCUMENT_BYTES, 3);
+  if (tooLarge) return tooLarge;
   const formData = await request.formData().catch(() => null);
   if (!formData) return NextResponse.json({ error: "invalid_input" }, { status: 400 });
 

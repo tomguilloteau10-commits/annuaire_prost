@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createProfileReport, REPORT_REASONS } from "@/modules/reports/report.service";
 import { checkCsrf } from "@/lib/route-helpers";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimits } from "@/lib/rate-limit";
 import { hashIp, extractClientIp } from "@/lib/ip-hash";
 
 const reportSchema = z.object({
@@ -18,12 +18,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ slu
   if (csrfError) return csrfError;
 
   const clientIp = extractClientIp(request);
-  const rateLimit = checkRateLimit({
-    key: `profile-report:${clientIp ? hashIp(clientIp) : "unknown"}`,
-    limit: 5,
-    windowMs: 60 * 60 * 1000,
-  });
-  if (!rateLimit.allowed) {
+  const allowed = checkRateLimits([
+    { key: `profile-report:${clientIp ? hashIp(clientIp) : "unknown"}`, limit: 5, windowMs: 60 * 60 * 1000 },
+    { key: "profile-report:global", limit: 60, windowMs: 60 * 60 * 1000 },
+  ]);
+  if (!allowed) {
     return NextResponse.json({ error: "rate_limited" }, { status: 429 });
   }
 

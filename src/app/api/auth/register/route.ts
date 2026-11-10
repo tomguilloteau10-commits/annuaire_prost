@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/modules/auth/password";
 import { createSession } from "@/modules/auth/session";
 import { assertValidCsrf, CsrfError } from "@/lib/csrf";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimits } from "@/lib/rate-limit";
 import { hashIp, extractClientIp } from "@/lib/ip-hash";
 import { logger } from "@/lib/logger";
 
@@ -28,10 +28,14 @@ export async function POST(request: Request) {
     throw error;
   }
 
+  // Par IP (5 / 15 min) ET au total (30 / heure, indépendant de l'IP qui
+  // peut être falsifiée) : empêche la création de comptes en masse.
   const clientIp = extractClientIp(request);
-  const rateLimitKey = `auth:register:${clientIp ? hashIp(clientIp) : "unknown"}`;
-  const rateLimit = checkRateLimit({ key: rateLimitKey, limit: 5, windowMs: 15 * 60 * 1000 });
-  if (!rateLimit.allowed) {
+  const allowed = checkRateLimits([
+    { key: `auth:register:${clientIp ? hashIp(clientIp) : "unknown"}`, limit: 5, windowMs: 15 * 60 * 1000 },
+    { key: "auth:register:global", limit: 30, windowMs: 60 * 60 * 1000 },
+  ]);
+  if (!allowed) {
     return NextResponse.json({ error: "rate_limited" }, { status: 429 });
   }
 
@@ -40,9 +44,10 @@ export async function POST(request: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: "invalid_input" }, { status: 400 });
   }
-  const { email, password } = parsed.data;
+  const email = parsed.data.email.trim().toLowerCase();
+  const { password } = parsed.data;
 
-  const existing = await prisma.user.findUnique({ where: { email } });
+  const existing = await prisma.user.findFirst({ where: { email: { equals: email, mode: "insensitive" } } });
   if (existing) {
     // Réponse volontairement identique à un succès générique côté message
     // pour ne pas confirmer l'existence d'un email à un tiers, tout en
@@ -55,7 +60,7 @@ export async function POST(request: Request) {
     data: { email, passwordHash, role: "PROVIDER" },
   });
 
-  await createSession({ userId: user.id, request });
+  await createSession({ userId: user.id, role: user.role, request });
 
   logger.info("auth.register.success", { userId: user.id });
 

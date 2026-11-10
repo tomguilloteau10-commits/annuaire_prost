@@ -254,6 +254,33 @@ posée dès le modèle de données. Concrètement :
   brancher sur un cron de production est une étape d'exploitation (voir
   README.md), pas une réécriture de schéma.
 
+## Anti-abus et durcissement (audit de sécurité)
+
+- **Jamais de protection fondée sur l'IP seule** : l'IP vient d'un en-tête
+  falsifiable tant que l'app n'est pas derrière un reverse proxy de
+  confiance (`TRUSTED_PROXY_HOPS`, `lib/ip-hash.ts`). Chaque route sensible
+  combine un seau par IP et un seau qui n'en dépend pas
+  (`lib/rate-limit.ts`) :
+  - connexion : 20 essais / 15 min par IP, et **8 mots de passe faux /
+    15 min par compte** (verrouillage, quelle que soit l'IP) ; même durée
+    de réponse que le compte existe ou non ;
+  - inscription : 5 / 15 min par IP, 30 / heure au total ;
+  - « Afficher le contact » : 20 / heure par IP, 300 / heure au total,
+    réponse `no-store` ;
+  - signalement : 5 / heure par IP, 60 / heure au total.
+- **Envois de fichiers** : taille annoncée contrôlée AVANT lecture
+  (`rejectOversizedUpload`), puis type réel (octets de signature).
+- **Secrets** : jamais les valeurs d'exemple en production (générées
+  automatiquement par `docker-entrypoint.sh`, alerte au démarrage sinon).
+- **Réseau** : base et site liés à `127.0.0.1` dans `docker-compose.yml`.
+- **Sessions** : 12 heures pour un compte admin, 30 jours pour une
+  prestataire ; supprimées à l'expiration.
+- **Erreurs** : Prisma en `errorFormat: "minimal"` (aucune valeur de
+  requête recopiée dans les logs) ; pages d'erreur sans détail technique.
+- **Purge** automatique au démarrage puis toutes les 6 heures
+  (`modules/retention/purge.ts`).
+- Tests : `tests/invariants/security-hardening.test.ts`.
+
 ## Application des règles
 
 - Revue de code : toute PR touchant `prisma/schema.prisma`,

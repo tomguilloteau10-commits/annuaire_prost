@@ -19,7 +19,7 @@ import type { VerificationDocumentKind } from "@prisma/client";
  *   (vérifié oui/non, date, type de document, pays).
  * - Sans décision, les pièces sont supprimées au plus tard à `purgeAt`
  *   (purgeExpiredVerificationDocuments, appelée à l'ouverture des files
- *   admin et par scripts/purge-expired-data.ts).
+ *   admin et par src/modules/retention/purge.ts).
  */
 
 export { MANUAL_REVIEW_PROVIDER, purgeExpiredVerificationDocuments };

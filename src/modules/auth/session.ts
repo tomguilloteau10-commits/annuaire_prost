@@ -7,7 +7,10 @@ import { hashIp, extractClientIp } from "@/lib/ip-hash";
 import { computePurgeAt, DATA_CATEGORIES } from "@/modules/retention/retention-policy.service";
 
 export const SESSION_COOKIE_NAME = "aprost_session";
-const SESSION_DURATION_MS = 1000 * 60 * 60 * 24 * 30; // 30 jours
+const SESSION_DURATION_MS = 1000 * 60 * 60 * 24 * 30; // 30 jours (prestataires : reste connectée sur son téléphone)
+// Compte admin : accès aux pièces d'identité et à toutes les décisions, donc
+// session courte — une session oubliée ou volée expire dans la journée.
+const ADMIN_SESSION_DURATION_MS = 1000 * 60 * 60 * 12; // 12 heures
 
 function generateSessionToken(): string {
   return randomBytes(32).toString("hex");
@@ -22,10 +25,12 @@ function hashToken(token: string): string {
 
 export interface CreateSessionInput {
   userId: string;
+  role: User["role"];
   request: Request;
 }
 
-export async function createSession({ userId, request }: CreateSessionInput): Promise<void> {
+export async function createSession({ userId, role, request }: CreateSessionInput): Promise<void> {
+  const duration = role === "ADMIN" ? ADMIN_SESSION_DURATION_MS : SESSION_DURATION_MS;
   const token = generateSessionToken();
   const tokenHash = hashToken(token);
   const clientIp = extractClientIp(request);
@@ -38,7 +43,7 @@ export async function createSession({ userId, request }: CreateSessionInput): Pr
       userAgent: request.headers.get("user-agent")?.slice(0, 512) ?? null,
       ipHash: clientIp ? hashIp(clientIp) : null,
       ipHashPurgeAt: clientIp ? await computePurgeAt(DATA_CATEGORIES.SESSION_IP_HASH, now) : null,
-      expiresAt: new Date(now.getTime() + SESSION_DURATION_MS),
+      expiresAt: new Date(now.getTime() + duration),
     },
   });
 
@@ -47,7 +52,7 @@ export async function createSession({ userId, request }: CreateSessionInput): Pr
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: SESSION_DURATION_MS / 1000,
+    maxAge: duration / 1000,
   });
 }
 
@@ -61,7 +66,12 @@ export async function getCurrentUser(): Promise<User | null> {
     include: { user: true },
   });
 
-  if (!session || session.expiresAt < new Date()) return null;
+  if (!session) return null;
+  if (session.expiresAt < new Date()) {
+    // Session expirée : supprimée tout de suite plutôt que laissée en base.
+    await prisma.session.deleteMany({ where: { id: session.id } });
+    return null;
+  }
   return session.user;
 }
 

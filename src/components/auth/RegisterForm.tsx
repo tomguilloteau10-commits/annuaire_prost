@@ -26,12 +26,20 @@ export function RegisterForm() {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-csrf-token": csrfToken },
       body: JSON.stringify({ email, password }),
-    });
+    }).catch(() => null);
 
-    if (!response.ok) {
+    if (!response?.ok) {
       setSubmitting(false);
-      const body = (await response.json().catch(() => null)) as { error?: string } | null;
-      setError(body?.error === "email_taken" ? t("emailTakenError") : t("registerError"));
+      const body = (await response?.json().catch(() => null)) as { error?: string } | null;
+      setError(
+        !response
+          ? t("networkError")
+          : response.status === 429
+            ? t("tooManyAttempts")
+            : body?.error === "email_taken"
+              ? t("emailTakenError")
+              : t("registerError"),
+      );
       return;
     }
 

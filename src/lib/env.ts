@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { logger } from "./logger";
 
 // Validation stricte des variables d'environnement au démarrage : on
 // préfère un crash immédiat et lisible à une valeur `undefined` silencieuse
@@ -37,5 +38,26 @@ export function getEnv(): Env {
     );
   }
   cachedEnv = parsed.data;
+  warnAboutExampleSecrets(cachedEnv);
   return cachedEnv;
+}
+
+const SECRET_NAMES = ["SESSION_SECRET", "CSRF_SECRET", "APP_IP_HASH_SECRET", "MEDIA_SIGNING_SECRET"] as const;
+
+/**
+ * Les valeurs d'exemple de .env.example sont publiques (dépôt) : en
+ * production elles permettraient de recalculer les hash d'IP, de forger
+ * des liens de photo, ou de déchiffrer les pièces d'identité. Avec Docker,
+ * docker-entrypoint.sh les remplace automatiquement ; hors Docker, on le
+ * signale bruyamment au démarrage (sans bloquer).
+ */
+function warnAboutExampleSecrets(env: Env) {
+  if (env.NODE_ENV !== "production" || process.env.NEXT_PHASE === "phase-production-build") return;
+  const weak = SECRET_NAMES.filter((name) => env[name].includes("change-me"));
+  if (weak.length > 0) {
+    logger.error("security.example_secrets_in_production", {
+      variables: weak,
+      fix: "Générez des valeurs aléatoires (openssl rand -hex 32) ou démarrez via Docker.",
+    });
+  }
 }

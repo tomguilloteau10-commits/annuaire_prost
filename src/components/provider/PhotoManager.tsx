@@ -80,7 +80,9 @@ export function PhotoManager({ initialPhotos, maxPhotos, maxBytes, onPhotosChang
 
   function uploadErrorMessage(name: string, error?: string, status?: number): string {
     if (status === 0) return t("photoErrors.network", { name });
-    if (error === "file_too_large") return t("photoErrors.tooLarge", { name, max: megabytes(maxBytes) });
+    if (error === "file_too_large" || error === "payload_too_large") {
+      return t("photoErrors.tooLarge", { name, max: megabytes(maxBytes) });
+    }
     if (error === "unsupported_content_type") return t("photoErrors.format", { name });
     if (error === "photo_limit_reached") return t("photoErrors.limit", { max: maxPhotos });
     return t("photoErrors.generic", { name });

@@ -178,7 +178,9 @@
     "submit": "Conferma",
     "loginError": "Email o password errati.",
     "registerError": "Impossibile creare l'account al momento.",
-    "emailTakenError": "Esiste già un account con questa email."
+    "emailTakenError": "Esiste già un account con questa email.",
+    "tooManyAttempts": "Troppi tentativi. Attendi 15 minuti prima di riprovare.",
+    "networkError": "Connessione non riuscita. Controlla la rete e riprova."
   },
   "onboarding": {
     "title": "Maggiore età & autorizzazione",
@@ -422,7 +424,7 @@
       "whatsappInvalid": "Questo numero non sembra completo. Scrivilo con il prefisso, ad esempio +41 79 123 45 67.",
       "phoneInvalid": "Questo numero non sembra completo. Scrivilo con il prefisso, oppure lascia la casella vuota.",
       "emailInvalid": "Questo indirizzo e-mail non sembra corretto (esempio: nome@esempio.ch), oppure lascia la casella vuota.",
-      "instagramInvalid": "Questo nome Instagram non sembra corretto, oppure lascia la casella vuota."
+      "instagramInvalid": "Indica il tuo nome Instagram (es. @mio.nome) o il link al tuo profilo."
     },
     "photoUploadingProgress": "Invio della foto {current} di {total}…",
     "photoErrors": {
@@ -719,5 +721,16 @@
       "missing": "Aggiungi questo documento.",
       "network": "Connessione persa. Controlla la rete e riprova."
     }
+  },
+  "errorPage": {
+    "title": "Si è verificato un problema",
+    "body": "La pagina non ha potuto essere visualizzata. Riprova tra poco.",
+    "retry": "Riprova",
+    "home": "Torna alla home"
+  },
+  "notFoundPage": {
+    "title": "Pagina non trovata",
+    "body": "Questa pagina non esiste o non è più online.",
+    "home": "Torna alla home"
   }
 }

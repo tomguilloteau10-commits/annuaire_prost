@@ -179,14 +179,31 @@ d'attention :
 
 ## Purge des données à durée de vie limitée
 
-`npm run db:purge-expired` (`scripts/purge-expired-data.ts`) balaie les
-hash d'IP, journaux de révélation de contact, médias rejetés et journaux
-d'audit de vérification arrivés en fin de rétention (durées définies dans
-la table `DataRetentionPolicy`, éditable en base). Ce script est
-fonctionnel dès la bêta ; il n'est pas encore branché sur un cron actif —
-pour l'activer en production, planifiez son exécution périodique (ex: cron
-système, tâche planifiée de votre hébergeur) plutôt que de le laisser
-manuel.
+La purge (`src/modules/retention/purge.ts`) efface les pièces d'identité
+non traitées après 30 jours, les hash d'IP, les journaux de révélation de
+contact, les photos refusées (ligne ET fichier), les sessions expirées et
+les journaux d'audit de vérification arrivés en fin de rétention (durées :
+table `DataRetentionPolicy`). Elle tourne **automatiquement** au démarrage
+du conteneur puis toutes les 6 heures (`src/instrumentation.ts`) ; à la
+main : `npm run db:purge-expired`.
+
+## Sécurité de la mise en ligne
+
+- **Secrets** : avec Docker, les valeurs d'exemple (`change-me…`) sont
+  remplacées au premier démarrage par des valeurs aléatoires, conservées
+  dans le volume `app_secrets` (ne pas le supprimer : il contient la clé
+  de chiffrement des pièces d'identité en attente).
+- **Réseau** : `docker-compose.yml` n'expose la base et le site que sur
+  cet ordinateur (`127.0.0.1`). Pour une mise en ligne, placer le site
+  derrière un reverse proxy HTTPS (Caddy, nginx…) et définir
+  `TRUSTED_PROXY_HOPS=1` : les limites anti-abus par IP deviennent alors
+  fiables (sans proxy, l'IP annoncée par le visiteur est falsifiable ; les
+  limites par compte et globales protègent quand même).
+- **Compte admin** : son mot de passe de démonstration est public (ce
+  README). Avant toute ouverture au public : `npm run admin:reset-password`
+  (dans Docker : `docker compose exec app npm run admin:reset-password`)
+  génère un mot de passe fort, l'affiche une fois et déconnecte les
+  sessions ouvertes. Note : `npm run db:seed` ne le remet pas à l'exemple.
 
 ## Tests
 

@@ -177,7 +177,9 @@
     "submit": "Valider",
     "loginError": "Email ou mot de passe incorrect.",
     "registerError": "Impossible de créer le compte pour le moment.",
-    "emailTakenError": "Un compte existe déjà avec cet email."
+    "emailTakenError": "Un compte existe déjà avec cet email.",
+    "tooManyAttempts": "Trop de tentatives. Patientez 15 minutes avant de réessayer.",
+    "networkError": "Connexion impossible. Vérifiez votre réseau puis réessayez."
   },
   "onboarding": {
     "title": "Majorité & autorisation",
@@ -421,7 +423,7 @@
       "whatsappInvalid": "Ce numéro ne semble pas complet. Écrivez-le avec l'indicatif, par exemple +41 79 123 45 67.",
       "phoneInvalid": "Ce numéro ne semble pas complet. Écrivez-le avec l'indicatif, ou laissez la case vide.",
       "emailInvalid": "Cette adresse e-mail ne semble pas correcte (exemple : nom@exemple.ch), ou laissez la case vide.",
-      "instagramInvalid": "Ce nom Instagram ne semble pas correct, ou laissez la case vide."
+      "instagramInvalid": "Indiquez votre pseudo Instagram (ex. @mon.pseudo) ou le lien de votre profil."
     },
     "photoUploadingProgress": "Envoi de la photo {current} sur {total}…",
     "photoErrors": {
@@ -718,5 +720,16 @@
       "missing": "Ajoutez ce document.",
       "network": "Connexion perdue. Vérifiez votre réseau puis réessayez."
     }
+  },
+  "errorPage": {
+    "title": "Un problème est survenu",
+    "body": "La page n'a pas pu s'afficher. Réessayez dans un instant.",
+    "retry": "Réessayer",
+    "home": "Retour à l'accueil"
+  },
+  "notFoundPage": {
+    "title": "Page introuvable",
+    "body": "Cette page n'existe pas ou n'est plus en ligne.",
+    "home": "Retour à l'accueil"
   }
 }

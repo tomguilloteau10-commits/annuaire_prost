@@ -1,4 +1,5 @@
 "use client";
+import { instagramHandle } from "@/modules/profiles/contact-validation";
 import { useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { useCsrfToken } from "@/lib/use-csrf-token";
@@ -16,9 +17,10 @@ function whatsappHref(value: string): string {
   return `https://wa.me/${value.replace(/[^0-9]/g, "")}`;
 }
 
-function instagramHref(value: string): string {
-  if (/^https?:\/\//i.test(value)) return value;
-  return `https://instagram.com/${value.replace(/^@/, "")}`;
+/** Toujours vers instagram.com, jamais un lien arbitraire saisi dans le champ. */
+function instagramHref(value: string): string | null {
+  const handle = instagramHandle(value);
+  return handle ? `https://www.instagram.com/${handle}/` : null;
 }
 
 function telHref(value: string): string {
@@ -153,8 +155,8 @@ export function ContactBlock({ slug }: { slug: string }) {
 
           {hasSecondary && (
             <div className="flex flex-col gap-2">
-              {contact.instagram && (
-                <SecondaryLink href={instagramHref(contact.instagram)} external icon={<CameraIcon />}>
+              {contact.instagram && instagramHref(contact.instagram) && (
+                <SecondaryLink href={instagramHref(contact.instagram)!} external icon={<CameraIcon />}>
                   Instagram · {contact.instagram}
                 </SecondaryLink>
               )}

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
 import { requirePageRole } from "@/lib/page-guards";
 import { AdminTabs } from "@/components/admin/AdminTabs";
 
@@ -19,12 +21,14 @@ export default async function AdminLayout({
 }) {
   const { locale } = await params;
   await requirePageRole(locale, ["ADMIN"]);
+  // Toutes les traductions, y compris celles de l'admin (retirées des autres pages).
+  const messages = await getMessages();
   return (
-    <>
+    <NextIntlClientProvider messages={messages}>
       <div className="px-4">
         <AdminTabs />
       </div>
       {children}
-    </>
+    </NextIntlClientProvider>
   );
 }

@@ -19,3 +19,16 @@ export function isValidWhatsapp(value: string): boolean {
 export function isValidEmail(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value.trim());
 }
+
+/** Pseudo Instagram extrait de « pseudo », « @pseudo » ou d'un lien instagram.com/pseudo ; null sinon. */
+export function instagramHandle(value: string): string | null {
+  const trimmed = value.trim();
+  const link = trimmed.match(/^(?:https?:\/\/)?(?:www\.)?instagram\.com\/([^/?#\s]+)\/?$/i);
+  const handle = (link ? link[1]! : trimmed).replace(/^@/, "");
+  return /^[A-Za-z0-9._]{1,30}$/.test(handle) ? handle : null;
+}
+
+/** Instagram : « pseudo », « @pseudo » ou lien instagram.com/pseudo (lettres, chiffres, « . » et « _ »). */
+export function isValidInstagram(value: string): boolean {
+  return instagramHandle(value) !== null;
+}

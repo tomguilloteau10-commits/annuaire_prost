@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 
 // Volontairement sans "server-only" : utilisé aussi par le job de purge
-// (scripts/purge-expired-data.ts), exécuté hors de Next.js.
+// (src/modules/retention/purge.ts), exécuté hors de Next.js.
 
 export const MANUAL_REVIEW_PROVIDER = "manual_review";
 

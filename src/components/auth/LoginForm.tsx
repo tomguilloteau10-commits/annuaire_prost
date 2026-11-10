@@ -27,11 +27,11 @@ export function LoginForm() {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-csrf-token": csrfToken },
       body: JSON.stringify({ email, password }),
-    });
+    }).catch(() => null);
 
-    if (!response.ok) {
+    if (!response?.ok) {
       setSubmitting(false);
-      setError(t("loginError"));
+      setError(!response ? t("networkError") : response.status === 429 ? t("tooManyAttempts") : t("loginError"));
       return;
     }
 

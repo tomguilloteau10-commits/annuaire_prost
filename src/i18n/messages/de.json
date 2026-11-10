@@ -178,7 +178,9 @@
     "submit": "Bestätigen",
     "loginError": "Falsche E-Mail oder falsches Passwort.",
     "registerError": "Konto kann derzeit nicht erstellt werden.",
-    "emailTakenError": "Für diese E-Mail existiert bereits ein Konto."
+    "emailTakenError": "Für diese E-Mail existiert bereits ein Konto.",
+    "tooManyAttempts": "Zu viele Versuche. Bitte warten Sie 15 Minuten.",
+    "networkError": "Keine Verbindung. Prüfen Sie Ihr Netz und versuchen Sie es erneut."
   },
   "onboarding": {
     "title": "Volljährigkeit & Bewilligung",
@@ -422,7 +424,7 @@
       "whatsappInvalid": "Diese Nummer scheint unvollständig. Schreiben Sie sie mit Vorwahl, zum Beispiel +41 79 123 45 67.",
       "phoneInvalid": "Diese Nummer scheint unvollständig. Schreiben Sie sie mit Vorwahl, oder lassen Sie das Feld leer.",
       "emailInvalid": "Diese E-Mail-Adresse scheint nicht korrekt (Beispiel: name@beispiel.ch), oder lassen Sie das Feld leer.",
-      "instagramInvalid": "Dieser Instagram-Name scheint nicht korrekt, oder lassen Sie das Feld leer."
+      "instagramInvalid": "Geben Sie Ihren Instagram-Namen (z. B. @mein.name) oder den Link zu Ihrem Profil ein."
     },
     "photoUploadingProgress": "Foto {current} von {total} wird gesendet…",
     "photoErrors": {
@@ -719,5 +721,16 @@
       "missing": "Fügen Sie dieses Dokument hinzu.",
       "network": "Verbindung unterbrochen. Prüfen Sie Ihr Netz und versuchen Sie es erneut."
     }
+  },
+  "errorPage": {
+    "title": "Ein Problem ist aufgetreten",
+    "body": "Die Seite konnte nicht angezeigt werden. Bitte versuchen Sie es gleich erneut.",
+    "retry": "Erneut versuchen",
+    "home": "Zur Startseite"
+  },
+  "notFoundPage": {
+    "title": "Seite nicht gefunden",
+    "body": "Diese Seite existiert nicht oder ist nicht mehr online.",
+    "home": "Zur Startseite"
   }
 }

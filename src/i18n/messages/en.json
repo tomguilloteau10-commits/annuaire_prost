@@ -177,7 +177,9 @@
     "submit": "Submit",
     "loginError": "Incorrect email or password.",
     "registerError": "Could not create the account right now.",
-    "emailTakenError": "An account already exists with this email."
+    "emailTakenError": "An account already exists with this email.",
+    "tooManyAttempts": "Too many attempts. Please wait 15 minutes before trying again.",
+    "networkError": "Connection failed. Check your network and try again."
   },
   "onboarding": {
     "title": "Age & authorisation",
@@ -421,7 +423,7 @@
       "whatsappInvalid": "This number does not look complete. Write it with the country code, for example +41 79 123 45 67.",
       "phoneInvalid": "This number does not look complete. Write it with the country code, or leave the box empty.",
       "emailInvalid": "This email address does not look right (example: name@example.ch), or leave the box empty.",
-      "instagramInvalid": "This Instagram name does not look right, or leave the box empty."
+      "instagramInvalid": "Enter your Instagram handle (e.g. @my.handle) or your profile link."
     },
     "photoUploadingProgress": "Uploading photo {current} of {total}…",
     "photoErrors": {
@@ -718,5 +720,16 @@
       "missing": "Add this document.",
       "network": "Connection lost. Check your network and try again."
     }
+  },
+  "errorPage": {
+    "title": "Something went wrong",
+    "body": "The page could not be displayed. Please try again in a moment.",
+    "retry": "Try again",
+    "home": "Back to home"
+  },
+  "notFoundPage": {
+    "title": "Page not found",
+    "body": "This page doesn't exist or is no longer online.",
+    "home": "Back to home"
   }
 }

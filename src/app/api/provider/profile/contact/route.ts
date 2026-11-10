@@ -4,7 +4,12 @@ import { getCurrentUser } from "@/modules/auth/session";
 import { assertRole, ForbiddenError } from "@/modules/auth/rbac";
 import { getOwnContact, upsertOwnContact } from "@/modules/profiles/profile.service";
 import { checkCsrf } from "@/lib/route-helpers";
-import { isValidEmail, isValidPhoneNumber, isValidWhatsapp } from "@/modules/profiles/contact-validation";
+import {
+  isValidEmail,
+  isValidInstagram,
+  isValidPhoneNumber,
+  isValidWhatsapp,
+} from "@/modules/profiles/contact-validation";
 
 // Distinct de /api/provider/profile à dessein : le contact vit dans sa
 // propre table (ProfileContact) et sa propre route, jamais mélangé au
@@ -18,7 +23,7 @@ const contactSchema = z.object({
   phone: optionalField(z.string().trim().max(32).refine(isValidPhoneNumber)),
   email: optionalField(z.string().trim().max(254).refine(isValidEmail)),
   whatsapp: z.string().trim().max(64).refine(isValidWhatsapp),
-  instagram: optionalField(z.string().trim().max(100)),
+  instagram: optionalField(z.string().trim().max(100).refine(isValidInstagram)),
 });
 
 export async function GET() {

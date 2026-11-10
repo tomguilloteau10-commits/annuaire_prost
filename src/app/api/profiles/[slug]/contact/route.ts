@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { revealContact } from "@/modules/profiles/contact-reveal.service";
 import { checkCsrf } from "@/lib/route-helpers";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimits } from "@/lib/rate-limit";
 import { hashIp, extractClientIp } from "@/lib/ip-hash";
 
 // Le SEUL endpoint qui renvoie un contact. Jamais dans le HTML initial ni
@@ -9,25 +9,30 @@ import { hashIp, extractClientIp } from "@/lib/ip-hash";
 // demande, au clic sur "Afficher le contact". Anonyme (pas d'auth requise
 // : un visiteur non connecté doit pouvoir contacter une annonceuse), donc
 // protégé par rate limiting sur l'IP plutôt que par un compte.
+// Coordonnées : jamais gardées par un cache (navigateur, proxy).
+const NO_STORE = { "Cache-Control": "no-store" };
+
 export async function POST(request: Request, { params }: { params: Promise<{ slug: string }> }) {
   const csrfError = checkCsrf(request);
   if (csrfError) return csrfError;
 
+  // Par IP (20 / heure) ET au total (300 / heure, indépendant de l'IP qui
+  // peut être falsifiée) : un robot ne peut pas aspirer les coordonnées de
+  // tout l'annuaire. Largement au-dessus de l'usage normal d'une bêta.
   const clientIp = extractClientIp(request);
-  const rateLimit = checkRateLimit({
-    key: `contact-reveal:${clientIp ? hashIp(clientIp) : "unknown"}`,
-    limit: 20,
-    windowMs: 60 * 60 * 1000,
-  });
-  if (!rateLimit.allowed) {
-    return NextResponse.json({ error: "rate_limited" }, { status: 429 });
+  const allowed = checkRateLimits([
+    { key: `contact-reveal:${clientIp ? hashIp(clientIp) : "unknown"}`, limit: 20, windowMs: 60 * 60 * 1000 },
+    { key: "contact-reveal:global", limit: 300, windowMs: 60 * 60 * 1000 },
+  ]);
+  if (!allowed) {
+    return NextResponse.json({ error: "rate_limited" }, { status: 429, headers: NO_STORE });
   }
 
   const { slug } = await params;
   const contact = await revealContact(slug, clientIp);
   if (!contact) {
-    return NextResponse.json({ error: "not_found" }, { status: 404 });
+    return NextResponse.json({ error: "not_found" }, { status: 404, headers: NO_STORE });
   }
 
-  return NextResponse.json(contact);
+  return NextResponse.json(contact, { headers: NO_STORE });
 }

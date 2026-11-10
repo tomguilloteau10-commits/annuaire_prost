@@ -24,6 +24,13 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
       "Cache-Control": "private, no-store, max-age=0",
       "X-Content-Type-Options": "nosniff",
       "Referrer-Policy": "no-referrer",
+      // Image ouverte « en grand » dans un onglet : bac à sable sans script ni
+      // accès à la session admin, même si le fichier était piégé. (Pas pour
+      // les PDF : Chrome refuse d'afficher un PDF dans un bac à sable ; sa
+      // visionneuse est de toute façon isolée du site.)
+      ...(document.contentType === "application/pdf"
+        ? {}
+        : { "Content-Security-Policy": "sandbox; default-src 'none'; img-src 'self'; style-src 'unsafe-inline'" }),
     },
   });
 }

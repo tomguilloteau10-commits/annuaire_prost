@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import { hash, verify } from "@node-rs/argon2";
 
 // Argon2id (recommandation OWASP) via @node-rs/argon2, qui embarque des
@@ -18,4 +19,16 @@ export async function verifyPassword(
   plainPassword: string,
 ): Promise<boolean> {
   return verify(passwordHash, plainPassword);
+}
+
+let dummyHash: Promise<string> | undefined;
+
+/**
+ * Hash d'un mot de passe aléatoire, calculé une fois : la connexion à un
+ * compte inexistant vérifie contre lui, pour prendre autant de temps qu'un
+ * vrai compte (sinon la durée de réponse révélerait qui est inscrit).
+ */
+export function dummyPasswordHash(): Promise<string> {
+  dummyHash ??= hashPassword(randomBytes(32).toString("hex"));
+  return dummyHash;
 }

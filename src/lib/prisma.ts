@@ -13,6 +13,9 @@ export const prisma =
     // inclurait les valeurs des paramètres, ce qui logguerait en clair des
     // champs comme ProfileContact.phone/email (contrainte #5).
     log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
+    // Messages d'erreur courts : le format détaillé recopie les arguments
+    // de la requête (e-mail, téléphone…) dans l'erreur, donc dans les logs.
+    errorFormat: "minimal",
   });
 
 if (process.env.NODE_ENV !== "production") {
