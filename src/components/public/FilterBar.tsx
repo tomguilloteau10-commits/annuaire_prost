@@ -33,7 +33,7 @@ export interface FilterBarProps {
 const SERVICES_PREVIEW = 10;
 
 const CHIP = "cursor-pointer rounded-full border px-3 py-1.5 text-sm transition-colors";
-const CHIP_ON = "border-accent bg-accent text-accent-foreground";
+const CHIP_ON = "border-accent/70 bg-accent-soft text-accent";
 const CHIP_OFF = "border-hairline2 text-ink2-muted hover:border-accent/60 hover:text-ink2";
 
 function FilterGroup({ legend, children }: { legend: string; children: React.ReactNode }) {

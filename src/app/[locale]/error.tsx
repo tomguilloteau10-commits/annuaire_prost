@@ -17,7 +17,7 @@ export default function ErrorPage({ reset }: { error: Error & { digest?: string 
         <button
           type="button"
           onClick={reset}
-          className="rounded-full bg-accent px-6 py-3 font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
+          className="rounded-full bg-gold-sheen px-6 py-3 font-medium text-accent-foreground shadow-gold-btn transition-all hover:brightness-110"
         >
           {t("retry")}
         </button>

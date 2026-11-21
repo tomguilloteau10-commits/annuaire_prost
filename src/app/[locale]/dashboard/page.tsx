@@ -21,7 +21,7 @@ const TONE_CLASSES: Record<StatusTone, { box: string; dot: string; title: string
 
 const BIG_BUTTON =
   "inline-flex w-full items-center justify-center rounded-full px-5 py-3.5 text-base font-medium transition-colors sm:w-auto";
-const PRIMARY_BUTTON = `${BIG_BUTTON} bg-accent text-accent-foreground hover:bg-accent-hover`;
+const PRIMARY_BUTTON = `${BIG_BUTTON} bg-gold-sheen text-accent-foreground shadow-gold-btn hover:brightness-110`;
 const SECONDARY_BUTTON = `${BIG_BUTTON} border border-hairline2 bg-surface-raised text-ink2 hover:bg-surface-hover`;
 
 function CheckIcon({ done }: { done: boolean }) {

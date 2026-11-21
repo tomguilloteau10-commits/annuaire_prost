@@ -15,7 +15,7 @@ export function ProfileGallery({ photos, className = "" }: { photos: string[]; c
 
   return (
     <div className={`flex flex-col gap-3 ${className}`}>
-      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-xl3 border border-hairline bg-surface-raised md:max-h-[62vh]">
+      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-xl3 border border-hairline bg-surface-raised shadow-pop md:max-h-[66vh]">
         {activePhoto ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={activePhoto} alt="" className="absolute inset-0 h-full w-full object-cover" />

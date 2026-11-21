@@ -11,8 +11,12 @@ export default async function RegisterPage({ params }: { params: Promise<{ local
 
   return (
     <main className="mx-auto flex min-h-[80vh] max-w-3xl flex-col items-center justify-center gap-6 px-4 py-16">
-      <Card className="flex w-full max-w-sm flex-col items-center gap-6 p-8">
-        <h1 className="font-serif text-2xl font-medium text-ink2">{t("registerTitle")}</h1>
+      <Card className="relative flex w-full max-w-sm flex-col items-center gap-6 overflow-hidden p-8 shadow-pop">
+        <div aria-hidden className="pointer-events-none absolute -top-24 left-1/2 h-48 w-64 -translate-x-1/2 rounded-full bg-accent/10 blur-3xl" />
+        <div className="relative flex flex-col items-center gap-2 text-center">
+          <p className="eyebrow">{t("authEyebrowRegister")}</p>
+          <h1 className="font-serif text-3xl font-normal text-ink2">{t("registerTitle")}</h1>
+        </div>
         <RegisterForm />
       </Card>
     </main>

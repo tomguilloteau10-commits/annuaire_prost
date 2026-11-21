@@ -88,7 +88,13 @@
     "storiesTitle": "Stories",
     "seeAll": "Alle ansehen",
     "resultsCount": "{count, plural, =0 {Keine Profile} one {# Profil} other {# Profile}}",
-    "noMatch": "Kein Profil entspricht diesen Filtern. Entfernen Sie einen."
+    "noMatch": "Kein Profil entspricht diesen Filtern. Entfernen Sie einen.",
+    "heroLead": "Treffen Sie eine",
+    "heroAccent": "unabhängige",
+    "heroTail": "Anbieterin in der Schweiz",
+    "resultsEyebrow": "Das Verzeichnis",
+    "featuredEyebrow": "Auswahl",
+    "storiesEyebrow": "Neu"
   },
   "whyUs": {
     "title": "Warum uns wählen",
@@ -97,10 +103,17 @@
     "discretionTitle": "Diskretion",
     "discretionBody": "Kontaktdaten werden nie öffentlich angezeigt oder in unseren Protokollen gespeichert: nur auf Anfrage, anonym, ohne Konto.",
     "directContactTitle": "Direkter Kontakt",
-    "directContactBody": "Sie kontaktieren die Anbieterin direkt, ohne Vermittler und ohne Provision. Wir sind ein Inserate-Herausgeber, keine Agentur."
+    "directContactBody": "Sie kontaktieren die Anbieterin direkt, ohne Vermittler und ohne Provision. Wir sind ein Inserate-Herausgeber, keine Agentur.",
+    "eyebrow": "Unsere Versprechen"
   },
   "footer": {
-    "disclaimer": "Herausgeber unabhängiger Inserate, nur für Erwachsene (18 Jahre und älter)."
+    "disclaimer": "Herausgeber unabhängiger Inserate, nur für Erwachsene (18 Jahre und älter).",
+    "tagline": "Das Schweizer Verzeichnis unabhängiger Anbieterinnen: volljährig geprüfte Profile, direkter Kontakt, absolute Diskretion.",
+    "adultsOnly": "Nur für Erwachsene",
+    "explore": "Entdecken",
+    "providers": "Anbieterinnen",
+    "listYourProfile": "Mein Inserat aufgeben",
+    "noCommission": "Keine Provision, keine Vermittlung: Sie bestimmen selbst über Ihre Tätigkeit."
   },
   "map": {
     "profileCount": "Profile",
@@ -181,7 +194,9 @@
     "registerError": "Konto kann derzeit nicht erstellt werden.",
     "emailTakenError": "Für diese E-Mail existiert bereits ein Konto.",
     "tooManyAttempts": "Zu viele Versuche. Bitte warten Sie 15 Minuten.",
-    "networkError": "Keine Verbindung. Prüfen Sie Ihr Netz und versuchen Sie es erneut."
+    "networkError": "Keine Verbindung. Prüfen Sie Ihr Netz und versuchen Sie es erneut.",
+    "authEyebrowLogin": "Bereich für Anbieterinnen",
+    "authEyebrowRegister": "VelvetGirl beitreten"
   },
   "onboarding": {
     "title": "Volljährigkeit & Bewilligung",

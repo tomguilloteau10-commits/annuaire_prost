@@ -31,7 +31,7 @@ export function AdminTabs() {
                 href={tab.href}
                 aria-current={active ? "page" : undefined}
                 className={`block rounded-full px-3.5 py-1.5 text-sm transition-colors ${
-                  active ? "bg-accent text-accent-foreground" : "text-ink2-muted hover:text-ink2"
+                  active ? "bg-accent-soft text-accent ring-1 ring-inset ring-accent/30" : "text-ink2-muted hover:text-ink2"
                 }`}
               >
                 {t(tab.key)}

@@ -32,7 +32,7 @@ export function HorizontalScroller({ label, children }: { label: string; childre
   }
 
   const buttonClasses =
-    "absolute top-1/2 z-10 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-hairline2 bg-ink/80 text-ink2 shadow-pop backdrop-blur transition-colors hover:bg-surface-raised md:flex";
+    "absolute top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-accent/25 bg-ink/75 text-accent shadow-pop backdrop-blur-md transition-colors hover:border-accent/60 hover:bg-ink md:flex";
 
   return (
     <div className="relative">
@@ -40,7 +40,7 @@ export function HorizontalScroller({ label, children }: { label: string; childre
         ref={trackRef}
         role="region"
         aria-label={label}
-        className="scrollbar-none flex snap-x snap-mandatory gap-3 overflow-x-auto pb-1"
+        className="scrollbar-none flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 pt-1"
       >
         {children}
       </div>

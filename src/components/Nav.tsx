@@ -12,11 +12,13 @@ export async function Nav({ locale }: { locale: string }) {
   const user = await getCurrentUser();
 
   return (
-    <header className="sticky top-0 z-20 border-b border-hairline bg-ink/85 backdrop-blur-md">
-      <div className="mx-auto max-w-5xl px-4">
+    <header className="sticky top-0 z-20 bg-ink/70 backdrop-blur-xl">
+      <div className="mx-auto max-w-6xl px-4">
         <div className="flex flex-wrap items-center justify-between gap-3 py-3.5">
-          <Link href="/" className="font-serif text-lg font-semibold tracking-tight text-ink2">
-            {common("siteName")}
+          {/* Logo texte en deux tons (ivoire + or), comme la marque. */}
+          <Link href="/" aria-label={common("siteName")} className="group font-serif text-[1.35rem] leading-none tracking-tight">
+            <span className="font-medium text-ink2">Velvet</span>
+            <span className="text-gold font-semibold italic">Girl</span>
           </Link>
 
           <div className="flex flex-wrap items-center gap-5 text-sm text-ink2-muted">
@@ -27,7 +29,7 @@ export async function Nav({ locale }: { locale: string }) {
                 </Link>
                 <Link
                   href="/register"
-                  className="rounded-full bg-accent px-4 py-1.5 font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
+                  className="rounded-full bg-gold-sheen px-4 py-1.5 font-medium text-accent-foreground shadow-gold-btn transition-all hover:brightness-110"
                 >
                   {t("register")}
                 </Link>
@@ -46,7 +48,7 @@ export async function Nav({ locale }: { locale: string }) {
             {user?.role === "ADMIN" && (
               <Link
                 href={ADMIN_PATH}
-                className="rounded-full border border-hairline2 px-3.5 py-1 font-medium text-ink2 transition-colors hover:bg-surface-raised"
+                className="rounded-full border border-accent/30 px-3.5 py-1 font-medium text-accent transition-colors hover:bg-accent-soft"
               >
                 {t("admin")}
               </Link>
@@ -72,10 +74,11 @@ export async function Nav({ locale }: { locale: string }) {
           </div>
         </div>
 
-        <div className="pb-2.5">
+        <div className="pb-1">
           <NavLinks />
         </div>
       </div>
+      <div className="gold-rule" />
     </header>
   );
 }

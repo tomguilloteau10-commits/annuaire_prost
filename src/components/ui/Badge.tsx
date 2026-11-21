@@ -9,9 +9,9 @@ const VARIANT_CLASSES: Record<BadgeVariant, string> = {
   neutral: "bg-white/[0.06] text-ink2-muted",
   accent: "bg-accent-soft text-accent",
   // Plein (pas "soft") : reste lisible posé sur une photo claire.
-  featured: "bg-accent text-accent-foreground",
+  featured: "bg-gold-sheen text-accent-foreground shadow-gold-btn",
   // Fond noir à 60 % : le vert reste lisible quelle que soit la photo dessous.
-  successOnImage: "bg-black/60 text-success backdrop-blur-sm",
+  successOnImage: "border border-white/10 bg-black/55 text-success backdrop-blur-md",
 };
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {

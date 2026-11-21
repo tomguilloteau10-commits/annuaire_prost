@@ -13,7 +13,7 @@ export function Card({ as: Component = "div", className, ...props }: CardProps) 
   return (
     <Component
       className={cx(
-        "rounded-xl2 border border-hairline bg-surface shadow-card",
+        "rounded-xl2 border border-hairline bg-gradient-to-b from-surface-raised/70 to-surface/80 shadow-card backdrop-blur-sm",
         className,
       )}
       {...props}

@@ -87,7 +87,13 @@
     "storiesTitle": "Stories",
     "seeAll": "See all",
     "resultsCount": "{count, plural, =0 {No profiles} one {# profile} other {# profiles}}",
-    "noMatch": "No profile matches these filters. Try removing one."
+    "noMatch": "No profile matches these filters. Try removing one.",
+    "heroLead": "Meet an",
+    "heroAccent": "independent",
+    "heroTail": "provider in Switzerland",
+    "resultsEyebrow": "The directory",
+    "featuredEyebrow": "Selection",
+    "storiesEyebrow": "New"
   },
   "whyUs": {
     "title": "Why choose us",
@@ -96,10 +102,17 @@
     "discretionTitle": "Discretion",
     "discretionBody": "Contact details are never shown publicly or kept in our logs: revealed on request only, anonymously, no account needed.",
     "directContactTitle": "Direct contact",
-    "directContactBody": "You contact the provider directly, with no middleman and no commission. We're a listings publisher, not an agency."
+    "directContactBody": "You contact the provider directly, with no middleman and no commission. We're a listings publisher, not an agency.",
+    "eyebrow": "Our commitments"
   },
   "footer": {
-    "disclaimer": "Independent listings publisher, for adults only (18 and over)."
+    "disclaimer": "Independent listings publisher, for adults only (18 and over).",
+    "tagline": "The Swiss directory of independent providers: age-verified profiles, direct contact, complete discretion.",
+    "adultsOnly": "Adults only",
+    "explore": "Explore",
+    "providers": "Providers",
+    "listYourProfile": "List my profile",
+    "noCommission": "No commission, no middleman: you stay fully in charge of your work."
   },
   "map": {
     "profileCount": "profiles",
@@ -180,7 +193,9 @@
     "registerError": "Could not create the account right now.",
     "emailTakenError": "An account already exists with this email.",
     "tooManyAttempts": "Too many attempts. Please wait 15 minutes before trying again.",
-    "networkError": "Connection failed. Check your network and try again."
+    "networkError": "Connection failed. Check your network and try again.",
+    "authEyebrowLogin": "Provider area",
+    "authEyebrowRegister": "Join VelvetGirl"
   },
   "onboarding": {
     "title": "Age & authorisation",

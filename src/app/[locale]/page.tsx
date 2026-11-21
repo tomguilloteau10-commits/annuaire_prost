@@ -19,6 +19,7 @@ import { ProfileMapLoader } from "@/components/public/ProfileMapLoader";
 import { WhyUsSection } from "@/components/public/WhyUsSection";
 import { HorizontalScroller } from "@/components/public/HorizontalScroller";
 import { StoryThumb } from "@/components/public/StoryThumb";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 
 const FEATURED_COUNT = 6;
 const STORIES_COUNT = 8;
@@ -72,16 +73,19 @@ export default async function HomePage({
 
   const results = (
     <section id="resultats" className="flex scroll-mt-32 flex-col gap-6">
-      <div className="flex items-baseline justify-between gap-4">
-        <h2 className="font-serif text-2xl font-medium text-ink2">{t("resultsTitle")}</h2>
-        {isFiltering && (
-          <span className="text-sm text-ink2-muted">{t("resultsCount", { count: profilesWithThumbnails.length })}</span>
-        )}
-      </div>
+      <SectionHeading
+        eyebrow={t("resultsEyebrow")}
+        title={t("resultsTitle")}
+        action={
+          isFiltering && (
+            <span className="text-ink2-muted">{t("resultsCount", { count: profilesWithThumbnails.length })}</span>
+          )
+        }
+      />
       {profilesWithThumbnails.length === 0 ? (
         <p className="py-16 text-center text-sm text-ink2-faint">{isFiltering ? t("noMatch") : t("emptyState")}</p>
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
           {profilesWithThumbnails.map((profile) => (
             <ProfileCard key={profile.slug} profile={profile} locale={locale} />
           ))}
@@ -98,36 +102,38 @@ export default async function HomePage({
   );
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-5xl flex-col gap-14 px-4 py-14 sm:py-20">
-      <div className="flex flex-col items-center gap-5 text-center">
-        <p className="text-xs font-medium uppercase tracking-[0.2em] text-ink2-faint">
+    <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-20 px-4 pb-14 pt-12 sm:pt-20">
+      <div className="flex flex-col items-center gap-7 text-center">
+        <p className="inline-flex items-center gap-2 rounded-full border border-hairline2 bg-white/[0.03] px-3.5 py-1.5 text-[10px] font-medium uppercase tracking-[0.1em] text-ink2-muted sm:text-[11px] sm:tracking-[0.18em]">
+          <span className="h-1.5 w-1.5 rounded-full bg-accent" />
           {common("betaNotice")}
         </p>
-        <h1 className="max-w-xl text-4xl font-medium leading-[1.1] sm:text-5xl">{t("title")}</h1>
-        <p className="max-w-md text-base text-ink2-muted">{t("subtitle")}</p>
+        <h1 className="max-w-4xl animate-fade-up font-serif text-[2.35rem] font-light leading-[1.05] tracking-tight text-ink2 sm:text-6xl lg:text-7xl">
+          {t("heroLead")} <em className="text-gold font-normal">{t("heroAccent")}</em> {t("heroTail")}
+        </h1>
+        <p className="max-w-lg text-base leading-relaxed text-ink2-muted sm:text-lg">{t("subtitle")}</p>
 
         {totalProfiles > 0 && (
-          <div className="flex items-center gap-4 text-sm text-ink2-muted">
-            <span>
-              <span className="font-serif text-lg text-ink2">{totalProfiles}</span> {t("statsProfiles")}
-            </span>
-            <span className="h-4 w-px bg-hairline2" />
-            <span>
-              <span className="font-serif text-lg text-ink2">{totalCities}</span> {t("statsCities")}
-            </span>
-            <span className="h-4 w-px bg-hairline2" />
-            <span>
-              {/* 100% par construction : seul un profil ayant passé la
-                  vérification 18+ et la modération humaine peut être
-                  PUBLISHED (ENGINEERING_RULES.md §2). */}
-              <span className="font-serif text-lg text-ink2">100%</span> {t("statsVerified")}
-            </span>
-          </div>
+          <dl className="flex items-stretch divide-x divide-hairline2 rounded-2xl border border-hairline bg-white/[0.02] px-2 py-3 backdrop-blur-sm">
+            {[
+              { value: totalProfiles, label: t("statsProfiles") },
+              { value: totalCities, label: t("statsCities") },
+              // 100% par construction : seul un profil ayant passé la
+              // vérification 18+ et la modération humaine est visible
+              // (ENGINEERING_RULES.md §2).
+              { value: "100%", label: t("statsVerified") },
+            ].map((stat) => (
+              <div key={stat.label} className="flex flex-col items-center gap-0.5 px-5 sm:px-8">
+                <dd className="text-gold font-serif text-2xl leading-none sm:text-3xl">{stat.value}</dd>
+                <dt className="text-[11px] uppercase tracking-[0.14em] text-ink2-faint">{stat.label}</dt>
+              </div>
+            ))}
+          </dl>
         )}
 
-        {/* Tous les filtres au même endroit, en haut de page (ville,
+        {/* Tous les filtres au même endroit, en haut de page (canton, ville,
             catégorie, langue, en ligne + "Plus de filtres"). */}
-        <div className="w-full rounded-xl2 border border-hairline bg-surface p-3 text-left shadow-card sm:p-4">
+        <div className="glass w-full rounded-xl3 p-3 text-left shadow-pop ring-1 ring-inset ring-accent/10 sm:p-4">
           <FilterBar
             locale={locale}
             categories={categories}
@@ -143,11 +149,11 @@ export default async function HomePage({
       {isFiltering && results}
 
       {featuredProfiles.length > 0 && (
-        <section className="flex flex-col gap-4">
-          <h2 className="font-serif text-2xl font-medium text-ink2">{t("featuredTitle")}</h2>
+        <section className="flex flex-col gap-6">
+          <SectionHeading eyebrow={t("featuredEyebrow")} title={t("featuredTitle")} />
           <HorizontalScroller label={t("featuredTitle")}>
             {featuredProfiles.map((profile) => (
-              <div key={profile.slug} className="w-36 shrink-0 snap-start sm:w-44">
+              <div key={profile.slug} className="w-44 shrink-0 snap-start sm:w-56">
                 <ProfileCard profile={profile} locale={locale} featured compact />
               </div>
             ))}
@@ -156,16 +162,19 @@ export default async function HomePage({
       )}
 
       {stories.length > 0 && (
-        <section className="flex flex-col gap-4">
-          <div className="flex items-baseline justify-between gap-4">
-            <h2 className="font-serif text-2xl font-medium text-ink2">{t("storiesTitle")}</h2>
-            <Link href="/stories" className="text-sm text-accent transition-colors hover:text-accent-hover">
-              {t("seeAll")} →
-            </Link>
-          </div>
+        <section className="flex flex-col gap-6">
+          <SectionHeading
+            eyebrow={t("storiesEyebrow")}
+            title={t("storiesTitle")}
+            action={
+              <Link href="/stories" className="text-accent transition-colors hover:text-accent-hover">
+                {t("seeAll")} →
+              </Link>
+            }
+          />
           <HorizontalScroller label={t("storiesTitle")}>
             {stories.map((story) => (
-              <StoryThumb key={story.slug} story={story} className="w-24 shrink-0 snap-start sm:w-28" />
+              <StoryThumb key={story.slug} story={story} className="w-28 shrink-0 snap-start sm:w-32" />
             ))}
           </HorizontalScroller>
         </section>

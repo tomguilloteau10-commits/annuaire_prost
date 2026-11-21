@@ -127,14 +127,15 @@ export function ContactBlock({ slug }: { slug: string }) {
   const hasSecondary = contact && (contact.instagram || contact.phone || contact.email);
 
   return (
-    <Card className="flex flex-col gap-4 p-5">
-      <div className="flex flex-col gap-1">
-        <h2 className="font-serif text-lg font-medium text-ink2">{t("contactTitle")}</h2>
+    <Card className="relative flex flex-col gap-4 overflow-hidden border-accent/25 p-5 shadow-glow sm:p-6">
+      <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-accent/10 blur-3xl" />
+      <div className="relative flex flex-col gap-1">
+        <h2 className="font-serif text-xl font-normal text-ink2">{t("contactTitle")}</h2>
         <p className="text-sm text-ink2-muted">{t("contactIntro")}</p>
       </div>
 
       {!contact ? (
-        <Button onClick={handleReveal} disabled={loading || !csrfToken} className="w-full py-3 text-base">
+        <Button onClick={handleReveal} disabled={loading || !csrfToken} size="lg" className="relative w-full">
           {t("showContact")}
         </Button>
       ) : (

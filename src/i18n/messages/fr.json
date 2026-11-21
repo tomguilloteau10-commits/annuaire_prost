@@ -87,7 +87,13 @@
     "storiesTitle": "Stories",
     "seeAll": "Voir tout",
     "resultsCount": "{count, plural, =0 {Aucun profil} one {# profil} other {# profils}}",
-    "noMatch": "Aucun profil ne correspond à ces filtres. Essayez d'en retirer un."
+    "noMatch": "Aucun profil ne correspond à ces filtres. Essayez d'en retirer un.",
+    "heroLead": "Rencontrez une annonceuse",
+    "heroAccent": "indépendante",
+    "heroTail": "en Suisse",
+    "resultsEyebrow": "L'annuaire",
+    "featuredEyebrow": "Sélection",
+    "storiesEyebrow": "Nouveautés"
   },
   "whyUs": {
     "title": "Pourquoi nous choisir",
@@ -96,10 +102,17 @@
     "discretionTitle": "Discrétion",
     "discretionBody": "Le contact n'est jamais affiché publiquement ni conservé dans nos journaux : il est révélé à la demande, de façon anonyme, sans compte requis.",
     "directContactTitle": "Contact direct",
-    "directContactBody": "Vous contactez directement l'annonceuse, sans intermédiaire ni commission. Nous sommes un éditeur d'annonces, pas une agence."
+    "directContactBody": "Vous contactez directement l'annonceuse, sans intermédiaire ni commission. Nous sommes un éditeur d'annonces, pas une agence.",
+    "eyebrow": "Nos engagements"
   },
   "footer": {
-    "disclaimer": "Éditeur d'annonces indépendantes, réservé aux personnes majeures (18 ans et plus)."
+    "disclaimer": "Éditeur d'annonces indépendantes, réservé aux personnes majeures (18 ans et plus).",
+    "tagline": "L'annuaire suisse des annonceuses indépendantes : profils vérifiés majeurs, contact direct, discrétion absolue.",
+    "adultsOnly": "Réservé aux adultes",
+    "explore": "Explorer",
+    "providers": "Annonceuses",
+    "listYourProfile": "Publier mon annonce",
+    "noCommission": "Aucune commission, aucun intermédiaire : vous restez seule maîtresse de votre activité."
   },
   "map": {
     "profileCount": "profils",
@@ -180,7 +193,9 @@
     "registerError": "Impossible de créer le compte pour le moment.",
     "emailTakenError": "Un compte existe déjà avec cet email.",
     "tooManyAttempts": "Trop de tentatives. Patientez 15 minutes avant de réessayer.",
-    "networkError": "Connexion impossible. Vérifiez votre réseau puis réessayez."
+    "networkError": "Connexion impossible. Vérifiez votre réseau puis réessayez.",
+    "authEyebrowLogin": "Espace annonceuses",
+    "authEyebrowRegister": "Rejoindre VelvetGirl"
   },
   "onboarding": {
     "title": "Majorité & autorisation",

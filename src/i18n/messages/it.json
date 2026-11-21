@@ -88,7 +88,13 @@
     "storiesTitle": "Stories",
     "seeAll": "Vedi tutto",
     "resultsCount": "{count, plural, =0 {Nessun profilo} one {# profilo} other {# profili}}",
-    "noMatch": "Nessun profilo corrisponde a questi filtri. Prova a toglierne uno."
+    "noMatch": "Nessun profilo corrisponde a questi filtri. Prova a toglierne uno.",
+    "heroLead": "Incontra un'inserzionista",
+    "heroAccent": "indipendente",
+    "heroTail": "in Svizzera",
+    "resultsEyebrow": "L'elenco",
+    "featuredEyebrow": "Selezione",
+    "storiesEyebrow": "Novità"
   },
   "whyUs": {
     "title": "Perché sceglierci",
@@ -97,10 +103,17 @@
     "discretionTitle": "Discrezione",
     "discretionBody": "Il contatto non è mai mostrato pubblicamente né conservato nei nostri log: viene rivelato solo su richiesta, in modo anonimo, senza bisogno di un account.",
     "directContactTitle": "Contatto diretto",
-    "directContactBody": "Contatti direttamente la fornitrice, senza intermediari né commissioni. Siamo un editore di annunci, non un'agenzia."
+    "directContactBody": "Contatti direttamente la fornitrice, senza intermediari né commissioni. Siamo un editore di annunci, non un'agenzia.",
+    "eyebrow": "I nostri impegni"
   },
   "footer": {
-    "disclaimer": "Editore di annunci indipendenti, riservato ai maggiorenni (18 anni e oltre)."
+    "disclaimer": "Editore di annunci indipendenti, riservato ai maggiorenni (18 anni e oltre).",
+    "tagline": "L'elenco svizzero delle inserzioniste indipendenti: profili maggiorenni verificati, contatto diretto, massima discrezione.",
+    "adultsOnly": "Solo per adulti",
+    "explore": "Esplora",
+    "providers": "Inserzioniste",
+    "listYourProfile": "Pubblica il mio annuncio",
+    "noCommission": "Nessuna commissione, nessun intermediario: resti padrona della tua attività."
   },
   "map": {
     "profileCount": "profili",
@@ -181,7 +194,9 @@
     "registerError": "Impossibile creare l'account al momento.",
     "emailTakenError": "Esiste già un account con questa email.",
     "tooManyAttempts": "Troppi tentativi. Attendi 15 minuti prima di riprovare.",
-    "networkError": "Connessione non riuscita. Controlla la rete e riprova."
+    "networkError": "Connessione non riuscita. Controlla la rete e riprova.",
+    "authEyebrowLogin": "Area inserzioniste",
+    "authEyebrowRegister": "Unisciti a VelvetGirl"
   },
   "onboarding": {
     "title": "Maggiore età & autorizzazione",

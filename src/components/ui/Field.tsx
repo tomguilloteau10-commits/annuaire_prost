@@ -6,7 +6,7 @@ import type {
 } from "react";
 
 const FIELD_BASE_CLASSES =
-  "rounded-xl border border-hairline2 bg-surface-raised px-3.5 py-2.5 text-sm text-ink2 placeholder:text-ink2-faint transition-colors focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent disabled:cursor-not-allowed disabled:opacity-50";
+  "rounded-xl border border-hairline2 bg-ink-soft/70 px-3.5 py-2.5 text-sm text-ink2 placeholder:text-ink2-faint shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)] transition-colors hover:border-hairline2 focus:border-accent/70 focus:outline-none focus:ring-2 focus:ring-accent/25 disabled:cursor-not-allowed disabled:opacity-50";
 const FIELD_CLASSES = `w-full ${FIELD_BASE_CLASSES}`;
 
 export function Label({ className = "", ...props }: LabelHTMLAttributes<HTMLLabelElement>) {

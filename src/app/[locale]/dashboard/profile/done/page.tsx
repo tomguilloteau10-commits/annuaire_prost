@@ -74,7 +74,7 @@ export default async function ProfileDonePage({ params }: { params: Promise<{ lo
         <div className="flex w-full flex-col gap-2.5 sm:flex-row sm:justify-center">
           <Link
             href={DASHBOARD_PATH}
-            className={`${BIG_BUTTON} bg-accent text-accent-foreground hover:bg-accent-hover`}
+            className={`${BIG_BUTTON} bg-gold-sheen text-accent-foreground shadow-gold-btn hover:brightness-110`}
           >
             {t("toDashboard")}
           </Link>

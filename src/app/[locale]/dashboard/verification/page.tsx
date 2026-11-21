@@ -68,7 +68,7 @@ export default async function VerificationPage({ params }: { params: Promise<{ l
         {identity.key !== "rejected" && identity.key !== "missing" && (
           <Link
             href={hasProfile ? DASHBOARD_PATH : PROFILE_EDIT_PATH}
-            className="self-start rounded-full bg-accent px-6 py-3 text-base font-medium text-accent-foreground transition-colors hover:bg-accent-hover"
+            className="self-start rounded-full bg-gold-sheen px-6 py-3 text-base font-medium text-accent-foreground shadow-gold-btn transition-all hover:brightness-110"
           >
             {hasProfile ? t("toDashboard") : t("continueToProfile")}
           </Link>

@@ -11,8 +11,29 @@
     @apply bg-ink;
   }
 
+  /* Fond « velours » : halos de lumière très doux (prune, or, rose) fixés
+     derrière le contenu, plus un grain léger qui casse l'aplat numérique. */
   body {
     @apply bg-ink font-sans text-ink2 antialiased;
+    background-image:
+      radial-gradient(60rem 40rem at 12% -6rem, rgba(126, 72, 120, 0.22), transparent 60%),
+      radial-gradient(50rem 32rem at 92% 0, rgba(217, 183, 126, 0.09), transparent 60%),
+      radial-gradient(70rem 40rem at 50% 100%, rgba(199, 120, 150, 0.08), transparent 65%);
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  body > * {
+    position: relative;
+    z-index: 1;
   }
 
   h1,
@@ -25,6 +46,10 @@
     @apply bg-accent/30 text-ink2;
   }
 
+  :focus-visible {
+    @apply outline-none ring-2 ring-accent/60 ring-offset-2 ring-offset-ink;
+  }
+
   /* Champs de formulaire natifs (select, input date, etc.) : on force le
      rendu sombre pour éviter le flash blanc du thème système. */
   select,
@@ -35,6 +60,26 @@
 }
 
 @layer utilities {
+  /* Texte doré (titres, chiffres clés). */
+  .text-gold {
+    @apply bg-gold-sheen bg-clip-text text-transparent;
+  }
+
+  /* Petit intitulé en capitales espacées, au-dessus d'un titre. */
+  .eyebrow {
+    @apply font-sans text-[11px] font-medium uppercase tracking-eyebrow text-accent/80;
+  }
+
+  /* Surface translucide (en-tête, panneau de recherche). */
+  .glass {
+    @apply border border-hairline bg-surface/55 backdrop-blur-xl;
+  }
+
+  /* Filet décoratif doré qui s'estompe sur les côtés. */
+  .gold-rule {
+    @apply h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent;
+  }
+
   /* Rangées défilantes horizontales (navigation, stories, carrousels) :
      défilement conservé au doigt/trackpad, barre masquée. */
   .scrollbar-none {

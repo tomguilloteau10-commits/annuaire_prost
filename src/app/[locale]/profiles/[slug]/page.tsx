@@ -18,12 +18,29 @@ const STATUS_BADGE: Record<"ONLINE" | "AWAY" | "OFFLINE", BadgeVariant> = {
 
 function Pill({ children }: { children: React.ReactNode }) {
   return (
-    <span className="rounded-full border border-hairline2 px-3 py-1 text-sm text-ink2-muted">{children}</span>
+    <span className="rounded-full border border-accent/25 px-3 py-1 text-sm text-ink2/90">{children}</span>
   );
 }
 
+/** Titre de section : filet doré + titre serif. */
 function SectionTitle({ children }: { children: React.ReactNode }) {
-  return <h2 className="font-serif text-xl font-medium text-ink2">{children}</h2>;
+  return (
+    <h2 className="flex items-center gap-3 font-serif text-[1.35rem] font-normal tracking-tight text-ink2">
+      <span aria-hidden className="h-px w-6 bg-gradient-to-r from-accent to-accent/0" />
+      {children}
+    </h2>
+  );
+}
+
+/** Panneau d'une section de la fiche. */
+function Panel({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <section
+      className={`flex flex-col gap-4 rounded-xl2 border border-hairline bg-gradient-to-b from-surface-raised/50 to-surface/30 p-5 shadow-card sm:p-6 ${className}`}
+    >
+      {children}
+    </section>
+  );
 }
 
 /** Ligne "libellé : valeur" d'une liste de définitions. */
@@ -36,13 +53,13 @@ function InfoRow({ label, children }: { label: string; children: React.ReactNode
   );
 }
 
-/** Badge "libellé · valeur" (ex. "Cheveux · Châtains") : sûr dans toutes les langues. */
+/** Tuile « libellé / valeur » (ex. Cheveux / Châtains) : sûre dans toutes les langues. */
 function Trait({ label, value }: { label: string; value: string }) {
   return (
-    <span className="rounded-full border border-hairline2 px-3 py-1 text-sm text-ink2">
-      <span className="text-ink2-faint">{label} · </span>
-      {value}
-    </span>
+    <div className="flex flex-col gap-1 rounded-xl border border-hairline bg-ink-soft/50 px-3.5 py-3">
+      <span className="text-[10.5px] uppercase tracking-[0.14em] text-ink2-faint">{label}</span>
+      <span className="font-serif text-[17px] leading-tight text-ink2">{value}</span>
+    </div>
   );
 }
 
@@ -119,7 +136,7 @@ export default async function PublicProfilePage({
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-6 px-4 py-8 sm:py-12">
-      <Link href="/" className="self-start text-sm text-ink2-muted transition-colors hover:text-ink2">
+      <Link href="/" className="self-start text-sm text-ink2-muted transition-colors hover:text-accent">
         ← {t("backToDirectory")}
       </Link>
 
@@ -129,14 +146,26 @@ export default async function PublicProfilePage({
         {/* Infos + contact : sous la galerie sur mobile, colonne de droite
             (collante) sur desktop — le contact reste visible en scrollant. */}
         <aside className="flex flex-col gap-6 md:sticky md:top-36 md:col-start-2 md:row-span-2 md:row-start-1 md:self-start">
-          <div className="flex flex-col gap-3">
-            <h1 className="font-serif text-3xl font-medium text-ink2 sm:text-4xl">
+          <div className="flex flex-col gap-3.5">
+            <p className="eyebrow">{getLocalizedLabel(profile.category.label, locale)}</p>
+            <h1 className="font-serif text-4xl font-light leading-[1.05] tracking-tight text-ink2 sm:text-5xl">
               {profile.displayName}
-              {profile.age && <span className="text-ink2-muted">, {t("ageYears", { age: profile.age })}</span>}
+              {profile.age && (
+                <span className="font-sans text-2xl font-extralight text-ink2/60 sm:text-3xl">
+                  , {t("ageYears", { age: profile.age })}
+                </span>
+              )}
             </h1>
-            <p className="text-ink2-muted">
-              {profile.city.name} ({profile.city.canton}) · {getLocalizedLabel(profile.category.label, locale)}
+            <p className="flex items-center gap-1.5 text-ink2-muted">
+              <svg viewBox="0 0 20 20" className="h-4 w-4 text-accent/80" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
+                <path d="M10 17.5s5.5-5 5.5-9.5a5.5 5.5 0 0 0-11 0c0 4.5 5.5 9.5 5.5 9.5Z" />
+                <circle cx="10" cy="8" r="2" />
+              </svg>
+              {profile.city.name} ({profile.city.canton})
             </p>
+            {profile.rateFrom !== null && (
+              <p className="text-gold font-serif text-2xl">{t("rateFrom", { price: chf.format(profile.rateFrom) })}</p>
+            )}
             <div className="flex flex-wrap gap-2">
               <Badge variant="successOnImage" className="border border-hairline">
                 ✓ {t("verifiedBadge")}
@@ -150,24 +179,27 @@ export default async function PublicProfilePage({
           <ContactBlock slug={profile.slug} />
         </aside>
 
-        <div className="flex flex-col gap-8 md:col-start-1 md:row-start-2">
-          <section className="flex flex-col gap-3">
+        <div className="flex flex-col gap-5 md:col-start-1 md:row-start-2">
+          <Panel>
             <SectionTitle>{t("aboutTitle")}</SectionTitle>
-            <p className="whitespace-pre-wrap text-[15px] leading-relaxed text-ink2-muted">{profile.description}</p>
-          </section>
+            <p className="whitespace-pre-wrap text-[15.5px] leading-[1.75] text-ink2/80">{profile.description}</p>
+          </Panel>
 
           {(rates.length > 0 || payments.length > 0 || profile.rateFrom !== null) && (
-            <section className="flex flex-col gap-3">
+            <Panel>
               <SectionTitle>{t("ratesTitle")}</SectionTitle>
-              {profile.rateFrom !== null && (
-                <p className="text-lg text-ink2">{t("rateFrom", { price: chf.format(profile.rateFrom) })}</p>
+              {profile.rateFrom !== null && rates.length === 0 && (
+                <p className="text-gold font-serif text-2xl">{t("rateFrom", { price: chf.format(profile.rateFrom) })}</p>
               )}
               {rates.length > 0 && (
-                <dl className="divide-y divide-hairline overflow-hidden rounded-xl2 border border-hairline bg-surface">
+                <dl className="grid grid-cols-2 gap-2.5">
                   {rates.map(({ field, amount }) => (
-                    <div key={field} className="flex items-center justify-between gap-4 px-4 py-3">
-                      <dt className="text-ink2-muted">{t(`rates.${field}`)}</dt>
-                      <dd className="font-medium text-ink2">{chf.format(amount)}</dd>
+                    <div
+                      key={field}
+                      className="flex flex-col gap-1 rounded-xl border border-hairline bg-ink-soft/50 px-3.5 py-3"
+                    >
+                      <dt className="text-[10.5px] uppercase tracking-[0.14em] text-ink2-faint">{t(`rates.${field}`)}</dt>
+                      <dd className="text-gold font-serif text-xl">{chf.format(amount)}</dd>
                     </div>
                   ))}
                 </dl>
@@ -178,11 +210,11 @@ export default async function PublicProfilePage({
                 </dl>
               )}
               <p className="text-xs text-ink2-faint">{t("ratesNote")}</p>
-            </section>
+            </Panel>
           )}
 
           {hasServices && (
-            <section className="flex flex-col gap-4">
+            <Panel>
               <SectionTitle>{t("servicesTitle")}</SectionTitle>
               <dl className="flex flex-col gap-2.5 text-[15px]">
                 {meeting.length > 0 && <InfoRow label={t("meetingLabel")}>{meeting.join(" · ")}</InfoRow>}
@@ -206,39 +238,39 @@ export default async function PublicProfilePage({
                   ))}
                 </div>
               )}
-            </section>
+            </Panel>
           )}
 
           {(days || hours) && (
-            <section className="flex flex-col gap-4">
+            <Panel>
               <SectionTitle>{t("availabilityTitle")}</SectionTitle>
               <dl className="flex flex-col gap-2.5 text-[15px]">
                 {days && <InfoRow label={t("daysLabel")}>{days}</InfoRow>}
                 {hours && <InfoRow label={t("hoursLabel")}>{hours}</InfoRow>}
               </dl>
-            </section>
+            </Panel>
           )}
 
           {traits.length > 0 && (
-            <section className="flex flex-col gap-3">
+            <Panel>
               <SectionTitle>{t("traitsTitle")}</SectionTitle>
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
                 {traits.map((trait) => (
                   <Trait key={trait.label} label={trait.label} value={trait.value} />
                 ))}
               </div>
-            </section>
+            </Panel>
           )}
 
           {profile.languages.length > 0 && (
-            <section className="flex flex-col gap-3">
+            <Panel>
               <SectionTitle>{t("languagesLabel")}</SectionTitle>
               <div className="flex flex-wrap gap-2">
                 {profile.languages.map((l) => (
                   <Pill key={l.language.code}>{getLocalizedLabel(l.language.label, locale)}</Pill>
                 ))}
               </div>
-            </section>
+            </Panel>
           )}
         </div>
 

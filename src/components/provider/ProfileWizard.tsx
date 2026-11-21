@@ -111,7 +111,7 @@ const STEP_ALIASES: Record<string, StepId> = {
 };
 
 const CHIP = "cursor-pointer rounded-full border px-4 py-2 text-sm transition-colors";
-const CHIP_ON = "border-accent bg-accent text-accent-foreground";
+const CHIP_ON = "border-accent/70 bg-accent-soft text-accent";
 const CHIP_OFF = "border-hairline2 text-ink2-muted hover:border-accent/60";
 
 function Chip({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {

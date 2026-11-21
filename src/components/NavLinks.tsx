@@ -19,7 +19,7 @@ export function NavLinks() {
 
   return (
     <nav aria-label={t("mainNavLabel")} className="scrollbar-none -mx-4 overflow-x-auto px-4">
-      <ul className="flex min-w-max items-center gap-1">
+      <ul className="flex min-w-max items-center gap-0.5">
         {NAV_ITEMS.map((item) => {
           const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
           return (
@@ -27,11 +27,18 @@ export function NavLinks() {
               <Link
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition-colors ${
-                  active ? "bg-surface-raised text-ink2" : "text-ink2-muted hover:text-ink2"
+                className={`relative flex items-center gap-1.5 px-3 pb-3 pt-2 text-sm tracking-[0.01em] transition-colors ${
+                  active ? "text-ink2" : "text-ink2-muted hover:text-ink2"
                 }`}
               >
                 {t(item.key)}
+                {/* Page courante : fin trait doré sous l'intitulé. */}
+                <span
+                  aria-hidden
+                  className={`absolute inset-x-3 bottom-0 h-px rounded-full bg-gold-sheen transition-opacity ${
+                    active ? "opacity-100" : "opacity-0"
+                  }`}
+                />
                 {"soon" in item && (
                   <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-label={t("soon")} />
                 )}
