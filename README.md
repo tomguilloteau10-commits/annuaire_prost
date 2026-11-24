@@ -79,6 +79,10 @@ toi-même avec ton éditeur habituel.
    docker compose exec app npm run db:seed
    ```
 
+5. Mises à jour suivantes, en une seule commande : `./mettre-a-jour.sh`
+   (récupère les modifications, reconstruit l'app, et ne relance le seed
+   que si `prisma/seed.ts` a changé).
+
    Le script est idempotent (relançable sans dupliquer les données) et crée
    deux choses distinctes :
    - les données de fondation nécessaires au fonctionnement de l'app (plan
