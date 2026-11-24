@@ -208,6 +208,12 @@ table `DataRetentionPolicy`). Elle tourne **automatiquement** au démarrage
 du conteneur puis toutes les 6 heures (`src/instrumentation.ts`) ; à la
 main : `npm run db:purge-expired`.
 
+## Mise en ligne
+
+Guide pas à pas (serveur, domaine, HTTPS, e-mails, sauvegardes chiffrées et
+restauration, surveillance, liste de contrôle) : **[docs/MISE-EN-LIGNE.md](docs/MISE-EN-LIGNE.md)**.
+Configuration : `docker-compose.prod.yml`, `deploy/`, `.env.production.example`.
+
 ## Sécurité de la mise en ligne
 
 - **Secrets** : avec Docker, les valeurs d'exemple (`change-me…`) sont
@@ -220,11 +226,11 @@ main : `npm run db:purge-expired`.
   `TRUSTED_PROXY_HOPS=1` : les limites anti-abus par IP deviennent alors
   fiables (sans proxy, l'IP annoncée par le visiteur est falsifiable ; les
   limites par compte et globales protègent quand même).
-- **Compte admin** : son mot de passe de démonstration est public (ce
-  README). Avant toute ouverture au public : `npm run admin:reset-password`
-  (dans Docker : `docker compose exec app npm run admin:reset-password`)
-  génère un mot de passe fort, l'affiche une fois et déconnecte les
-  sessions ouvertes. Note : `npm run db:seed` ne le remet pas à l'exemple.
+- **Compte admin** : le mot de passe du compte de démonstration est public
+  (ce README). Avant toute ouverture au public :
+  `docker compose exec app npm run admin:setup -- votre@adresse.ch` crée
+  votre compte admin (mot de passe fort affiché une fois) et supprime le
+  compte de démonstration ; `npm run db:seed` ne le recrée plus ensuite.
 
 ## Tests
 

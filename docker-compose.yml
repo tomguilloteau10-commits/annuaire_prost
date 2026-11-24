@@ -39,6 +39,8 @@ services:
       # que soit NODE_ENV dans .env (souvent "development", copié de
       # .env.example) : cookies sécurisés, en-têtes HTTPS, pas d'avertissement.
       NODE_ENV: "production"
+      # Dates et heures affichées (admin, e-mails) à l'heure suisse.
+      TZ: "Europe/Zurich"
     # Site accessible sur http://localhost:3000 depuis cet ordinateur
     # uniquement. Pour une mise en ligne, passer par un reverse proxy HTTPS
     # (voir README, « Mise en ligne »).

@@ -22,8 +22,6 @@ export const OPERATOR = {
   subscriptionPrice: null as string | null,
   /** Ville du for juridique, ex. « Lausanne ». */
   court: null as string | null,
-  /** Durée de conservation des journaux techniques de l'hébergeur, ex. « 14 jours ». */
-  serverLogRetention: null as string | null,
 };
 
 /**

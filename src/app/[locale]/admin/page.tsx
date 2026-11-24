@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { Link } from "@/i18n/navigation";
 import { countPendingVerificationDossiers } from "@/modules/verification/manual-review.service";
 import { countPaymentsDue } from "@/modules/subscriptions/subscription.service";
+import { getBackupStatus } from "@/modules/ops/backup-status";
+import { getEmailDriver } from "@/modules/email/email.service";
 
 // Accueil de l'espace admin : une tuile par file, avec ce qui attend une
 // décision (mises en évidence), puis les réglages. Réservé au rôle ADMIN.
@@ -16,18 +18,27 @@ export default async function AdminHomePage({ params }: { params: Promise<{ loca
   const queueT = await getTranslations("moderation.queues");
   const subT = await getTranslations("adminSubscriptions");
 
-  const [dossiers, pendingProfiles, pendingMedia, openReports, activeCategories, activeCities, actionCount, allowedCountries, paymentsDue] =
-    await Promise.all([
-      countPendingVerificationDossiers(),
-      prisma.providerProfile.count({ where: { status: "PENDING_REVIEW" } }),
-      prisma.media.count({ where: { status: "PENDING" } }),
-      prisma.profileReport.count({ where: { status: "OPEN" } }),
-      prisma.category.count({ where: { isActive: true } }),
-      prisma.city.count({ where: { isActive: true } }),
-      prisma.auditLog.count(),
-      prisma.allowedCountry.count({ where: { isAllowed: true } }),
-      countPaymentsDue(),
-    ]);
+  const [
+    dossiers,
+    pendingProfiles,
+    pendingMedia,
+    openReports,
+    activeCategories,
+    activeCities,
+    actionCount,
+    allowedCountries,
+    paymentsDue,
+  ] = await Promise.all([
+    countPendingVerificationDossiers(),
+    prisma.providerProfile.count({ where: { status: "PENDING_REVIEW" } }),
+    prisma.media.count({ where: { status: "PENDING" } }),
+    prisma.profileReport.count({ where: { status: "OPEN" } }),
+    prisma.category.count({ where: { isActive: true } }),
+    prisma.city.count({ where: { isActive: true } }),
+    prisma.auditLog.count(),
+    prisma.allowedCountry.count({ where: { isAllowed: true } }),
+    countPaymentsDue(),
+  ]);
 
   const queues = [
     { href: "/admin/identities", title: queueT("identities"), count: dossiers.identities },
@@ -38,8 +49,32 @@ export default async function AdminHomePage({ params }: { params: Promise<{ loca
     { href: "/admin/subscriptions", title: subT("paymentsDueTile"), count: paymentsDue },
   ];
   const toReview = queues.reduce((sum, q) => sum + q.count, 0);
+
+  // Santé du site : sauvegardes (production) et envoi des e-mails.
+  const backup = await getBackupStatus();
+  const formatDate = new Intl.DateTimeFormat(`${locale}-CH`, { dateStyle: "medium", timeStyle: "short" });
+  const health: { tone: "ok" | "warn"; text: string }[] = [];
+  if (backup.configured) {
+    health.push(
+      backup.needsAttention
+        ? {
+            tone: "warn",
+            text: backup.lastSuccess
+              ? t("backupStale", { date: formatDate.format(backup.lastSuccess) })
+              : t("backupNone"),
+          }
+        : { tone: "ok", text: t("backupOk", { date: formatDate.format(backup.lastSuccess!) }) },
+    );
+  }
+  if (getEmailDriver() === "outbox" && process.env.NODE_ENV === "production" && backup.configured) {
+    health.push({ tone: "warn", text: t("emailNotConfigured") });
+  }
   const settings = [
-    { href: "/admin/taxonomies", title: nav("taxonomies"), body: t("taxonomiesBody", { categories: activeCategories, cities: activeCities }) },
+    {
+      href: "/admin/taxonomies",
+      title: nav("taxonomies"),
+      body: t("taxonomiesBody", { categories: activeCategories, cities: activeCities }),
+    },
     { href: "/admin/audit-log", title: nav("auditLog"), body: t("auditLogBody", { count: actionCount }) },
     { href: "/admin/geo-settings", title: nav("geoSettings"), body: t("geoBody", { count: allowedCountries }) },
   ];
@@ -48,11 +83,33 @@ export default async function AdminHomePage({ params }: { params: Promise<{ loca
     <main className="mx-auto flex min-h-screen max-w-4xl flex-col gap-8 px-4 py-10 sm:py-14">
       <div className="flex flex-col gap-1">
         <h1 className="font-serif text-3xl font-medium text-ink2">{t("title")}</h1>
-        <p className="text-ink2-muted">{toReview > 0 ? t("toReview", { count: toReview }) : t("nothingToReview")}</p>
+        <p className="text-ink2-muted">
+          {toReview > 0 ? t("toReview", { count: toReview }) : t("nothingToReview")}
+        </p>
       </div>
 
+      {health.length > 0 && (
+        <ul className="flex flex-col gap-2">
+          {health.map((item) => (
+            <li
+              key={item.text}
+              className={`flex items-start gap-2.5 rounded-xl border px-4 py-3 text-sm ${
+                item.tone === "ok"
+                  ? "border-success/30 bg-success/10 text-success"
+                  : "border-warning/40 bg-warning/10 text-warning"
+              }`}
+            >
+              <span aria-hidden>{item.tone === "ok" ? "✓" : "!"}</span>
+              <span>{item.text}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
       <section className="flex flex-col gap-3">
-        <h2 className="font-sans text-xs font-medium uppercase tracking-wide text-ink2-faint">{t("queuesTitle")}</h2>
+        <h2 className="font-sans text-xs font-medium uppercase tracking-wide text-ink2-faint">
+          {t("queuesTitle")}
+        </h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {queues.map((queue) => (
             <Link
@@ -76,7 +133,9 @@ export default async function AdminHomePage({ params }: { params: Promise<{ loca
       </section>
 
       <section className="flex flex-col gap-3">
-        <h2 className="font-sans text-xs font-medium uppercase tracking-wide text-ink2-faint">{t("settingsTitle")}</h2>
+        <h2 className="font-sans text-xs font-medium uppercase tracking-wide text-ink2-faint">
+          {t("settingsTitle")}
+        </h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {settings.map((tile) => (
             <Link

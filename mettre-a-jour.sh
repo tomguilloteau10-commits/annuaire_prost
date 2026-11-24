@@ -19,6 +19,10 @@ cd "$(dirname "$0")"
 BRANCH="claude/swiss-directory-platform-foundation-6ytxc6"
 ETAT=".version-installee"
 
+# Sur le serveur (DOMAIN défini dans .env) : adresse publique ; sinon locale.
+DOMAINE=$(grep -E '^DOMAIN=' .env 2>/dev/null | head -n 1 | cut -d= -f2- | tr -d '"' || true)
+if [ -n "$DOMAINE" ]; then SITE="https://$DOMAINE"; else SITE="http://localhost:3000"; fi
+
 if ! docker info >/dev/null 2>&1; then
   echo "❌ Docker n'est pas lancé. Ouvrez Docker Desktop, attendez qu'il soit prêt, puis relancez la commande."
   exit 1
@@ -36,7 +40,7 @@ INSTALLEE=$(cat "$ETAT" 2>/dev/null || true)
 if [ "$ACTUELLE" = "$INSTALLEE" ]; then
   echo "✔ Déjà à jour : aucune nouveauté."
   docker compose up -d >/dev/null 2>&1
-  echo "  Site : http://localhost:3000"
+  echo "  Site : $SITE"
   exit 0
 fi
 
@@ -63,4 +67,4 @@ fi
 
 echo "$ACTUELLE" > "$ETAT"
 echo ""
-echo "✔ Mise à jour terminée. Site : http://localhost:3000"
+echo "✔ Mise à jour terminée. Site : $SITE"

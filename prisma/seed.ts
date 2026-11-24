@@ -310,11 +310,20 @@ async function seedCities() {
 async function seedDemoAccounts() {
   const passwordHash = await hashPassword(DEMO_PASSWORD);
 
-  const admin = await prisma.user.upsert({
-    where: { email: "admin@example.test" },
-    update: {},
-    create: { email: "admin@example.test", passwordHash, role: "ADMIN" },
+  // Le compte admin de démonstration (mot de passe public) n'est créé que
+  // s'il n'existe aucun autre admin : une fois le vrai compte créé
+  // (npm run admin:setup), le seed ne le recrée jamais.
+  const realAdmin = await prisma.user.findFirst({
+    where: { role: "ADMIN", email: { not: "admin@example.test" } },
+    select: { id: true },
   });
+  const admin =
+    realAdmin ??
+    (await prisma.user.upsert({
+      where: { email: "admin@example.test" },
+      update: {},
+      create: { email: "admin@example.test", passwordHash, role: "ADMIN" },
+    }));
 
   // Deux comptes de démo clairs, un par espace : admin@example.test (/admin)
   // et prestataire@example.test (/dashboard). Le compte prestataire reprend
@@ -1105,13 +1114,17 @@ async function main() {
     console.log(`Profils fictifs de démonstration créés (${DEMO_PROFILES.length}).`);
   }
 
+  const demoAdmin = await prisma.user.findUnique({ where: { email: "admin@example.test" }, select: { id: true } });
   // eslint-disable-next-line no-console
   console.log(
-    [
-      "Compte admin (mot de passe de bêta — jamais en production) :",
-      "  espace admin (/admin) : admin@example.test",
-      `  mot de passe : ${DEMO_PASSWORD}`,
-    ].join("\n"),
+    demoAdmin
+      ? [
+          "Compte admin de démonstration (mot de passe public — jamais en production) :",
+          "  espace admin (/admin) : admin@example.test",
+          `  mot de passe : ${DEMO_PASSWORD}`,
+          "  Pour créer votre vrai compte admin et supprimer celui-ci : npm run admin:setup -- votre@adresse.ch",
+        ].join("\n")
+      : "Données de base à jour (compte admin réel déjà en place).",
   );
 }
 

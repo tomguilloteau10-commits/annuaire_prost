@@ -756,7 +756,11 @@
     "auditLogBody": "{count, plural, one {# recorded action.} other {# recorded actions.}}",
     "geoBody": "{count, plural, one {# allowed country.} other {# allowed countries.}}",
     "queuesTitle": "To validate",
-    "settingsTitle": "Settings"
+    "settingsTitle": "Settings",
+    "backupOk": "Automatic backups: last successful on {date}.",
+    "backupStale": "Warning: no successful backup since {date}. See the go-live guide (\"Backups\").",
+    "backupNone": "Warning: no successful backup yet. The first one runs within minutes of startup; if this message remains, see the go-live guide.",
+    "emailNotConfigured": "Warning: no email server is configured. \"Forgot password\" emails are not sent (see SMTP in the server .env file)."
   },
   "profileDone": {
     "sent": {

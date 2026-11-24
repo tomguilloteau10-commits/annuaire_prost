@@ -19,3 +19,4 @@ storage/media
 coverage
 *.log
 .version-installee
+backups

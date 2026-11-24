@@ -38,3 +38,6 @@ prisma/dev.db
 
 # worker de la carte, copié depuis node_modules au build (scripts/copy-map-worker.mjs)
 public/vendor/
+
+# sauvegardes du serveur (chiffrées, jamais dans Git)
+backups/

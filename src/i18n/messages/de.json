@@ -757,7 +757,11 @@
     "auditLogBody": "{count, plural, one {# erfasste Aktion.} other {# erfasste Aktionen.}}",
     "geoBody": "{count, plural, one {# erlaubtes Land.} other {# erlaubte Länder.}}",
     "queuesTitle": "Zu prüfen",
-    "settingsTitle": "Einstellungen"
+    "settingsTitle": "Einstellungen",
+    "backupOk": "Automatische Sicherungen: letzte erfolgreiche am {date}.",
+    "backupStale": "Achtung: keine erfolgreiche Sicherung seit {date}. Siehe Anleitung zur Inbetriebnahme («Sicherungen»).",
+    "backupNone": "Achtung: noch keine erfolgreiche Sicherung. Die erste erfolgt wenige Minuten nach dem Start; bleibt diese Meldung bestehen, siehe Anleitung zur Inbetriebnahme.",
+    "emailNotConfigured": "Achtung: kein E-Mail-Server konfiguriert. «Passwort vergessen»-E-Mails werden nicht versendet (siehe SMTP in der .env-Datei des Servers)."
   },
   "profileDone": {
     "sent": {

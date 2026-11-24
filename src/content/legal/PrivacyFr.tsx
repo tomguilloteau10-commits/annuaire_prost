@@ -38,9 +38,8 @@ export function PrivacyFr() {
             choisissez d&apos;écrire. Aucune identité n&apos;est demandée.
           </li>
           <li>
-            <Strong>Journaux techniques</Strong> : l&apos;hébergeur enregistre les requêtes reçues (adresse IP,
-            date, page demandée) pour la sécurité du site, conservées{" "}
-            <Fill field="serverLogRetention" label="durée de conservation des journaux" />.
+            <Strong>Journaux techniques</Strong> : le serveur ne conserve aucun journal des visites (ni adresse IP,
+            ni pages consultées). Seuls des messages de fonctionnement sans donnée personnelle sont gardés.
           </li>
           <li>
             <Strong>Carte</Strong> : le fond de carte est chargé depuis le service OpenFreeMap

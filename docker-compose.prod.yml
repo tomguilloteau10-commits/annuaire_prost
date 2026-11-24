@@ -1,0 +1,95 @@
+# Configuration de PRODUCTION (serveur), ajoutée à docker-compose.yml.
+# Activée automatiquement par la ligne COMPOSE_FILE du fichier .env du
+# serveur (voir .env.production.example et docs/MISE-EN-LIGNE.md) : les
+# commandes habituelles (docker compose …, ./mettre-a-jour.sh) l'utilisent.
+#
+# Ajoute : HTTPS automatique (Caddy), mot de passe de base de données privé,
+# aucun port exposé hormis 80/443, sauvegardes chiffrées quotidiennes.
+
+services:
+  db:
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Définissez POSTGRES_PASSWORD dans .env}
+    # La base n'est joignable que par les autres conteneurs.
+    ports: !reset []
+
+  app:
+    environment:
+      DATABASE_URL: "postgresql://annuaire:${POSTGRES_PASSWORD}@db:5432/annuaire_prost?schema=public"
+      NEXT_PUBLIC_APP_URL: "https://${DOMAIN:?Définissez DOMAIN dans .env}"
+      # Caddy est le seul proxy devant le site : l'adresse IP réelle du
+      # visiteur (limites anti-abus) est la dernière de X-Forwarded-For.
+      TRUSTED_PROXY_HOPS: "1"
+      NODE_ENV: "production"
+    # Le site n'est joignable que par Caddy (HTTPS).
+    ports: !reset []
+    # Lecture seule de l'état des sauvegardes (date de la dernière réussie),
+    # affiché dans l'espace admin.
+    volumes:
+      - ./backups:/app/backup-status:ro
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMAIN: ${DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL:?Définissez ACME_EMAIL dans .env}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+  backup:
+    build:
+      context: ./deploy/backup
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment: &backup-env
+      PGHOST: db
+      PGUSER: annuaire
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: annuaire_prost
+      TZ: Europe/Zurich
+    volumes:
+      - media_storage:/data/media:ro
+      - app_secrets:/data/secrets:ro
+      - ./backups:/backups
+
+  # Restauration d'une sauvegarde (jamais lancée automatiquement) :
+  #   docker compose run --rm restore /backups/velvetgirl_….tar.gz.enc
+  restore:
+    profiles: ["restore"]
+    build:
+      context: ./deploy/backup
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment: *backup-env
+    entrypoint: ["restore.sh"]
+    volumes:
+      - media_storage:/data/media
+      - app_secrets:/data/secrets
+      - ./backups:/backups
+
+volumes:
+  caddy_data:
+  caddy_config:

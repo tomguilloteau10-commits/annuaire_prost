@@ -757,7 +757,11 @@
     "auditLogBody": "{count, plural, one {# azione registrata.} other {# azioni registrate.}}",
     "geoBody": "{count, plural, one {# paese autorizzato.} other {# paesi autorizzati.}}",
     "queuesTitle": "Da convalidare",
-    "settingsTitle": "Impostazioni"
+    "settingsTitle": "Impostazioni",
+    "backupOk": "Backup automatici: ultimo riuscito il {date}.",
+    "backupStale": "Attenzione: nessun backup riuscito dal {date}. Vedi la guida alla messa online («Backup»).",
+    "backupNone": "Attenzione: ancora nessun backup riuscito. Il primo avviene pochi minuti dopo l'avvio; se il messaggio resta, vedi la guida alla messa online.",
+    "emailNotConfigured": "Attenzione: nessun server e-mail configurato. Le e-mail «password dimenticata» non vengono inviate (vedi SMTP nel file .env del server)."
   },
   "profileDone": {
     "sent": {

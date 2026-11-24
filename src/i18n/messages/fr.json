@@ -756,7 +756,11 @@
     "auditLogBody": "{count, plural, one {# action enregistrée.} other {# actions enregistrées.}}",
     "geoBody": "{count, plural, one {# pays autorisé.} other {# pays autorisés.}}",
     "queuesTitle": "À valider",
-    "settingsTitle": "Réglages"
+    "settingsTitle": "Réglages",
+    "backupOk": "Sauvegardes automatiques : dernière réussie le {date}.",
+    "backupStale": "Attention : aucune sauvegarde réussie depuis le {date}. Consultez le guide de mise en ligne (« Sauvegardes »).",
+    "backupNone": "Attention : aucune sauvegarde réussie pour l'instant. La première a lieu dans les minutes qui suivent le démarrage ; si ce message reste affiché, consultez le guide de mise en ligne.",
+    "emailNotConfigured": "Attention : aucun serveur d'e-mail n'est configuré. Les e-mails « mot de passe oublié » ne partent pas (voir SMTP dans le fichier .env du serveur)."
   },
   "profileDone": {
     "sent": {

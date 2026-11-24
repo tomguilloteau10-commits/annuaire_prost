@@ -1,0 +1,23 @@
+# Reverse proxy HTTPS de VelvetGirl (production).
+#
+# Caddy obtient et renouvelle tout seul le certificat HTTPS (Let's Encrypt)
+# pour le domaine indiqué dans .env (DOMAIN). Aucun journal des visites
+# n'est écrit (pas de directive « log ») : les adresses IP des visiteurs ne
+# sont pas conservées.
+{
+	email {$ACME_EMAIL}
+}
+
+{$DOMAIN} {
+	encode zstd gzip
+	# Photos et pièces d'identité : 8 Mo maximum côté application, marge ici.
+	request_body {
+		max_size 12MB
+	}
+	reverse_proxy app:3000
+}
+
+# www.domaine → domaine
+www.{$DOMAIN} {
+	redir https://{$DOMAIN}{uri} permanent
+}
