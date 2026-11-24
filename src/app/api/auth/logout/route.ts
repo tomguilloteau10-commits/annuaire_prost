@@ -4,7 +4,7 @@ import { destroyCurrentSession } from "@/modules/auth/session";
 
 export async function POST(request: Request) {
   try {
-    assertValidCsrf(request);
+    await assertValidCsrf(request);
   } catch (error) {
     if (error instanceof CsrfError) {
       return NextResponse.json({ error: "csrf_invalid" }, { status: 403 });

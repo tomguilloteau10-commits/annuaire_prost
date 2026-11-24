@@ -11,7 +11,7 @@ import { checkCsrf } from "@/lib/route-helpers";
  * pas l'existence d'une ressource qui n'est pas la sienne.
  */
 async function requireOwnPhoto(request: Request, mediaId: string) {
-  const csrfError = checkCsrf(request);
+  const csrfError = await checkCsrf(request);
   if (csrfError) return { error: csrfError };
 
   const user = await getCurrentUser();

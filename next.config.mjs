@@ -12,12 +12,10 @@ const nextConfig = {
   images: {
     remotePatterns: [],
   },
-  // @node-rs/argon2 embarque un binaire natif (.node) : il doit être
-  // chargé via require() côté serveur, pas bundlé par webpack.
   // Anciennes adresses de l'espace prestataire (avant /dashboard) : gardées
   // en redirection pour les favoris et liens déjà envoyés.
   // En-têtes de sécurité des réponses d'API (les pages les reçoivent du
-  // middleware, qui ne s'applique pas à /api). Aucune réponse d'API ne doit
+  // proxy, qui ne s'applique pas à /api). Aucune réponse d'API ne doit
   // être interprétée autrement que son type déclaré, ni affichée dans un
   // cadre, ni transmettre son adresse à un site tiers.
   async headers() {
@@ -38,18 +36,20 @@ const nextConfig = {
       { source: "/:locale/provider/dashboard", destination: "/:locale/dashboard", permanent: false },
       { source: "/:locale/provider/profile/edit", destination: "/:locale/dashboard/profile", permanent: false },
       { source: "/:locale/provider/onboarding", destination: "/:locale/dashboard/onboarding", permanent: false },
-      { source: "/:locale/provider/verification", destination: "/:locale/dashboard/verification", permanent: false },
+      {
+        source: "/:locale/provider/verification",
+        destination: "/:locale/dashboard/verification",
+        permanent: false,
+      },
     ];
   },
+  serverExternalPackages: ["@node-rs/argon2", "sharp"],
   experimental: {
-    serverComponentsExternalPackages: ["@node-rs/argon2"],
     // Pas de cache côté navigateur pour les pages dynamiques : après une
     // décision de l'admin (photo validée, identité vérifiée), la page
     // suivante montre toujours l'état réel, jamais une copie périmée
     // (bug des photos restées "en attente").
     staleTimes: { dynamic: 0 },
-    // src/instrumentation.ts : purge périodique des données expirées.
-    instrumentationHook: true,
   },
 };
 

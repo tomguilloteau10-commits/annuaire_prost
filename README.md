@@ -14,7 +14,7 @@ et où brancher un vrai prestataire de vérification, du stockage cloud, etc.
 
 ## Stack
 
-Next.js 14 (App Router) + TypeScript + Tailwind · PostgreSQL/PostGIS +
+Next.js 16 (App Router, React 19) + TypeScript + Tailwind · PostgreSQL/PostGIS +
 Prisma · next-intl (FR/EN remplis, DE/IT en structure) · Docker Compose.
 
 ## Tester sans rien installer (GitHub Codespaces)
@@ -162,9 +162,9 @@ d'attention :
   prestataire externe ; elle n'est **pas branchée** — en bêta, la majorité
   est validée uniquement à la main par l'admin.
 - `GEO_COUNTRY_HEADER` (optionnel, défaut `x-geo-country`) : nom de l'en-tête
-  HTTP que le middleware lit pour la géo-restriction. En self-hosting, ce
+  HTTP que le proxy lit pour la géo-restriction. En self-hosting, ce
   header doit être posé par un reverse proxy équipé d'une base GeoIP (voir
-  `src/middleware.ts` pour le détail — c'est un stub honnête, pas une
+  `src/proxy.ts` pour le détail — c'est un stub honnête, pas une
   géolocalisation réelle en bêta).
 
 ## Migrations & PostGIS
@@ -249,7 +249,7 @@ champs sensibles (téléphone, email, adresse, date de naissance, documents).
 
 - **Ossature** (fait) : configuration, Docker Compose, schéma de base et
   migrations, authentification (sessions, RBAC, CSRF, rate limiting de
-  base), middleware (en-têtes de sécurité, géo-restriction stub),
+  base), proxy (en-têtes de sécurité, géo-restriction stub),
   squelette i18n.
 - **Abstractions** (fait) : `VerificationProvider` (+ `MockVerificationProvider`),
   `MediaStorage` (+ stockage local avec URLs signées), `ModerationQueue`

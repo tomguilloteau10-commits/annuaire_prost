@@ -62,16 +62,18 @@ export function PhotoManager({ initialPhotos, maxPhotos, maxBytes, onPhotosChang
   // Quand la page est rechargée depuis le serveur (après une décision de
   // l'admin), on reprend le statut à jour de chaque photo : sans cela, une
   // photo validée restait affichée "en attente" jusqu'au rechargement complet.
+  // Ajusté pendant le rendu plutôt que dans un effet (pas de second rendu).
   const serverSignature = initialPhotos.map((p) => `${p.id}:${p.status}`).join("|");
-  useEffect(() => {
+  const [syncedSignature, setSyncedSignature] = useState(serverSignature);
+  if (syncedSignature !== serverSignature) {
+    setSyncedSignature(serverSignature);
     setPhotos((previous) =>
       previous.map((photo) => {
         const fresh = initialPhotos.find((p) => p.id === photo.id);
         return fresh ? { ...photo, status: fresh.status, rejectionReason: fresh.rejectionReason } : photo;
       }),
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [serverSignature]);
+  }
 
   const usableCount = photos.filter((p) => p.status !== "REJECTED").length;
   useEffect(() => {
@@ -101,9 +103,7 @@ export function PhotoManager({ initialPhotos, maxPhotos, maxBytes, onPhotosChang
         return false;
       }
       if (file.size > maxBytes) {
-        messages.push(
-          t("photoErrors.tooLarge", { name: file.name, max: megabytes(maxBytes) }),
-        );
+        messages.push(t("photoErrors.tooLarge", { name: file.name, max: megabytes(maxBytes) }));
         return false;
       }
       return true;

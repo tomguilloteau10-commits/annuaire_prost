@@ -11,7 +11,7 @@ import {
 import { checkCsrf } from "@/lib/route-helpers";
 
 export async function POST(request: Request) {
-  const csrfError = checkCsrf(request);
+  const csrfError = await checkCsrf(request);
   if (csrfError) return csrfError;
 
   const user = await getCurrentUser();

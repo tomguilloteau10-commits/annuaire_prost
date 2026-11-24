@@ -14,8 +14,8 @@ const intlMiddleware = createIntlMiddleware(routing);
 // ── Géo-restriction (bêta) ──────────────────────────────────────────────
 //
 // La liste des pays autorisés vit en base (model AllowedCountry, éditable
-// depuis l'admin) — pas en dur dans le code. Le middleware tourne en
-// runtime Edge et ne peut donc pas interroger Postgres/Prisma directement ;
+// depuis l'admin) — pas en dur dans le code. Le proxy (src/proxy.ts)
+// n'importe volontairement pas Prisma : il passe avant chaque page ;
 // il rafraîchit périodiquement un cache en mémoire depuis une route Node.js
 // interne (/api/internal/allowed-countries).
 //
@@ -55,7 +55,7 @@ async function getAllowedCountries(origin: string): Promise<Set<string> | null> 
   }
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const countryCode = request.headers.get(GEO_HEADER_NAME);
 
   if (countryCode) {
@@ -85,6 +85,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   // Exclut les assets statiques, l'API (y compris la route interne
-  // utilisée par ce middleware) et les fichiers avec extension.
+  // utilisée par ce proxy) et les fichiers avec extension.
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)"],
 };

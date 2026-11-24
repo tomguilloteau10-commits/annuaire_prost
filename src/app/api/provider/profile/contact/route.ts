@@ -46,7 +46,7 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
-  const csrfError = checkCsrf(request);
+  const csrfError = await checkCsrf(request);
   if (csrfError) return csrfError;
 
   const user = await getCurrentUser();

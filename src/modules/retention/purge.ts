@@ -54,7 +54,8 @@ async function purgeRejectedMedia(now: Date) {
   // est réservé au serveur Next.js et ce code tourne aussi en script.)
   const directory = process.env.MEDIA_LOCAL_PATH ?? "./storage/media";
   for (const { storageKey } of expired) {
-    await rm(path.join(directory, path.basename(storageKey)), { force: true });
+    // Chemin connu seulement à l'exécution (volume média) : hors traçage du build.
+    await rm(path.join(/*turbopackIgnore: true*/ directory, path.basename(storageKey)), { force: true });
   }
   return result.count;
 }

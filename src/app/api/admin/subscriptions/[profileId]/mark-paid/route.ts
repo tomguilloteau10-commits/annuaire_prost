@@ -5,7 +5,7 @@ import { markSubscriptionPaid, SubscriptionNotFoundError } from "@/modules/subsc
 // « Marquer comme payé » : paiement reçu HORS plateforme (facture, TWINT,
 // virement). Aucun montant ni moyen de paiement n'est transmis ni stocké. Rôle ADMIN uniquement.
 export async function POST(request: Request, { params }: { params: Promise<{ profileId: string }> }) {
-  const csrfError = checkCsrf(request);
+  const csrfError = await checkCsrf(request);
   if (csrfError) return csrfError;
 
   const guard = await requireRole(["ADMIN"]);

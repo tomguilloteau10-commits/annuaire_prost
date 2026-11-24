@@ -14,7 +14,7 @@ const decisionSchema = z
   .transform((d) => ({ ...d, reason: d.reason || "Validé par l'admin" }));
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const csrfError = checkCsrf(request);
+  const csrfError = await checkCsrf(request);
   if (csrfError) return csrfError;
 
   const guard = await requireRole(["ADMIN"]);

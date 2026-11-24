@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export interface RangeSliderProps {
   id: string;
@@ -25,10 +25,16 @@ export function RangeSlider({ id, label, min, max, step = 1, value, format, onCo
   const [low, setLow] = useState(value?.min ?? min);
   const [high, setHigh] = useState(value?.max ?? max);
 
-  useEffect(() => {
+  // Filtre changé ailleurs (ex. « Tout effacer ») : les poignées reprennent
+  // la valeur appliquée. Ajusté pendant le rendu plutôt que dans un effet
+  // (pas de second rendu inutile).
+  const appliedKey = `${value?.min ?? min}:${value?.max ?? max}`;
+  const [syncedKey, setSyncedKey] = useState(appliedKey);
+  if (syncedKey !== appliedKey) {
+    setSyncedKey(appliedKey);
     setLow(value?.min ?? min);
     setHigh(value?.max ?? max);
-  }, [value?.min, value?.max, min, max]);
+  }
 
   function commit() {
     const range = { min: low > min ? low : undefined, max: high < max ? high : undefined };

@@ -6,13 +6,13 @@ import { assertRole, ForbiddenError, type Role } from "@/modules/auth/rbac";
 
 /**
  * Factorise le bloc répété dans chaque route mutante :
- * `try { assertValidCsrf(request) } catch { ... }`. Renvoie une réponse
+ * `try { await assertValidCsrf(request) } catch { ... }`. Renvoie une réponse
  * d'erreur à retourner immédiatement si le jeton est invalide, `null`
  * sinon.
  */
-export function checkCsrf(request: Request): NextResponse | null {
+export async function checkCsrf(request: Request): Promise<NextResponse | null> {
   try {
-    assertValidCsrf(request);
+    await assertValidCsrf(request);
     return null;
   } catch (error) {
     if (error instanceof CsrfError) {

@@ -35,3 +35,6 @@ prisma/dev.db
 
 # version installée localement (mettre-a-jour.sh)
 .version-installee
+
+# worker de la carte, copié depuis node_modules au build (scripts/copy-map-worker.mjs)
+public/vendor/

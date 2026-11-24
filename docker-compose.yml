@@ -35,6 +35,10 @@ services:
       # service Postgres (pas "localhost" comme dans .env.example, pensé
       # pour un usage hors-Docker).
       DATABASE_URL: "postgresql://annuaire:annuaire@db:5432/annuaire_prost?schema=public"
+      # Le conteneur sert toujours la version de production du site, quel
+      # que soit NODE_ENV dans .env (souvent "development", copié de
+      # .env.example) : cookies sécurisés, en-têtes HTTPS, pas d'avertissement.
+      NODE_ENV: "production"
     # Site accessible sur http://localhost:3000 depuis cet ordinateur
     # uniquement. Pour une mise en ligne, passer par un reverse proxy HTTPS
     # (voir README, « Mise en ligne »).

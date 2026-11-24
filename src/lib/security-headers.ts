@@ -1,11 +1,11 @@
-// En-têtes de sécurité appliqués à chaque réponse par le middleware.
+// En-têtes de sécurité appliqués à chaque réponse par le proxy (src/proxy.ts).
 //
 // script-src utilise un nonce par requête (voir buildContentSecurityPolicy)
 // plutôt que 'unsafe-inline' : Next.js App Router injecte lui-même des
 // <script> inline pour le streaming SSR et l'hydratation, qu'une CSP
 // `script-src 'self'` nue bloquerait entièrement (constaté en testant la
 // page profil dans un vrai navigateur : hydratation cassée, page blanche
-// après navigation client). Le nonce est généré dans le middleware et
+// après navigation client). Le nonce est généré dans le proxy et
 // propagé à la fois sur la réponse (pour que le navigateur l'applique) et
 // sur les en-têtes de la requête transmise au renderer (pour que Next.js
 // l'utilise automatiquement sur ses propres scripts injectés) — voir

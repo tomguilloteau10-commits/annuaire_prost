@@ -33,12 +33,13 @@ function isValidToken(token: string): boolean {
 }
 
 /** À appeler depuis une Server Action / page pour garantir la présence du cookie CSRF. */
-export function ensureCsrfCookie(): string {
-  const existing = cookies().get(CSRF_COOKIE_NAME)?.value;
+export async function ensureCsrfCookie(): Promise<string> {
+  const cookieStore = await cookies();
+  const existing = cookieStore.get(CSRF_COOKIE_NAME)?.value;
   if (existing && isValidToken(existing)) return existing;
 
   const token = buildToken();
-  cookies().set(CSRF_COOKIE_NAME, token, {
+  cookieStore.set(CSRF_COOKIE_NAME, token, {
     httpOnly: false, // doit être lisible par le client pour être renvoyé en en-tête
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -48,8 +49,8 @@ export function ensureCsrfCookie(): string {
 }
 
 /** À appeler dans chaque route handler qui mute de l'état (POST/PUT/PATCH/DELETE). */
-export function assertValidCsrf(request: Request): void {
-  const cookieToken = cookies().get(CSRF_COOKIE_NAME)?.value;
+export async function assertValidCsrf(request: Request): Promise<void> {
+  const cookieToken = (await cookies()).get(CSRF_COOKIE_NAME)?.value;
   const headerToken = request.headers.get(CSRF_HEADER_NAME);
 
   if (!cookieToken || !headerToken || cookieToken !== headerToken || !isValidToken(cookieToken)) {

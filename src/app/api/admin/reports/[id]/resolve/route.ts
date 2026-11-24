@@ -8,7 +8,7 @@ const resolveSchema = z.object({
 });
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const csrfError = checkCsrf(request);
+  const csrfError = await checkCsrf(request);
   if (csrfError) return csrfError;
 
   const guard = await requireRole(["ADMIN"]);

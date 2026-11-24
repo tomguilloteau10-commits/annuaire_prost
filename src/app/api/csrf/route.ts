@@ -5,6 +5,6 @@ import { ensureCsrfCookie } from "@/lib/csrf";
 // des pages login/register) pour obtenir un jeton CSRF valide, à renvoyer
 // ensuite dans l'en-tête x-csrf-token.
 export async function GET() {
-  const token = ensureCsrfCookie();
+  const token = await ensureCsrfCookie();
   return NextResponse.json({ csrfToken: token });
 }

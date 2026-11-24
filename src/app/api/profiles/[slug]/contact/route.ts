@@ -13,7 +13,7 @@ import { hashIp, extractClientIp } from "@/lib/ip-hash";
 const NO_STORE = { "Cache-Control": "no-store" };
 
 export async function POST(request: Request, { params }: { params: Promise<{ slug: string }> }) {
-  const csrfError = checkCsrf(request);
+  const csrfError = await checkCsrf(request);
   if (csrfError) return csrfError;
 
   // Par IP (20 / heure) ET au total (300 / heure, indépendant de l'IP qui

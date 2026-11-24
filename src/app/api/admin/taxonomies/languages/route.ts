@@ -15,7 +15,7 @@ export async function GET() {
 const createSchema = z.object({ code: z.string().min(2).max(5), label: labelSchema });
 
 export async function POST(request: Request) {
-  const csrfError = checkCsrf(request);
+  const csrfError = await checkCsrf(request);
   if (csrfError) return csrfError;
 
   const guard = await requireRole(["ADMIN"]);

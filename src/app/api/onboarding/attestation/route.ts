@@ -19,7 +19,7 @@ import { readCheckbox, readUpload, rejectOversizedUpload } from "@/lib/form-uplo
  * validé automatiquement ici (ENGINEERING_RULES.md §1-§2).
  */
 export async function POST(request: Request) {
-  const csrfError = checkCsrf(request);
+  const csrfError = await checkCsrf(request);
   if (csrfError) return csrfError;
 
   const guard = await requireRole(["PROVIDER"]);

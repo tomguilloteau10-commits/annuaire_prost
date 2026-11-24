@@ -54,7 +54,7 @@ quel.
 | Stockage média local (dossier / volume Docker)    | S3 / object storage compatible S3                     | `MediaStorage` (`modules/media/types.ts`) |
 | Plan unique "Founder" gratuit                     | Abonnement B2B payant (jamais une commission — voir ENGINEERING_RULES.md §3-4) | `Plan` + `features: Json` (déjà en base) |
 | Rate limiting en mémoire (`lib/rate-limit.ts`)    | Backend partagé (Redis `INCR`/`EXPIRE`)                | Signature `checkRateLimit()` inchangée |
-| Géo-restriction basée sur un en-tête HTTP         | Vraie résolution GeoIP (reverse proxy MaxMind, ou en-tête CDN natif) | `GEO_COUNTRY_HEADER` (voir `src/middleware.ts`) |
+| Géo-restriction basée sur un en-tête HTTP         | Vraie résolution GeoIP (reverse proxy MaxMind, ou en-tête CDN natif) | `GEO_COUNTRY_HEADER` (voir `src/proxy.ts`) |
 | Pas de messagerie/chat, avis, réservation, IA      | Fonctionnalités hors périmètre bêta, volontairement absentes | — |
 
 ## Taxonomies i18n : `Json` maintenant, table de traductions plus tard
@@ -81,9 +81,8 @@ pas un oubli :
 
 ## Géo-restriction : pourquoi un stub honnête en bêta
 
-`src/middleware.ts` tourne en runtime Edge (contrainte Next.js pour le
-middleware) et ne peut donc pas interroger Postgres/Prisma directement. Il
-lit un code pays dans un en-tête HTTP configurable et le compare à un cache
+`src/proxy.ts` passe avant chaque page et n'importe volontairement pas
+Prisma. Il lit un code pays dans un en-tête HTTP configurable et le compare à un cache
 en mémoire, rafraîchi depuis une route Node.js interne
 (`/api/internal/allowed-countries`) qui, elle, interroge la table
 `AllowedCountry`. Sans reverse proxy posant cet en-tête à partir d'une vraie

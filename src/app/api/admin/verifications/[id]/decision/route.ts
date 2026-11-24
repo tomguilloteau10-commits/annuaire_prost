@@ -22,7 +22,7 @@ const decisionSchema = z.object({
 
 /** Décision de l'admin sur une pièce d'identité : les pièces sont supprimées dans tous les cas. */
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const csrfError = checkCsrf(request);
+  const csrfError = await checkCsrf(request);
   if (csrfError) return csrfError;
 
   const guard = await requireRole(["ADMIN"]);

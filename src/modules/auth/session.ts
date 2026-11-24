@@ -47,7 +47,7 @@ export async function createSession({ userId, role, request }: CreateSessionInpu
     },
   });
 
-  cookies().set(SESSION_COOKIE_NAME, token, {
+  (await cookies()).set(SESSION_COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -57,7 +57,7 @@ export async function createSession({ userId, role, request }: CreateSessionInpu
 }
 
 export async function getCurrentUser(): Promise<User | null> {
-  const token = cookies().get(SESSION_COOKIE_NAME)?.value;
+  const token = (await cookies()).get(SESSION_COOKIE_NAME)?.value;
   if (!token) return null;
 
   const tokenHash = hashToken(token);
@@ -76,10 +76,10 @@ export async function getCurrentUser(): Promise<User | null> {
 }
 
 export async function destroyCurrentSession(): Promise<void> {
-  const token = cookies().get(SESSION_COOKIE_NAME)?.value;
+  const token = (await cookies()).get(SESSION_COOKIE_NAME)?.value;
   if (token) {
     const tokenHash = hashToken(token);
     await prisma.session.deleteMany({ where: { tokenHash } });
   }
-  cookies().delete(SESSION_COOKIE_NAME);
+  (await cookies()).delete(SESSION_COOKIE_NAME);
 }

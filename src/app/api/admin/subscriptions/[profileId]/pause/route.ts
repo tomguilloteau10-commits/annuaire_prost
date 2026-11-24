@@ -5,7 +5,7 @@ import { pauseSubscription, SubscriptionNotFoundError } from "@/modules/subscrip
 // « Mettre en pause » : le profil quitte l'annuaire public ; rien n'est supprimé,
 // la prestataire peut toujours le modifier. Rôle ADMIN uniquement.
 export async function POST(request: Request, { params }: { params: Promise<{ profileId: string }> }) {
-  const csrfError = checkCsrf(request);
+  const csrfError = await checkCsrf(request);
   if (csrfError) return csrfError;
 
   const guard = await requireRole(["ADMIN"]);

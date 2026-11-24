@@ -4,7 +4,9 @@
   "private": true,
   "description": "Annuaire suisse d'annonceuses independantes - beta privee",
   "scripts": {
+    "predev": "node scripts/copy-map-worker.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/copy-map-worker.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -25,29 +27,29 @@
   "dependencies": {
     "@node-rs/argon2": "^2.0.2",
     "@prisma/client": "^5.22.0",
-    "maplibre-gl": "^4.7.1",
-    "next": "^14.2.18",
-    "next-intl": "^3.26.3",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "maplibre-gl": "^6.19.0",
+    "next": "^16.4.6",
+    "next-intl": "^4.16.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
     "server-only": "^0.0.1",
-    "sharp": "^0.34.5",
-    "zod": "^3.23.8"
+    "sharp": "^0.35.5",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@types/node": "^20.17.9",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
+    "@types/node": "^22.20.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "autoprefixer": "^10.4.20",
-    "eslint": "^8.57.1",
-    "eslint-config-next": "^14.2.18",
-    "eslint-plugin-local-rules": "^3.0.2",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.4.6",
     "postcss": "^8.4.49",
     "prisma": "^5.22.0",
     "tailwindcss": "^3.4.15",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
-    "vitest": "^2.1.8"
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1"
   },
   "prisma": {
     "seed": "tsx --env-file-if-exists=.env prisma/seed.ts"

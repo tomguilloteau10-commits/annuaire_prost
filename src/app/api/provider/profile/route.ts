@@ -115,7 +115,7 @@ const upsertSchema = z.object({
 });
 
 export async function PUT(request: Request) {
-  const csrfError = checkCsrf(request);
+  const csrfError = await checkCsrf(request);
   if (csrfError) return csrfError;
 
   const guard = await requireProvider();

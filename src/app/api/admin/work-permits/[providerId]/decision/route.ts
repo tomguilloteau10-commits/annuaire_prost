@@ -10,7 +10,7 @@ const decisionSchema = z.object({
 
 /** Décision de l'admin sur le permis de travail : le document est supprimé dans tous les cas. */
 export async function POST(request: Request, { params }: { params: Promise<{ providerId: string }> }) {
-  const csrfError = checkCsrf(request);
+  const csrfError = await checkCsrf(request);
   if (csrfError) return csrfError;
 
   const guard = await requireRole(["ADMIN"]);

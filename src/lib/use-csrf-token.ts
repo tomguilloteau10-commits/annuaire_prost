@@ -43,10 +43,8 @@ export function useCsrfToken(): string | null {
   const [token, setToken] = useState<string | null>(cachedToken);
 
   useEffect(() => {
-    if (cachedToken) {
-      setToken(cachedToken);
-      return;
-    }
+    // Jeton déjà connu : il a servi de valeur initiale, rien à faire.
+    if (cachedToken) return;
     let cancelled = false;
     listeners.add(setToken);
     fetchCsrfToken()

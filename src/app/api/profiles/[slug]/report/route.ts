@@ -14,7 +14,7 @@ const reportSchema = z.object({
 // stocké sur l'auteur. Le hash d'IP ne sert qu'à la clé du rate limiting
 // en mémoire (anti-spam), jamais persisté.
 export async function POST(request: Request, { params }: { params: Promise<{ slug: string }> }) {
-  const csrfError = checkCsrf(request);
+  const csrfError = await checkCsrf(request);
   if (csrfError) return csrfError;
 
   const clientIp = extractClientIp(request);

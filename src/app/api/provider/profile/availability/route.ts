@@ -8,7 +8,7 @@ const availabilitySchema = z.object({ available: z.boolean() });
 
 // Interrupteur "Disponible maintenant" du tableau de bord.
 export async function PUT(request: Request) {
-  const csrfError = checkCsrf(request);
+  const csrfError = await checkCsrf(request);
   if (csrfError) return csrfError;
 
   const guard = await requireRole(["PROVIDER"]);

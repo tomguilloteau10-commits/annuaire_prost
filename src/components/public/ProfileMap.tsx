@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import maplibregl, { type GeoJSONSource } from "maplibre-gl";
+import * as maplibregl from "maplibre-gl";
+import type { GeoJSONSource } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 // Style vectoriel public, sans clé API (OpenFreeMap — un seul domaine sert
@@ -68,6 +69,8 @@ export function ProfileMap({ locale }: { locale: string }) {
 
       if (cancelled || !containerRef.current) return;
 
+      // Worker de la carte servi par le site (public/vendor, copié au build).
+      maplibregl.setWorkerUrl(`/vendor/maplibre-gl-worker.mjs?v=${maplibregl.getVersion()}`);
       map = new maplibregl.Map({
         container: containerRef.current,
         style: MAP_STYLE_URL,
@@ -240,7 +243,10 @@ export function ProfileMap({ locale }: { locale: string }) {
           {error}
         </div>
       ) : (
-        <div ref={containerRef} className="h-[420px] w-full [filter:invert(1)_hue-rotate(185deg)_brightness(0.95)_contrast(0.9)]" />
+        <div
+          ref={containerRef}
+          className="h-[420px] w-full [filter:invert(1)_hue-rotate(185deg)_brightness(0.95)_contrast(0.9)]"
+        />
       )}
     </div>
   );

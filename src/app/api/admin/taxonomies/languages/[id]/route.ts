@@ -7,7 +7,7 @@ import { requireRole, checkCsrf } from "@/lib/route-helpers";
 const updateSchema = z.object({ label: labelSchema.optional(), isActive: z.boolean().optional() });
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const csrfError = checkCsrf(request);
+  const csrfError = await checkCsrf(request);
   if (csrfError) return csrfError;
 
   const guard = await requireRole(["ADMIN"]);
