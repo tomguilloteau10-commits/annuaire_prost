@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { checkAgeConfirmed } from "@/lib/route-helpers";
 import { prisma } from "@/lib/prisma";
 import { getEnv } from "@/lib/env";
 import { verifyMediaToken, readLocalMediaFile } from "@/modules/media/local-storage";
@@ -14,6 +15,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
+  const ageError = await checkAgeConfirmed();
+  if (ageError) return ageError;
   const { MEDIA_STORAGE_DRIVER } = getEnv();
   if (MEDIA_STORAGE_DRIVER !== "local") {
     return NextResponse.json({ error: "not_found" }, { status: 404 });

@@ -6,6 +6,7 @@ import { getPublicPhotoUrl } from "@/modules/media/media.service";
 import { getLocalizedLabel } from "@/modules/taxonomies/types";
 import { HEIGHT_TOP_CM, RATE_FIELDS, WEEK_DAYS, groupWeekDays } from "@/modules/profiles/attributes";
 import { DEMO_SALONS } from "@/modules/showcase/demo-salons";
+import { FEATURES } from "@/lib/features";
 import { ProfileGallery } from "@/components/public/ProfileGallery";
 import { ContactBlock } from "@/components/public/ContactBlock";
 import { Badge, type BadgeVariant } from "@/components/ui/Badge";
@@ -113,7 +114,8 @@ export default async function PublicProfilePage({
   const payments = profile.paymentMethods.map((m) => ta(`payment.${m}`));
   // Canaux seulement (WhatsApp, e-mail…) : la coordonnée n'arrive qu'au clic.
   const contactChannels = (await getPublicContactChannels(profile.id)).map((m) => ta(`contactMethod.${m}`));
-  const salon = profile.salonSlug ? DEMO_SALONS.find((s) => s.slug === profile.salonSlug) : undefined;
+  const salon =
+    FEATURES.salons && profile.salonSlug ? DEMO_SALONS.find((s) => s.slug === profile.salonSlug) : undefined;
   const hasServices =
     meeting.length > 0 ||
     clientele.length > 0 ||

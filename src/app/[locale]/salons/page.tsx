@@ -3,11 +3,14 @@ import { DEMO_SALONS } from "@/modules/showcase/demo-salons";
 import { SalonCard } from "@/components/public/SalonCard";
 import { listPublishedProfilesBySalon } from "@/modules/profiles/profile.service";
 import { Reveal } from "@/components/ui/Reveal";
+import { notFound } from "next/navigation";
+import { FEATURES } from "@/lib/features";
 
 // Lit les profils rattachés : rendu à chaque requête, jamais figé au build.
 export const dynamic = "force-dynamic";
 
 export default async function SalonsPage({ params }: { params: Promise<{ locale: string }> }) {
+  if (!FEATURES.salons) notFound();
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("salons");

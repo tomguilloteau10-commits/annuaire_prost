@@ -113,7 +113,11 @@
     "explore": "Esplora",
     "providers": "Inserzioniste",
     "listYourProfile": "Pubblica il mio annuncio",
-    "noCommission": "Nessuna commissione, nessun intermediario: resti padrona della tua attività."
+    "noCommission": "Nessuna commissione, nessun intermediario: resti padrona della tua attività.",
+    "legal": "Informazioni legali",
+    "terms": "Condizioni d'uso",
+    "privacy": "Privacy",
+    "imprint": "Note legali"
   },
   "map": {
     "profileCount": "profili",
@@ -196,7 +200,10 @@
     "tooManyAttempts": "Troppi tentativi. Attendi 15 minuti prima di riprovare.",
     "networkError": "Connessione non riuscita. Controlla la rete e riprova.",
     "authEyebrowLogin": "Area inserzioniste",
-    "authEyebrowRegister": "Unisciti a VelvetGirl"
+    "authEyebrowRegister": "Unisciti a VelvetGirl",
+    "acceptTerms": "Accetto le <terms>condizioni d'uso</terms> e l'<privacy>informativa sulla privacy</privacy>.",
+    "consentSensitiveData": "Acconsento espressamente che VelvetGirl tratti le informazioni del mio annuncio, che possono rivelare dati degni di particolare protezione sulla mia sfera intima, al solo scopo di pubblicare e gestire il mio annuncio. Posso revocare questo consenso in qualsiasi momento.",
+    "consentRequired": "Seleziona entrambe le caselle per creare il tuo account."
   },
   "onboarding": {
     "title": "Maggiore età & autorizzazione",
@@ -809,5 +816,24 @@
     "actionError": "L'azione non è stata salvata. Riprova.",
     "networkError": "Connessione persa. Controlla la rete e riprova.",
     "noOnlinePayment": "Nessun pagamento transita dalla piattaforma: il pagamento (fattura, TWINT, bonifico) avviene direttamente, qui se ne registra solo lo stato."
+  },
+  "legal": {
+    "eyebrow": "Informazioni legali",
+    "titles": {
+      "terms": "Condizioni d'uso",
+      "privacy": "Informativa sulla privacy",
+      "imprint": "Note legali"
+    },
+    "version": "Versione del {date}",
+    "draftNotice": "Bozza preparata per la beta, in attesa di verifica legale. Gli elementi evidenziati sono ancora da completare.",
+    "frenchOnly": "Questo documento è per ora disponibile solo in francese. Fa fede la versione francese."
+  },
+  "ageGate": {
+    "title": "Riservato agli adulti",
+    "body": "VelvetGirl presenta annunci di servizi per adulti. Devi avere almeno 18 anni per entrare.",
+    "enter": "Ho 18 anni o più — Entra",
+    "leave": "Esci",
+    "notice": "Entrando confermi di avere almeno 18 anni e accetti le nostre <terms>condizioni d'uso</terms>. La tua scelta viene ricordata per 90 giorni su questo dispositivo (<privacy>privacy</privacy>).",
+    "languages": "Lingua"
   }
 }

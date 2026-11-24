@@ -27,6 +27,7 @@ import {
   sortWeekDays,
 } from "@/modules/profiles/attributes";
 import { DEMO_SALONS } from "@/modules/showcase/demo-salons";
+import { FEATURES } from "@/lib/features";
 
 async function requireProvider() {
   const user = await getCurrentUser();
@@ -85,7 +86,9 @@ const detailsSchema = z
     salonSlug: z
       .string()
       .refine((slug) => DEMO_SALONS.some((salon) => salon.slug === slug))
-      .nullable(),
+      .nullable()
+      // Rubrique Salons désactivée : aucun rattachement enregistré.
+      .transform((slug) => (FEATURES.salons ? slug : null)),
     cupSize: z.enum(CUP_SIZES).nullable().default(null),
     pubicHair: z.enum(PUBIC_HAIR).nullable().default(null),
     rateFrom: rate.default(null),

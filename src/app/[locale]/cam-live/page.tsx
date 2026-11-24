@@ -1,9 +1,12 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/Badge";
+import { notFound } from "next/navigation";
+import { FEATURES } from "@/lib/features";
 
 // Emplacement réservé : aucune brique de streaming n'est configurée ici.
 export default async function CamLivePage({ params }: { params: Promise<{ locale: string }> }) {
+  if (!FEATURES.camLive) notFound();
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("camLive");

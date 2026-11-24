@@ -113,7 +113,11 @@
     "explore": "Entdecken",
     "providers": "Anbieterinnen",
     "listYourProfile": "Mein Inserat aufgeben",
-    "noCommission": "Keine Provision, keine Vermittlung: Sie bestimmen selbst über Ihre Tätigkeit."
+    "noCommission": "Keine Provision, keine Vermittlung: Sie bestimmen selbst über Ihre Tätigkeit.",
+    "legal": "Rechtliches",
+    "terms": "Nutzungsbedingungen",
+    "privacy": "Datenschutz",
+    "imprint": "Impressum"
   },
   "map": {
     "profileCount": "Profile",
@@ -196,7 +200,10 @@
     "tooManyAttempts": "Zu viele Versuche. Bitte warten Sie 15 Minuten.",
     "networkError": "Keine Verbindung. Prüfen Sie Ihr Netz und versuchen Sie es erneut.",
     "authEyebrowLogin": "Bereich für Anbieterinnen",
-    "authEyebrowRegister": "VelvetGirl beitreten"
+    "authEyebrowRegister": "VelvetGirl beitreten",
+    "acceptTerms": "Ich akzeptiere die <terms>Nutzungsbedingungen</terms> und die <privacy>Datenschutzerklärung</privacy>.",
+    "consentSensitiveData": "Ich willige ausdrücklich ein, dass VelvetGirl die Angaben meines Inserats, die besonders schützenswerte Daten über meine Intimsphäre offenbaren können, ausschliesslich zur Veröffentlichung und Verwaltung meines Inserats bearbeitet. Ich kann diese Einwilligung jederzeit widerrufen.",
+    "consentRequired": "Bitte kreuzen Sie beide Kästchen an, um Ihr Konto zu erstellen."
   },
   "onboarding": {
     "title": "Volljährigkeit & Bewilligung",
@@ -809,5 +816,24 @@
     "actionError": "Die Aktion konnte nicht gespeichert werden. Bitte erneut versuchen.",
     "networkError": "Verbindung unterbrochen. Prüfen Sie Ihr Netz und versuchen Sie es erneut.",
     "noOnlinePayment": "Über die Plattform fliesst kein Geld: Die Zahlung (Rechnung, TWINT, Überweisung) erfolgt direkt, hier wird nur ihr Status erfasst."
+  },
+  "legal": {
+    "eyebrow": "Rechtliches",
+    "titles": {
+      "terms": "Nutzungsbedingungen",
+      "privacy": "Datenschutzerklärung",
+      "imprint": "Impressum"
+    },
+    "version": "Fassung vom {date}",
+    "draftNotice": "Entwurf für die Beta-Phase, rechtliche Prüfung ausstehend. Markierte Angaben sind noch zu ergänzen.",
+    "frenchOnly": "Dieses Dokument ist derzeit nur auf Französisch verfügbar. Massgebend ist die französische Fassung."
+  },
+  "ageGate": {
+    "title": "Nur für Erwachsene",
+    "body": "VelvetGirl zeigt Inserate für Dienstleistungen für Erwachsene. Sie müssen mindestens 18 Jahre alt sein.",
+    "enter": "Ich bin 18 oder älter – Eintreten",
+    "leave": "Verlassen",
+    "notice": "Mit dem Eintreten bestätigen Sie, mindestens 18 Jahre alt zu sein, und akzeptieren unsere <terms>Nutzungsbedingungen</terms>. Ihre Wahl wird 90 Tage auf diesem Gerät gespeichert (<privacy>Datenschutz</privacy>).",
+    "languages": "Sprache"
   }
 }

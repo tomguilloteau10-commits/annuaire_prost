@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { checkAgeConfirmed } from "@/lib/route-helpers";
 import { listPublishedProfiles } from "@/modules/profiles/profile.service";
 import { parseDirectoryFilters, toProfileFilters } from "@/lib/directory-filters";
 import { getPublicPhotoUrl } from "@/modules/media/media.service";
@@ -8,6 +9,8 @@ import { getPublicPhotoUrl } from "@/modules/media/media.service";
 // `select` de listPublishedProfiles, qui n'inclut structurellement pas
 // ProfileContact).
 export async function GET(request: Request) {
+  const ageError = await checkAgeConfirmed();
+  if (ageError) return ageError;
   const url = new URL(request.url);
   const filters = parseDirectoryFilters(Object.fromEntries(url.searchParams));
   const profiles = await listPublishedProfiles(toProfileFilters(filters));

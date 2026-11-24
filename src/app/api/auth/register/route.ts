@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
+import { registerSchema } from "@/modules/auth/register-schema";
+import { LEGAL_VERSION } from "@/content/legal/operator";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/modules/auth/password";
 import { createSession } from "@/modules/auth/session";
@@ -13,10 +14,6 @@ import { logger } from "@/lib/logger";
 // révélation de contact restent anonymes) ; les comptes MODERATOR/ADMIN ne
 // sont jamais créés par cette route publique, uniquement via le seed ou un
 // outillage interne.
-const registerSchema = z.object({
-  email: z.string().email().max(254),
-  password: z.string().min(12).max(256),
-});
 
 export async function POST(request: Request) {
   try {
@@ -42,7 +39,10 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const parsed = registerSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "invalid_input" }, { status: 400 });
+    const missingConsent = parsed.error.issues.some((issue) =>
+      ["acceptTerms", "consentSensitiveData"].includes(String(issue.path[0])),
+    );
+    return NextResponse.json({ error: missingConsent ? "consent_required" : "invalid_input" }, { status: 400 });
   }
   const email = parsed.data.email.trim().toLowerCase();
   const { password } = parsed.data;
@@ -57,7 +57,16 @@ export async function POST(request: Request) {
 
   const passwordHash = await hashPassword(password);
   const user = await prisma.user.create({
-    data: { email, passwordHash, role: "PROVIDER" },
+    data: {
+      email,
+      passwordHash,
+      role: "PROVIDER",
+      // Les deux cases sont obligatoires (registerSchema) : date et version
+      // des textes acceptés conservées comme preuve du consentement.
+      termsAcceptedAt: new Date(),
+      termsVersion: LEGAL_VERSION,
+      sensitiveDataConsentAt: new Date(),
+    },
   });
 
   await createSession({ userId: user.id, role: user.role, request });

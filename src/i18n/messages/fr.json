@@ -112,7 +112,11 @@
     "explore": "Explorer",
     "providers": "Annonceuses",
     "listYourProfile": "Publier mon annonce",
-    "noCommission": "Aucune commission, aucun intermédiaire : vous restez seule maîtresse de votre activité."
+    "noCommission": "Aucune commission, aucun intermédiaire : vous restez seule maîtresse de votre activité.",
+    "legal": "Informations légales",
+    "terms": "Conditions d'utilisation",
+    "privacy": "Confidentialité",
+    "imprint": "Mentions légales"
   },
   "map": {
     "profileCount": "profils",
@@ -195,7 +199,10 @@
     "tooManyAttempts": "Trop de tentatives. Patientez 15 minutes avant de réessayer.",
     "networkError": "Connexion impossible. Vérifiez votre réseau puis réessayez.",
     "authEyebrowLogin": "Espace annonceuses",
-    "authEyebrowRegister": "Rejoindre VelvetGirl"
+    "authEyebrowRegister": "Rejoindre VelvetGirl",
+    "acceptTerms": "J'accepte les <terms>conditions d'utilisation</terms> et la <privacy>politique de confidentialité</privacy>.",
+    "consentSensitiveData": "J'accepte expressément que VelvetGirl traite les informations de mon annonce, qui peuvent révéler des données sensibles sur ma vie intime, dans le seul but de publier et de gérer mon annonce. Je peux retirer ce consentement à tout moment.",
+    "consentRequired": "Merci de cocher les deux cases pour créer votre compte."
   },
   "onboarding": {
     "title": "Majorité & autorisation",
@@ -808,5 +815,24 @@
     "actionError": "L'action n'a pas pu être enregistrée. Réessayez.",
     "networkError": "Connexion perdue. Vérifiez votre réseau puis réessayez.",
     "noOnlinePayment": "Aucun paiement ne transite par la plateforme : le règlement (facture, TWINT, virement) se fait directement, seul son statut est enregistré ici."
+  },
+  "legal": {
+    "eyebrow": "Informations légales",
+    "titles": {
+      "terms": "Conditions d'utilisation",
+      "privacy": "Politique de confidentialité",
+      "imprint": "Mentions légales"
+    },
+    "version": "Version du {date}",
+    "draftNotice": "Projet de texte préparé pour la bêta, en attente de validation juridique. Les éléments surlignés restent à compléter.",
+    "frenchOnly": "Ce document est pour l'instant disponible en français uniquement. La version française fait foi."
+  },
+  "ageGate": {
+    "title": "Site réservé aux adultes",
+    "body": "VelvetGirl présente des annonces de services pour adultes. Vous devez avoir 18 ans révolus pour entrer.",
+    "enter": "J'ai 18 ans ou plus — Entrer",
+    "leave": "Quitter",
+    "notice": "En entrant, vous confirmez avoir 18 ans ou plus et acceptez nos <terms>conditions d'utilisation</terms>. Votre choix est mémorisé 90 jours sur cet appareil (<privacy>confidentialité</privacy>).",
+    "languages": "Langue"
   }
 }

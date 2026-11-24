@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { Link } from "@/i18n/navigation";
 import { ProfileWizard } from "@/components/provider/ProfileWizard";
 import { DEMO_SALONS } from "@/modules/showcase/demo-salons";
+import { FEATURES } from "@/lib/features";
 import { MAX_MEDIA_UPLOAD_BYTES } from "@/modules/media/types";
 import { DASHBOARD_PATH } from "@/lib/spaces";
 
@@ -90,7 +91,7 @@ export default async function ProfileEditPage({
         services={services}
         languages={languages}
         cities={cities}
-        salons={DEMO_SALONS.map(({ slug, name, city, canton }) => ({ slug, name, city, canton }))}
+        salons={(FEATURES.salons ? DEMO_SALONS : []).map(({ slug, name, city, canton }) => ({ slug, name, city, canton }))}
         initialValues={initialValues}
         initialContact={{
           phone: contact?.phone ?? "",

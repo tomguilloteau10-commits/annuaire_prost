@@ -7,7 +7,7 @@ import type { Config } from "tailwindcss";
 // réservés aux signaux de confiance (en ligne, vérifiée), l'ambre aux
 // alertes — jamais confondus avec l'or de l'accent. Palette tirée du logo.
 const config: Config = {
-  content: ["./src/app/**/*.{ts,tsx}", "./src/components/**/*.{ts,tsx}"],
+  content: ["./src/app/**/*.{ts,tsx}", "./src/components/**/*.{ts,tsx}", "./src/content/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {

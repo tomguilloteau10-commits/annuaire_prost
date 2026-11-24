@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { checkAgeConfirmed } from "@/lib/route-helpers";
 import { listPublishedProfileCityCounts } from "@/modules/profiles/profile.service";
 
 // Sans ceci, Next.js pré-rend cette route au moment du build (elle ne lit
@@ -10,6 +11,8 @@ export const dynamic = "force-dynamic";
 // profils publiés, jamais une liste de profils ni leur identité (voir le
 // commentaire sur listPublishedProfileCityCounts, ENGINEERING_RULES.md §8).
 export async function GET() {
+  const ageError = await checkAgeConfirmed();
+  if (ageError) return ageError;
   const cities = await listPublishedProfileCityCounts();
   return NextResponse.json({ cities });
 }

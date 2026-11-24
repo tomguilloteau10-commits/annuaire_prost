@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 import { applySecurityHeaders, buildContentSecurityPolicy } from "@/lib/security-headers";
+import {
+  AGE_COOKIE_NAME,
+  AGE_GATE_SEGMENT,
+  hasConfirmedAge,
+  isAgeGateExempt,
+  localeFromPathname,
+} from "@/lib/age-gate";
 
 function generateNonce(): string {
   const bytes = new Uint8Array(16);
@@ -79,6 +86,26 @@ export async function proxy(request: NextRequest) {
   const requestWithNonce = new NextRequest(request, { headers: requestHeaders });
 
   const response = intlMiddleware(requestWithNonce);
+
+  // Contrôle 18+ (voir lib/age-gate.ts) : tant que l'âge n'est pas confirmé,
+  // la page de confirmation est servie À LA PLACE de la page demandée (même
+  // adresse), donc aucun contenu de l'annuaire n'est envoyé avant. Les
+  // redirections de langue de next-intl ("/" → "/fr") passent d'abord.
+  const isRedirect = response.status >= 300 && response.status < 400;
+  if (
+    !isRedirect &&
+    !hasConfirmedAge(request.cookies.get(AGE_COOKIE_NAME)?.value) &&
+    !isAgeGateExempt(request.nextUrl.pathname)
+  ) {
+    const gateUrl = request.nextUrl.clone();
+    gateUrl.pathname = `/${localeFromPathname(gateUrl.pathname)}/${AGE_GATE_SEGMENT}`;
+    gateUrl.search = "";
+    const gate = NextResponse.rewrite(gateUrl, { request: { headers: requestHeaders } });
+    gate.headers.set("Cache-Control", "private, no-store");
+    applySecurityHeaders(gate.headers, csp);
+    return gate;
+  }
+
   applySecurityHeaders(response.headers, csp);
   return response;
 }

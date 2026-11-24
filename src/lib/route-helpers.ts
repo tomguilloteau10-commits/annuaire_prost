@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import type { User } from "@prisma/client";
+import { cookies } from "next/headers";
 import { assertValidCsrf, CsrfError } from "./csrf";
+import { AGE_COOKIE_NAME, hasConfirmedAge } from "./age-gate";
 import { getCurrentUser } from "@/modules/auth/session";
 import { assertRole, ForbiddenError, type Role } from "@/modules/auth/rbac";
 
@@ -43,4 +45,16 @@ export async function requireRole(roles: Role[]): Promise<RequireRoleResult> {
     throw error;
   }
   return { user };
+}
+
+/**
+ * Lectures publiques de l'annuaire (liste, fiche, carte, contact, photos) :
+ * refusées tant que le visiteur n'a pas confirmé avoir 18 ans ou plus,
+ * comme les pages (voir lib/age-gate.ts). Le navigateur envoie le cookie de
+ * confirmation automatiquement : invisible pour un visiteur normal.
+ */
+export async function checkAgeConfirmed(): Promise<NextResponse | null> {
+  const value = (await cookies()).get(AGE_COOKIE_NAME)?.value;
+  if (hasConfirmedAge(value)) return null;
+  return NextResponse.json({ error: "age_confirmation_required" }, { status: 403 });
 }

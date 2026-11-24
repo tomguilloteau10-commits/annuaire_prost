@@ -36,22 +36,29 @@ enum UserRole {
 }
 
 model User {
-  id               String    @id @default(cuid())
-  email            String    @unique
-  passwordHash     String
-  role             UserRole
-  twoFactorEnabled Boolean   @default(false)
-  twoFactorSecret  String? // chiffré au repos par la couche applicative, jamais loggué
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  lastLoginAt      DateTime?
+  id                     String    @id @default(cuid())
+  email                  String    @unique
+  passwordHash           String
+  role                   UserRole
+  twoFactorEnabled       Boolean   @default(false)
+  twoFactorSecret        String? // chiffré au repos par la couche applicative, jamais loggué
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+  lastLoginAt            DateTime?
+  // Acceptation des conditions d'utilisation et de la politique de
+  // confidentialité (version = LEGAL_VERSION, src/content/legal/operator.ts)
+  // et consentement exprès au traitement des données sensibles (nLPD) :
+  // date de l'acceptation, enregistrée à l'inscription.
+  termsAcceptedAt        DateTime?
+  termsVersion           String?
+  sensitiveDataConsentAt DateTime?
 
   sessions               Session[]
   providerProfile        ProviderProfile?
   verificationRecords    VerificationRecord[]
   verificationDocuments  VerificationDocument[]
   onboardingAttestation  OnboardingAttestation?
-  moderationActionsTaken ModerationAction[]      @relation("ModeratorActions")
+  moderationActionsTaken ModerationAction[]     @relation("ModeratorActions")
   auditLogs              AuditLog[]
 
   // ──────────────────────────────────────────────────────────────────────
@@ -100,22 +107,22 @@ enum VerificationStatus {
 }
 
 model VerificationRecord {
-  id                     String              @id @default(cuid())
+  id                     String             @id @default(cuid())
   providerId             String // userId de l'annonceuse
-  provider               User                @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  provider               User               @relation(fields: [providerId], references: [id], onDelete: Cascade)
   verificationProvider   String // "mock" | "sumsub" | "veriff" | "pxl_vision" | "swiss_eid"
   externalVerificationId String // identifiant opaque renvoyé par le prestataire externe
   isAdult                Boolean? // null tant que status est PENDING/IN_PROGRESS
-  documentType            String? // ex: "passport", "id_card" — type seulement, jamais le numéro
-  issuingCountry          String? // code ISO du pays émetteur
-  status                  VerificationStatus @default(PENDING)
-  verifiedAt              DateTime? // quand le résultat a été obtenu
-  expiresAt               DateTime? // validité métier du résultat (ex: revérifier après N mois)
-  retentionPurgeAt        DateTime? // rétention d'audit du *journal* — distinct de expiresAt
-  rejectionReason         String? // motif donné par l'admin en cas de refus, montré à la prestataire
-  reviewedById            String? // admin ayant décidé (trace complète dans AuditLog)
-  createdAt               DateTime           @default(now())
-  updatedAt               DateTime           @updatedAt
+  documentType           String? // ex: "passport", "id_card" — type seulement, jamais le numéro
+  issuingCountry         String? // code ISO du pays émetteur
+  status                 VerificationStatus @default(PENDING)
+  verifiedAt             DateTime? // quand le résultat a été obtenu
+  expiresAt              DateTime? // validité métier du résultat (ex: revérifier après N mois)
+  retentionPurgeAt       DateTime? // rétention d'audit du *journal* — distinct de expiresAt
+  rejectionReason        String? // motif donné par l'admin en cas de refus, montré à la prestataire
+  reviewedById           String? // admin ayant décidé (trace complète dans AuditLog)
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
 
   @@index([providerId, status])
   @@index([retentionPurgeAt])
@@ -157,25 +164,25 @@ model VerificationDocument {
 }
 
 model OnboardingAttestation {
-  id                                     String    @id @default(cuid())
-  providerId                             String    @unique
-  provider                               User      @relation(fields: [providerId], references: [id], onDelete: Cascade)
-  attestedAdult                          Boolean
-  attestedVoluntary                      Boolean
-  attestedAuthorizedToWorkInSwitzerland  Boolean
-  attestedCantonalDeclaration            Boolean
-  attestedAt                             DateTime
+  id                                    String           @id @default(cuid())
+  providerId                            String           @unique
+  provider                              User             @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  attestedAdult                         Boolean
+  attestedVoluntary                     Boolean
+  attestedAuthorizedToWorkInSwitzerland Boolean
+  attestedCantonalDeclaration           Boolean
+  attestedAt                            DateTime
   // Permis de travail / contrat : dépôt facultatif, contrôlé par l'admin.
   // Seul le résultat est conservé, le document est supprimé à la décision.
-  workPermitStatus                       WorkPermitStatus @default(NONE)
-  workPermitReviewedAt                   DateTime?
-  workPermitRejectionReason              String?
+  workPermitStatus                      WorkPermitStatus @default(NONE)
+  workPermitReviewedAt                  DateTime?
+  workPermitRejectionReason             String?
   // L'attestation elle-même (booléens + horodatage) est une preuve de
   // consentement conservée tant que le compte existe : elle n'est PAS
   // purgée automatiquement. Seul le hash d'IP associé a une durée de vie
   // courte (anti-abus), d'où le champ de purge dédié ci-dessous.
-  ipHash                                  String?
-  ipHashPurgeAt                           DateTime?
+  ipHash                                String?
+  ipHashPurgeAt                         DateTime?
 
   @@index([ipHashPurgeAt])
 }
@@ -197,10 +204,10 @@ enum OnlineStatus {
 }
 
 model ProviderProfile {
-  id           String        @id @default(cuid())
-  userId       String        @unique
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  slug         String        @unique
+  id           String       @id @default(cuid())
+  userId       String       @unique
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  slug         String       @unique
   displayName  String
   // Âge auto-déclaré par l'annonceuse, affiché publiquement comme contenu
   // éditorial au même titre que displayName/description — distinct de la
@@ -209,60 +216,60 @@ model ProviderProfile {
   // que ce soit ; seul VerificationRecord.isAdult fait autorité sur la
   // majorité réelle (contrainte #2).
   age          Int?
-  description  String        @db.Text
+  description  String       @db.Text
   cityId       String
-  city         City          @relation(fields: [cityId], references: [id])
+  city         City         @relation(fields: [cityId], references: [id])
   categoryId   String
-  category     Category      @relation(fields: [categoryId], references: [id])
-  onlineStatus OnlineStatus  @default(OFFLINE)
+  category     Category     @relation(fields: [categoryId], references: [id])
+  onlineStatus OnlineStatus @default(OFFLINE)
 
   // Infos complémentaires de la page profil, toutes facultatives et
   // auto-déclarées (contenu éditorial, comme la description). Valeurs
   // autorisées : src/modules/profiles/attributes.ts.
-  heightCm      Int?
-  bodyType      String?
-  hairColor     String?
-  eyeColor      String?
+  heightCm       Int?
+  bodyType       String?
+  hairColor      String?
+  eyeColor       String?
   // Tarifs indicatifs en CHF, affichés seulement : aucun paiement ne
   // transite par la plateforme (ENGINEERING_RULES.md §4).
-  rate30Min     Int?
-  rate1Hour     Int?
-  rate2Hours    Int?
-  rateNight     Int?
-  availableDays String[]      @default([]) // "MON" … "SUN"
-  availableFrom String? // "HH:MM"
-  availableTo   String? // "HH:MM", peut être après minuit
-  receives      Boolean       @default(false) // reçoit (incall)
-  travels       Boolean       @default(false) // se déplace (outcall)
+  rate30Min      Int?
+  rate1Hour      Int?
+  rate2Hours     Int?
+  rateNight      Int?
+  availableDays  String[] @default([]) // "MON" … "SUN"
+  availableFrom  String? // "HH:MM"
+  availableTo    String? // "HH:MM", peut être après minuit
+  receives       Boolean  @default(false) // reçoit (incall)
+  travels        Boolean  @default(false) // se déplace (outcall)
   travelRadiusKm Int? // rayon de déplacement autour de la ville du profil
   tattoos        Boolean? // null = non précisé
   piercings      Boolean?
   origin         String? // région d'origine déclarée (liste ORIGINS), jamais un document
-  clientele      String[]      @default([]) // "MEN" | "WOMEN" | "COUPLES"
+  clientele      String[] @default([]) // "MEN" | "WOMEN" | "COUPLES"
   // Moyens de paiement acceptés directement par la prestataire : simple
   // information, aucun paiement ne transite par la plateforme (§4).
-  paymentMethods String[]      @default([]) // "CASH" | "TWINT" | "CARD"
+  paymentMethods String[] @default([]) // "CASH" | "TWINT" | "CARD"
   cupSize        String? // tour de poitrine déclaré : "A" … "G", "H_PLUS"
   pubicHair      String? // "SHAVED" | "TRIMMED" | "NATURAL"
   // Tarif indicatif « à partir de » (CHF), affiché seulement (§4).
   rateFrom       Int?
   // Moyens de contact acceptés (WHATSAPP, PHONE, EMAIL, INSTAGRAM) : seule
   // l'existence du canal est publique, jamais la coordonnée (contrainte #5).
-  contactMethods String[]      @default([])
+  contactMethods String[] @default([])
   // Salon de rattachement : slug d'un salon de modules/showcase/demo-salons
   // (pas encore de modèle Salon en base).
   salonSlug      String?
 
-  status       ProfileStatus @default(DRAFT)
-  planId       String
-  plan         Plan          @relation(fields: [planId], references: [id])
+  status ProfileStatus @default(DRAFT)
+  planId String
+  plan   Plan          @relation(fields: [planId], references: [id])
 
-  languages ProfileLanguage[]
-  services  ProfileService[]
-  media     Media[]
-  contact   ProfileContact? // 1:1, table séparée à dessein — voir ci-dessous
+  languages    ProfileLanguage[]
+  services     ProfileService[]
+  media        Media[]
+  contact      ProfileContact? // 1:1, table séparée à dessein — voir ci-dessous
   subscription Subscription? // 1:1, voir model Subscription
-  reports   ProfileReport[]
+  reports      ProfileReport[]
 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -399,14 +406,14 @@ enum ModerationDecision {
 }
 
 model ModerationAction {
-  id          String                @id @default(cuid())
+  id          String               @id @default(cuid())
   targetType  ModerationTargetType
   targetId    String
   decision    ModerationDecision
   reason      String
   moderatorId String
-  moderator   User                  @relation("ModeratorActions", fields: [moderatorId], references: [id])
-  createdAt   DateTime              @default(now())
+  moderator   User                 @relation("ModeratorActions", fields: [moderatorId], references: [id])
+  createdAt   DateTime             @default(now())
 
   @@index([targetType, targetId])
 }

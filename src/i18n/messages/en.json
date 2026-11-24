@@ -112,7 +112,11 @@
     "explore": "Explore",
     "providers": "Providers",
     "listYourProfile": "List my profile",
-    "noCommission": "No commission, no middleman: you stay fully in charge of your work."
+    "noCommission": "No commission, no middleman: you stay fully in charge of your work.",
+    "legal": "Legal information",
+    "terms": "Terms of use",
+    "privacy": "Privacy",
+    "imprint": "Legal notice"
   },
   "map": {
     "profileCount": "profiles",
@@ -195,7 +199,10 @@
     "tooManyAttempts": "Too many attempts. Please wait 15 minutes before trying again.",
     "networkError": "Connection failed. Check your network and try again.",
     "authEyebrowLogin": "Provider area",
-    "authEyebrowRegister": "Join VelvetGirl"
+    "authEyebrowRegister": "Join VelvetGirl",
+    "acceptTerms": "I accept the <terms>terms of use</terms> and the <privacy>privacy policy</privacy>.",
+    "consentSensitiveData": "I expressly agree that VelvetGirl processes the information in my listing, which may reveal sensitive data about my intimate life, solely to publish and manage my listing. I can withdraw this consent at any time.",
+    "consentRequired": "Please tick both boxes to create your account."
   },
   "onboarding": {
     "title": "Age & authorisation",
@@ -808,5 +815,24 @@
     "actionError": "The action could not be saved. Please try again.",
     "networkError": "Connection lost. Check your network and try again.",
     "noOnlinePayment": "No payment goes through the platform: payment (invoice, TWINT, bank transfer) is made directly; only its status is recorded here."
+  },
+  "legal": {
+    "eyebrow": "Legal information",
+    "titles": {
+      "terms": "Terms of use",
+      "privacy": "Privacy policy",
+      "imprint": "Legal notice"
+    },
+    "version": "Version of {date}",
+    "draftNotice": "Draft text prepared for the beta, pending legal review. Highlighted items are still to be completed.",
+    "frenchOnly": "This document is currently available in French only. The French version is authoritative."
+  },
+  "ageGate": {
+    "title": "Adults only",
+    "body": "VelvetGirl features listings for adult services. You must be at least 18 years old to enter.",
+    "enter": "I am 18 or older — Enter",
+    "leave": "Leave",
+    "notice": "By entering, you confirm that you are 18 or older and accept our <terms>terms of use</terms>. Your choice is remembered for 90 days on this device (<privacy>privacy</privacy>).",
+    "languages": "Language"
   }
 }

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { revealContact } from "@/modules/profiles/contact-reveal.service";
-import { checkCsrf } from "@/lib/route-helpers";
+import { checkCsrf, checkAgeConfirmed } from "@/lib/route-helpers";
 import { checkRateLimits } from "@/lib/rate-limit";
 import { hashIp, extractClientIp } from "@/lib/ip-hash";
 
@@ -13,6 +13,8 @@ import { hashIp, extractClientIp } from "@/lib/ip-hash";
 const NO_STORE = { "Cache-Control": "no-store" };
 
 export async function POST(request: Request, { params }: { params: Promise<{ slug: string }> }) {
+  const ageError = await checkAgeConfirmed();
+  if (ageError) return ageError;
   const csrfError = await checkCsrf(request);
   if (csrfError) return csrfError;
 

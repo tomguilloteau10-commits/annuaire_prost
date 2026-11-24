@@ -158,3 +158,13 @@
     transform: none;
   }
 }
+
+/* Écran 18+ (components/AgeGate.tsx) : chaque enfant de <body> forme sa
+   propre couche (z-index: 1 ci-dessus) ; la couche qui contient l'écran passe
+   au-dessus de l'en-tête et du pied de page, et la page ne défile plus. */
+body:has([data-age-gate]) {
+  overflow: hidden;
+}
+body:has([data-age-gate]) > :has([data-age-gate]) {
+  z-index: 50;
+}

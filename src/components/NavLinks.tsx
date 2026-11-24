@@ -1,6 +1,7 @@
 "use client";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
+import { FEATURES } from "@/lib/features";
 
 const NAV_ITEMS = [
   { href: "/", key: "home" },
@@ -8,9 +9,9 @@ const NAV_ITEMS = [
   { href: "/categories/masseuse", key: "masseuses" },
   { href: "/categories/dominatrice", key: "bdsm" },
   { href: "/categories/striptease", key: "striptease" },
-  { href: "/salons", key: "salons" },
+  ...(FEATURES.salons ? [{ href: "/salons", key: "salons" }] : []),
   { href: "/stories", key: "stories" },
-  { href: "/cam-live", key: "camLive", soon: true },
+  ...(FEATURES.camLive ? [{ href: "/cam-live", key: "camLive", soon: true }] : []),
 ] as const;
 
 export function NavLinks() {
@@ -39,9 +40,7 @@ export function NavLinks() {
                     active ? "opacity-100" : "opacity-0"
                   }`}
                 />
-                {"soon" in item && (
-                  <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-label={t("soon")} />
-                )}
+                {"soon" in item && <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-label={t("soon")} />}
               </Link>
             </li>
           );
