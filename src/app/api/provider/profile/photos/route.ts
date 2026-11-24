@@ -7,6 +7,7 @@ import {
   uploadProviderPhoto,
   PhotoLimitReachedError,
   MediaTooLargeError,
+  InvalidImageError,
 } from "@/modules/media/media.service";
 import { ALLOWED_MEDIA_CONTENT_TYPES, MAX_MEDIA_UPLOAD_BYTES } from "@/modules/media";
 import { checkCsrf } from "@/lib/route-helpers";
@@ -18,7 +19,9 @@ function hasImageSignature(buffer: Buffer, contentType: string): boolean {
   if (contentType === "image/jpeg") return buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
   if (contentType === "image/png") return buffer.subarray(0, 8).equals(PNG_SIGNATURE);
   if (contentType === "image/webp") {
-    return buffer.subarray(0, 4).toString("ascii") === "RIFF" && buffer.subarray(8, 12).toString("ascii") === "WEBP";
+    return (
+      buffer.subarray(0, 4).toString("ascii") === "RIFF" && buffer.subarray(8, 12).toString("ascii") === "WEBP"
+    );
   }
   return false;
 }
@@ -72,6 +75,9 @@ export async function POST(request: Request) {
     }
     if (error instanceof MediaTooLargeError) {
       return NextResponse.json({ error: "file_too_large" }, { status: 413 });
+    }
+    if (error instanceof InvalidImageError) {
+      return NextResponse.json({ error: "unsupported_content_type" }, { status: 415 });
     }
     throw error;
   }

@@ -1,7 +1,15 @@
 import { prisma } from "@/lib/prisma";
 import { getMediaStorage } from "./index";
 import { canUploadMorePhotos, getProviderEntitlements } from "@/modules/entitlements/entitlements.service";
-import { MAX_MEDIA_UPLOAD_BYTES, type UploadMediaInput } from "./types";
+import {
+  ALLOWED_MEDIA_CONTENT_TYPES,
+  MAX_MEDIA_UPLOAD_BYTES,
+  type AllowedMediaContentType,
+  type UploadMediaInput,
+} from "./types";
+import { sanitizeImage, InvalidImageError } from "./sanitize-image";
+
+export { InvalidImageError };
 
 export class PhotoLimitReachedError extends Error {
   constructor() {
@@ -40,8 +48,15 @@ export async function uploadProviderPhoto(
     throw new PhotoLimitReachedError();
   }
 
+  if (!(ALLOWED_MEDIA_CONTENT_TYPES as readonly string[]).includes(input.contentType)) {
+    throw new InvalidImageError();
+  }
+  // Métadonnées (dont la position GPS) retirées et image redimensionnée
+  // AVANT tout stockage : l'original n'est jamais écrit sur disque.
+  const sanitized = await sanitizeImage(input.buffer, input.contentType as AllowedMediaContentType);
+
   const storage = getMediaStorage();
-  const { storageKey } = await storage.upload(input);
+  const { storageKey } = await storage.upload(sanitized);
 
   const media = await prisma.media.create({
     // Toujours après la dernière photo (le nombre de photos ne suffit pas :
