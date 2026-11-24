@@ -2,6 +2,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { listPublishedProfiles } from "@/modules/profiles/profile.service";
 import { withThumbnails } from "@/modules/profiles/profile-thumbnails";
 import { StoryThumb } from "@/components/public/StoryThumb";
+import { Reveal } from "@/components/ui/Reveal";
 
 // La page ne lit ni searchParams ni cookies : sans ceci, Next.js tente de la
 // pré-rendre au build, où la base n'existe pas (build Docker sans
@@ -27,8 +28,10 @@ export default async function StoriesPage({ params }: { params: Promise<{ locale
         <p className="py-16 text-center text-sm text-ink2-faint">{home("emptyState")}</p>
       ) : (
         <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-          {stories.map((story) => (
-            <StoryThumb key={story.slug} story={story} />
+          {stories.map((story, index) => (
+            <Reveal key={story.slug} delay={(index % 6) * 70}>
+              <StoryThumb story={story} />
+            </Reveal>
           ))}
         </div>
       )}

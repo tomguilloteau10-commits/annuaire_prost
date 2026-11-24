@@ -7,6 +7,7 @@ import { listCategories, listCities, listLanguages } from "@/modules/taxonomies/
 import { getLocalizedLabel } from "@/modules/taxonomies/types";
 import { FilterBar } from "@/components/public/FilterBar";
 import { ProfileCard } from "@/components/public/ProfileCard";
+import { Reveal } from "@/components/ui/Reveal";
 
 export default async function CategoryPage({
   params,
@@ -57,8 +58,10 @@ export default async function CategoryPage({
         <p className="py-16 text-center text-sm text-ink2-faint">{home("emptyState")}</p>
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          {cards.map((profile) => (
-            <ProfileCard key={profile.slug} profile={profile} locale={locale} />
+          {cards.map((profile, index) => (
+            <Reveal key={profile.slug} delay={(index % 4) * 70}>
+              <ProfileCard profile={profile} locale={locale} />
+            </Reveal>
           ))}
         </div>
       )}

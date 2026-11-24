@@ -2,6 +2,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { DEMO_SALONS } from "@/modules/showcase/demo-salons";
 import { SalonCard } from "@/components/public/SalonCard";
 import { listPublishedProfilesBySalon } from "@/modules/profiles/profile.service";
+import { Reveal } from "@/components/ui/Reveal";
 
 // Lit les profils rattachés : rendu à chaque requête, jamais figé au build.
 export const dynamic = "force-dynamic";
@@ -20,8 +21,10 @@ export default async function SalonsPage({ params }: { params: Promise<{ locale:
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {DEMO_SALONS.map((salon) => (
-          <SalonCard key={salon.slug} salon={salon} profiles={profilesBySalon[salon.slug] ?? []} />
+        {DEMO_SALONS.map((salon, index) => (
+          <Reveal key={salon.slug} delay={(index % 3) * 70}>
+            <SalonCard salon={salon} profiles={profilesBySalon[salon.slug] ?? []} />
+          </Reveal>
         ))}
       </div>
 

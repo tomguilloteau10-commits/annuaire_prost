@@ -20,6 +20,7 @@ import { WhyUsSection } from "@/components/public/WhyUsSection";
 import { HorizontalScroller } from "@/components/public/HorizontalScroller";
 import { StoryThumb } from "@/components/public/StoryThumb";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Reveal } from "@/components/ui/Reveal";
 
 const FEATURED_COUNT = 6;
 const STORIES_COUNT = 8;
@@ -73,21 +74,28 @@ export default async function HomePage({
 
   const results = (
     <section id="resultats" className="flex scroll-mt-32 flex-col gap-6">
-      <SectionHeading
-        eyebrow={t("resultsEyebrow")}
-        title={t("resultsTitle")}
-        action={
-          isFiltering && (
-            <span className="text-ink2-muted">{t("resultsCount", { count: profilesWithThumbnails.length })}</span>
-          )
-        }
-      />
+      <Reveal>
+        <SectionHeading
+          eyebrow={t("resultsEyebrow")}
+          title={t("resultsTitle")}
+          action={
+            isFiltering && (
+              <span className="text-ink2-muted">
+                {t("resultsCount", { count: profilesWithThumbnails.length })}
+              </span>
+            )
+          }
+        />
+      </Reveal>
       {profilesWithThumbnails.length === 0 ? (
         <p className="py-16 text-center text-sm text-ink2-faint">{isFiltering ? t("noMatch") : t("emptyState")}</p>
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
-          {profilesWithThumbnails.map((profile) => (
-            <ProfileCard key={profile.slug} profile={profile} locale={locale} />
+          {profilesWithThumbnails.map((profile, index) => (
+            // Cascade ligne par ligne : chaque carte d'une rangée arrive un peu après la précédente.
+            <Reveal key={profile.slug} delay={(index % 4) * 80}>
+              <ProfileCard profile={profile} locale={locale} />
+            </Reveal>
           ))}
         </div>
       )}
@@ -95,26 +103,40 @@ export default async function HomePage({
   );
 
   const map = (
-    <div className="flex flex-col gap-2">
+    <Reveal className="flex flex-col gap-2">
       <ProfileMapLoader locale={locale} />
       <p className="text-center text-xs text-ink2-faint">{t("mapCaption")}</p>
-    </div>
+    </Reveal>
   );
 
   return (
     <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-20 px-4 pb-14 pt-12 sm:pt-20">
       <div className="flex flex-col items-center gap-7 text-center">
-        <p className="inline-flex items-center gap-2 rounded-full border border-hairline2 bg-white/[0.03] px-3.5 py-1.5 text-[10px] font-medium uppercase tracking-[0.1em] text-ink2-muted sm:text-[11px] sm:tracking-[0.18em]">
+        <p
+          style={{ animationDelay: "0ms" }}
+          className="hero-in inline-flex items-center gap-2 rounded-full border border-hairline2 bg-white/[0.03] px-3.5 py-1.5 text-[10px] font-medium uppercase tracking-[0.1em] text-ink2-muted sm:text-[11px] sm:tracking-[0.18em]"
+        >
           <span className="h-1.5 w-1.5 rounded-full bg-accent" />
           {common("betaNotice")}
         </p>
-        <h1 className="max-w-4xl animate-fade-up font-serif text-[2.35rem] font-light leading-[1.05] tracking-tight text-ink2 sm:text-6xl lg:text-7xl">
+        <h1
+          style={{ animationDelay: "90ms" }}
+          className="hero-in max-w-4xl font-serif text-[2.35rem] font-light leading-[1.05] tracking-tight text-ink2 sm:text-6xl lg:text-7xl"
+        >
           {t("heroLead")} <em className="text-gold font-normal">{t("heroAccent")}</em> {t("heroTail")}
         </h1>
-        <p className="max-w-lg text-base leading-relaxed text-ink2-muted sm:text-lg">{t("subtitle")}</p>
+        <p
+          style={{ animationDelay: "200ms" }}
+          className="hero-in max-w-lg text-base leading-relaxed text-ink2-muted sm:text-lg"
+        >
+          {t("subtitle")}
+        </p>
 
         {totalProfiles > 0 && (
-          <dl className="flex items-stretch divide-x divide-hairline2 rounded-2xl border border-hairline bg-white/[0.02] px-2 py-3 backdrop-blur-sm">
+          <dl
+            style={{ animationDelay: "300ms" }}
+            className="hero-in flex items-stretch divide-x divide-hairline2 rounded-2xl border border-hairline bg-white/[0.02] px-2 py-3 backdrop-blur-sm"
+          >
             {[
               { value: totalProfiles, label: t("statsProfiles") },
               { value: totalCities, label: t("statsCities") },
@@ -133,7 +155,10 @@ export default async function HomePage({
 
         {/* Tous les filtres au même endroit, en haut de page (canton, ville,
             catégorie, langue, en ligne + "Plus de filtres"). */}
-        <div className="glass w-full rounded-xl3 p-3 text-left shadow-pop ring-1 ring-inset ring-accent/10 sm:p-4">
+        <div
+          style={{ animationDelay: "400ms" }}
+          className="hero-in glass w-full rounded-xl3 p-3 text-left shadow-pop ring-1 ring-inset ring-accent/10 sm:p-4"
+        >
           <FilterBar
             locale={locale}
             categories={categories}
@@ -149,35 +174,39 @@ export default async function HomePage({
       {isFiltering && results}
 
       {featuredProfiles.length > 0 && (
-        <section className="flex flex-col gap-6">
-          <SectionHeading eyebrow={t("featuredEyebrow")} title={t("featuredTitle")} />
-          <HorizontalScroller label={t("featuredTitle")}>
-            {featuredProfiles.map((profile) => (
-              <div key={profile.slug} className="w-44 shrink-0 snap-start sm:w-56">
-                <ProfileCard profile={profile} locale={locale} featured compact />
-              </div>
-            ))}
-          </HorizontalScroller>
-        </section>
+        <Reveal>
+          <section className="flex flex-col gap-6">
+            <SectionHeading eyebrow={t("featuredEyebrow")} title={t("featuredTitle")} />
+            <HorizontalScroller label={t("featuredTitle")}>
+              {featuredProfiles.map((profile) => (
+                <div key={profile.slug} className="w-44 shrink-0 snap-start sm:w-56">
+                  <ProfileCard profile={profile} locale={locale} featured compact />
+                </div>
+              ))}
+            </HorizontalScroller>
+          </section>
+        </Reveal>
       )}
 
       {stories.length > 0 && (
-        <section className="flex flex-col gap-6">
-          <SectionHeading
-            eyebrow={t("storiesEyebrow")}
-            title={t("storiesTitle")}
-            action={
-              <Link href="/stories" className="text-accent transition-colors hover:text-accent-hover">
-                {t("seeAll")} →
-              </Link>
-            }
-          />
-          <HorizontalScroller label={t("storiesTitle")}>
-            {stories.map((story) => (
-              <StoryThumb key={story.slug} story={story} className="w-28 shrink-0 snap-start sm:w-32" />
-            ))}
-          </HorizontalScroller>
-        </section>
+        <Reveal>
+          <section className="flex flex-col gap-6">
+            <SectionHeading
+              eyebrow={t("storiesEyebrow")}
+              title={t("storiesTitle")}
+              action={
+                <Link href="/stories" className="text-accent transition-colors hover:text-accent-hover">
+                  {t("seeAll")} →
+                </Link>
+              }
+            />
+            <HorizontalScroller label={t("storiesTitle")}>
+              {stories.map((story) => (
+                <StoryThumb key={story.slug} story={story} className="w-28 shrink-0 snap-start sm:w-32" />
+              ))}
+            </HorizontalScroller>
+          </section>
+        </Reveal>
       )}
 
       {map}

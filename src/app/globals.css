@@ -112,3 +112,49 @@
     @apply ring-2 ring-accent/60 ring-offset-2 ring-offset-ink;
   }
 }
+
+/* Apparition au défilement (components/ui/Reveal.tsx) : seul l'état
+   "hidden", posé par le script pour les éléments encore hors de l'écran,
+   masque quelque chose ; le HTML du serveur reste toujours visible. */
+[data-reveal="hidden"],
+[data-reveal="shown"] {
+  transition:
+    opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+[data-reveal="hidden"] {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0);
+}
+
+/* Entrée en cascade du haut de l'accueil, au chargement (CSS seul). */
+.hero-in {
+  animation: fade-up 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Préférence système « réduire les animations » : tout s'affiche
+   directement, sans mouvement ni fondu. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+  [data-reveal="hidden"] {
+    opacity: 1;
+    transform: none;
+  }
+}
