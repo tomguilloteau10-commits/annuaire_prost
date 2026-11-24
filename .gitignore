@@ -32,3 +32,6 @@ prisma/dev.db
 
 # typescript
 *.tsbuildinfo
+
+# version installée localement (mettre-a-jour.sh)
+.version-installee

@@ -18,3 +18,4 @@ storage/media
 .idea
 coverage
 *.log
+.version-installee

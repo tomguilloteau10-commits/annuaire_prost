@@ -4,30 +4,36 @@
 #   ./mettre-a-jour.sh        (depuis le dossier du projet)
 #
 # 1. récupère les dernières modifications ;
-# 2. reconstruit et relance l'application (les migrations de base de
-#    données s'appliquent toutes seules au démarrage) ;
+# 2. reconstruit et relance l'application si la version installée n'est
+#    pas la dernière (les migrations de base de données s'appliquent
+#    toutes seules au démarrage) ;
 # 3. relance le remplissage de la base (seed) UNIQUEMENT si le fichier
-#    prisma/seed.ts a changé — jamais sinon.
+#    prisma/seed.ts a changé depuis la version installée — jamais sinon.
+#
+# La version réellement installée est notée dans .version-installee
+# (fichier local, non versionné) : même si un « git pull » a été fait à la
+# main avant, la reconstruction n'est pas oubliée.
 set -uo pipefail
 cd "$(dirname "$0")"
 
 BRANCH="claude/swiss-directory-platform-foundation-6ytxc6"
+ETAT=".version-installee"
 
 if ! docker info >/dev/null 2>&1; then
   echo "❌ Docker n'est pas lancé. Ouvrez Docker Desktop, attendez qu'il soit prêt, puis relancez la commande."
   exit 1
 fi
 
-AVANT=$(git rev-parse HEAD)
 echo "① Récupération des dernières modifications…"
 if ! git pull --no-rebase --no-edit origin "$BRANCH"; then
   echo "❌ La récupération a échoué (connexion internet, ou fichiers modifiés à la main dans le dossier)."
   echo "   Copiez le message ci-dessus et envoyez-le à Claude."
   exit 1
 fi
-APRES=$(git rev-parse HEAD)
+ACTUELLE=$(git rev-parse HEAD)
+INSTALLEE=$(cat "$ETAT" 2>/dev/null || true)
 
-if [ "$AVANT" = "$APRES" ]; then
+if [ "$ACTUELLE" = "$INSTALLEE" ]; then
   echo "✔ Déjà à jour : aucune nouveauté."
   docker compose up -d >/dev/null 2>&1
   echo "  Site : http://localhost:3000"
@@ -40,7 +46,7 @@ if ! docker compose up -d --build 2>&1 | tail -15; then
   exit 1
 fi
 
-if git diff --name-only "$AVANT" "$APRES" | grep -q '^prisma/seed.ts$'; then
+if [ -n "$INSTALLEE" ] && git diff --name-only "$INSTALLEE" "$ACTUELLE" 2>/dev/null | grep -q '^prisma/seed.ts$'; then
   echo "③ Mise à jour des données de base (seed)…"
   # L'application applique d'abord les migrations au démarrage : on
   # réessaie quelques fois le temps qu'elle soit prête.
@@ -55,5 +61,6 @@ if git diff --name-only "$AVANT" "$APRES" | grep -q '^prisma/seed.ts$'; then
   fi
 fi
 
+echo "$ACTUELLE" > "$ETAT"
 echo ""
 echo "✔ Mise à jour terminée. Site : http://localhost:3000"
