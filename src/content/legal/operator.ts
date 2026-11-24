@@ -16,6 +16,8 @@ export const OPERATOR = {
   responsible: null as string | null,
   /** Hébergeur du site : nom, ville, pays. */
   host: null as string | null,
+  /** Service d'envoi des e-mails (serveur SMTP) : nom et pays. */
+  emailProvider: null as string | null,
   /** Prix de l'abonnement, ex. « 49 CHF » (pour 30 jours). */
   subscriptionPrice: null as string | null,
   /** Ville du for juridique, ex. « Lausanne ». */

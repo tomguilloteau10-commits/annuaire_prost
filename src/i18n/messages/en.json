@@ -32,7 +32,8 @@
     "adminPermits": "Permits",
     "adminProfiles": "Profiles",
     "adminReports": "Reports",
-    "adminSubscriptions": "Subscriptions"
+    "adminSubscriptions": "Subscriptions",
+    "adminOutbox": "Outbox (test)"
   },
   "home": {
     "title": "Find an independent provider in Switzerland",
@@ -202,7 +203,23 @@
     "authEyebrowRegister": "Join VelvetGirl",
     "acceptTerms": "I accept the <terms>terms of use</terms> and the <privacy>privacy policy</privacy>.",
     "consentSensitiveData": "I expressly agree that VelvetGirl processes the information in my listing, which may reveal sensitive data about my intimate life, solely to publish and manage my listing. I can withdraw this consent at any time.",
-    "consentRequired": "Please tick both boxes to create your account."
+    "consentRequired": "Please tick both boxes to create your account.",
+    "forgotLink": "Forgot your password?",
+    "forgotTitle": "Forgot password",
+    "forgotIntro": "Enter your account's email address: we will send you a link to choose a new password.",
+    "forgotSubmit": "Send me the link",
+    "forgotSent": "If an account exists with this address, an email has just been sent. The link is valid for 1 hour. Remember to check your spam folder.",
+    "forgotError": "The request didn't work. Please try again in a moment.",
+    "backToLogin": "Back to sign in",
+    "resetTitle": "New password",
+    "resetNewPassword": "New password",
+    "resetConfirmPassword": "Confirm the password",
+    "resetSubmit": "Save the password",
+    "resetMismatch": "The two passwords do not match.",
+    "resetInvalidLink": "This link is no longer valid (expired or already used).",
+    "resetAskNewLink": "Request a new link",
+    "resetError": "Saving didn't work. Please try again in a moment.",
+    "resetDone": "Password changed. You can now sign in."
   },
   "onboarding": {
     "title": "Age & authorisation",
@@ -346,6 +363,19 @@
       "pausedBody": "Your profile isn't visible in the directory. It's still saved and editable; it will be reactivated once payment is received.",
       "photos": "Up to {maxPhotos} photos.",
       "offline": "No payment on the website: you pay our team directly."
+    },
+    "deleteAccount": {
+      "title": "Delete my account",
+      "explanation": "Deletion is permanent: your listing disappears from the site immediately and your account, photos, contact details and documents are erased. Your subscription stops. This cannot be undone.",
+      "passwordLabel": "Your password, to confirm",
+      "confirmLabel": "I understand that deletion is permanent.",
+      "submit": "Permanently delete my account",
+      "deleting": "Deleting…",
+      "wrongPassword": "Incorrect password.",
+      "error": "Deletion didn't work. Please try again in a moment.",
+      "doneTitle": "Your account has been deleted",
+      "doneBody": "Your listing is no longer visible and your data has been erased. Thank you for using VelvetGirl.",
+      "doneBack": "Back to home"
     }
   },
   "profileEdit": {
@@ -834,5 +864,17 @@
     "leave": "Leave",
     "notice": "By entering, you confirm that you are 18 or older and accept our <terms>terms of use</terms>. Your choice is remembered for 90 days on this device (<privacy>privacy</privacy>).",
     "languages": "Language"
+  },
+  "adminOutbox": {
+    "title": "Test outbox",
+    "notice": "No email server is configured: the site's emails are not sent, they are kept here (24 hours) for testing. Before going live, configure an SMTP server: this page will disappear.",
+    "empty": "No emails yet.",
+    "to": "To:"
+  },
+  "emails": {
+    "passwordReset": {
+      "subject": "Your new VelvetGirl password",
+      "body": "Hello,\n\nYou asked to change the password of your VelvetGirl account. To choose a new one, open this link (valid for 1 hour, single use):\n\n{link}\n\nIf you did not make this request, ignore this email: your current password remains valid.\n\nVelvetGirl"
+    }
   }
 }

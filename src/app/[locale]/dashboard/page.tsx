@@ -10,6 +10,7 @@ import { SubmitProfileButton } from "@/components/provider/SubmitProfileButton";
 import { AvailabilityToggle } from "@/components/provider/AvailabilityToggle";
 import { Card } from "@/components/ui/Card";
 import { SubscriptionCard } from "@/components/provider/SubscriptionCard";
+import { DeleteAccountCard } from "@/components/provider/DeleteAccountCard";
 import { getSubscriptionView } from "@/modules/subscriptions/subscription.service";
 import { PROFILE_EDIT_PATH, VERIFICATION_PATH } from "@/lib/spaces";
 
@@ -29,26 +30,33 @@ function CheckIcon({ done }: { done: boolean }) {
     return <span aria-hidden className="h-7 w-7 shrink-0 rounded-full border-2 border-hairline2" />;
   }
   return (
-    <span aria-hidden className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-success text-[#102017]">
+    <span
+      aria-hidden
+      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-success text-[#102017]"
+    >
       <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
-        <path d="m5 10.5 3.2 3L15 7" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+        <path
+          d="m5 10.5 3.2 3L15 7"
+          stroke="currentColor"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
     </span>
   );
 }
 
-export default async function ProviderDashboardPage({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}) {
+export default async function ProviderDashboardPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
   const user = await requirePageRole(locale, ["PROVIDER"]);
   const t = await getTranslations("dashboard");
 
   const { profile, verification, attestationCompleted } = await getProviderDashboardData(user.id);
-  const extras = profile ? await getProviderDashboardExtras(profile.id) : { hasWhatsapp: false, rejectionReason: null };
+  const extras = profile
+    ? await getProviderDashboardExtras(profile.id)
+    : { hasWhatsapp: false, rejectionReason: null };
   const plan = profile
     ? await getProviderEntitlements(profile.id)
     : await getPlanFeatures((await prisma.plan.findUniqueOrThrow({ where: { code: "founder" } })).id);
@@ -76,7 +84,11 @@ export default async function ProviderDashboardPage({
   const doneCount = state.checklist.filter((item) => item.done).length;
 
   const statusTitle =
-    state.tone === "online" ? t("status.onlineTitle") : state.tone === "pending" ? t("status.pendingTitle") : t("status.actionTitle");
+    state.tone === "online"
+      ? t("status.onlineTitle")
+      : state.tone === "pending"
+        ? t("status.pendingTitle")
+        : t("status.actionTitle");
   const identityPending = state.checklist.some((item) => item.key === "ageVerification" && item.pending);
   const statusBody =
     state.reason === "incomplete"
@@ -193,7 +205,9 @@ export default async function ProviderDashboardPage({
         <Card className="flex flex-col gap-4 p-5">
           <div className="flex flex-col gap-0.5">
             <h2 className="font-serif text-lg font-medium text-ink2">{t("checklist.title")}</h2>
-            <p className="text-sm text-ink2-muted">{t("checklist.progress", { done: doneCount, total: state.checklist.length })}</p>
+            <p className="text-sm text-ink2-muted">
+              {t("checklist.progress", { done: doneCount, total: state.checklist.length })}
+            </p>
           </div>
           <ul className="flex flex-col gap-2">
             {state.checklist.map((item) => (
@@ -245,6 +259,9 @@ export default async function ProviderDashboardPage({
           <SubscriptionCard locale={locale} view={subscription} wasPaid={wasPaid} maxPhotos={plan.maxPhotos} />
         )}
       </div>
+
+      {/* 6. Supprimer mon compte (replié, en dernier). */}
+      <DeleteAccountCard />
     </main>
   );
 }

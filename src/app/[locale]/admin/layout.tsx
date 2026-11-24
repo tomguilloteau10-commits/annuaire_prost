@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { requirePageRole } from "@/lib/page-guards";
 import { AdminTabs } from "@/components/admin/AdminTabs";
+import { getEmailDriver } from "@/modules/email/email.service";
 
 // Espace admin : garde de tout le segment /admin, côté serveur, en plus de
 // la garde propre à chaque page (défense en profondeur). Seul le rôle ADMIN
@@ -26,7 +27,8 @@ export default async function AdminLayout({
   return (
     <NextIntlClientProvider messages={messages}>
       <div className="px-4">
-        <AdminTabs />
+        {/* Boîte d'envoi de test : seulement sans serveur d'e-mail configuré. */}
+        <AdminTabs showOutbox={getEmailDriver() === "outbox"} />
       </div>
       {children}
     </NextIntlClientProvider>

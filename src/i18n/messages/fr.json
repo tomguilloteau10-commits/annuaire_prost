@@ -32,7 +32,8 @@
     "adminPermits": "Permis",
     "adminProfiles": "Profils",
     "adminReports": "Signalements",
-    "adminSubscriptions": "Abonnements"
+    "adminSubscriptions": "Abonnements",
+    "adminOutbox": "Boîte d'envoi (test)"
   },
   "home": {
     "title": "Trouvez une annonceuse indépendante en Suisse",
@@ -202,7 +203,23 @@
     "authEyebrowRegister": "Rejoindre VelvetGirl",
     "acceptTerms": "J'accepte les <terms>conditions d'utilisation</terms> et la <privacy>politique de confidentialité</privacy>.",
     "consentSensitiveData": "J'accepte expressément que VelvetGirl traite les informations de mon annonce, qui peuvent révéler des données sensibles sur ma vie intime, dans le seul but de publier et de gérer mon annonce. Je peux retirer ce consentement à tout moment.",
-    "consentRequired": "Merci de cocher les deux cases pour créer votre compte."
+    "consentRequired": "Merci de cocher les deux cases pour créer votre compte.",
+    "forgotLink": "Mot de passe oublié ?",
+    "forgotTitle": "Mot de passe oublié",
+    "forgotIntro": "Indiquez l'adresse e-mail de votre compte : nous vous enverrons un lien pour choisir un nouveau mot de passe.",
+    "forgotSubmit": "Recevoir le lien",
+    "forgotSent": "Si un compte existe avec cette adresse, un e-mail vient d'être envoyé. Le lien est valable 1 heure. Pensez à regarder dans les indésirables.",
+    "forgotError": "La demande n'a pas fonctionné. Réessayez dans un instant.",
+    "backToLogin": "Retour à la connexion",
+    "resetTitle": "Nouveau mot de passe",
+    "resetNewPassword": "Nouveau mot de passe",
+    "resetConfirmPassword": "Confirmez le mot de passe",
+    "resetSubmit": "Enregistrer le mot de passe",
+    "resetMismatch": "Les deux mots de passe ne sont pas identiques.",
+    "resetInvalidLink": "Ce lien n'est plus valable (expiré ou déjà utilisé).",
+    "resetAskNewLink": "Demander un nouveau lien",
+    "resetError": "L'enregistrement n'a pas fonctionné. Réessayez dans un instant.",
+    "resetDone": "Mot de passe modifié. Vous pouvez vous connecter."
   },
   "onboarding": {
     "title": "Majorité & autorisation",
@@ -346,6 +363,19 @@
       "pausedBody": "Votre profil n'est pas visible dans l'annuaire. Il reste enregistré et modifiable ; il sera réactivé dès le règlement reçu.",
       "photos": "Jusqu'à {maxPhotos} photos.",
       "offline": "Aucun paiement sur le site : le règlement se fait directement avec notre équipe."
+    },
+    "deleteAccount": {
+      "title": "Supprimer mon compte",
+      "explanation": "La suppression est définitive : votre annonce disparaît immédiatement du site et votre compte, vos photos, vos coordonnées et vos documents sont effacés. Votre abonnement s'arrête. Cette action ne peut pas être annulée.",
+      "passwordLabel": "Votre mot de passe, pour confirmer",
+      "confirmLabel": "Je comprends que la suppression est définitive.",
+      "submit": "Supprimer définitivement mon compte",
+      "deleting": "Suppression…",
+      "wrongPassword": "Mot de passe incorrect.",
+      "error": "La suppression n'a pas fonctionné. Réessayez dans un instant.",
+      "doneTitle": "Votre compte a été supprimé",
+      "doneBody": "Votre annonce n'est plus visible et vos données ont été effacées. Merci d'avoir utilisé VelvetGirl.",
+      "doneBack": "Retour à l'accueil"
     }
   },
   "profileEdit": {
@@ -834,5 +864,17 @@
     "leave": "Quitter",
     "notice": "En entrant, vous confirmez avoir 18 ans ou plus et acceptez nos <terms>conditions d'utilisation</terms>. Votre choix est mémorisé 90 jours sur cet appareil (<privacy>confidentialité</privacy>).",
     "languages": "Langue"
+  },
+  "adminOutbox": {
+    "title": "Boîte d'envoi de test",
+    "notice": "Aucun serveur d'e-mail n'est configuré : les e-mails du site ne partent pas, ils sont rangés ici (24 heures) pour les tests. Avant la mise en ligne, configurez un serveur SMTP : cette page disparaîtra.",
+    "empty": "Aucun e-mail pour le moment.",
+    "to": "À :"
+  },
+  "emails": {
+    "passwordReset": {
+      "subject": "Votre nouveau mot de passe VelvetGirl",
+      "body": "Bonjour,\n\nVous avez demandé à changer le mot de passe de votre compte VelvetGirl. Pour en choisir un nouveau, ouvrez ce lien (valable 1 heure, utilisable une seule fois) :\n\n{link}\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez cet e-mail : votre mot de passe actuel reste valable.\n\nVelvetGirl"
+    }
   }
 }

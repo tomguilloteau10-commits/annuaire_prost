@@ -181,6 +181,23 @@ d'attention :
 - Les recherches par ville/distance passent par `$queryRaw` (Prisma ne sait
   pas typer les requêtes géographiques nativement).
 
+## E-mails, mot de passe oublié, suppression de compte
+
+- **Mot de passe oublié** (`/forgot-password`) : lien à usage unique valable
+  1 heure, envoyé par e-mail ; le jeton est placé après `#` (jamais transmis
+  au serveur avec la page) et seul son hash est stocké. La réponse est
+  identique qu'un compte existe ou non. Réservé aux prestataires (admin :
+  `npm run admin:reset-password`). Toutes les sessions sont fermées après
+  le changement.
+- **Envoi des e-mails** (`src/modules/email`) : serveur SMTP si `SMTP_HOST`
+  est défini ; sinon boîte d'envoi de **test** visible par l'admin dans
+  `/admin/outbox` (onglet « Boîte d'envoi (test) », purgée après 24 h).
+  À configurer avant toute mise en ligne (voir `.env.example`).
+- **Suppression du compte** : depuis le tableau de bord (« Supprimer mon
+  compte », mot de passe + confirmation). Efface compte, annonce, photos
+  (fichiers compris), coordonnées, documents, abonnement et journaux liés
+  (`src/modules/account`, test : `tests/invariants/account-deletion.test.ts`).
+
 ## Purge des données à durée de vie limitée
 
 La purge (`src/modules/retention/purge.ts`) efface les pièces d'identité

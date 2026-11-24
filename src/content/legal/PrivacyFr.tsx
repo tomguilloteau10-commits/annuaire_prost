@@ -85,8 +85,8 @@ export function PrivacyFr() {
           <Strong>Données sensibles.</Strong> Votre présence sur l&apos;annuaire peut révéler des informations sur
           votre vie sexuelle, que la loi considère comme des données sensibles. Nous ne les traitons qu&apos;avec
           votre consentement exprès, donné lors de l&apos;inscription, et uniquement pour publier et gérer votre
-          annonce. Vous pouvez retirer ce consentement à tout moment : votre annonce est alors retirée et votre
-          compte supprimé.
+          annonce. Vous pouvez retirer ce consentement à tout moment en supprimant votre compte depuis votre
+          tableau de bord : votre annonce disparaît immédiatement et vos données sont effacées.
         </P>
       </Section>
 
@@ -104,7 +104,9 @@ export function PrivacyFr() {
         <P>
           Vos données ne sont ni vendues, ni louées, ni partagées à des fins publicitaires. Y ont accès :
           l&apos;administration du site, notre hébergeur (<Fill field="host" label="nom et pays de l'hébergeur" />)
-          qui stocke les données pour notre compte, et les autorités lorsque la loi nous y oblige.
+          qui stocke les données pour notre compte, notre service d&apos;envoi d&apos;e-mails (
+          <Fill field="emailProvider" label="nom et pays du service d'e-mail" />) pour les seuls e-mails
+          nécessaires (lien « mot de passe oublié »), et les autorités lorsque la loi nous y oblige.
         </P>
         <P>
           Si des données devaient être hébergées hors de Suisse, ce serait uniquement dans un pays offrant un
@@ -123,6 +125,7 @@ export function PrivacyFr() {
             ["Empreinte d'IP liée à l'affichage d'un contact", "30 jours"],
             ["Empreinte d'IP liée à une connexion ou à l'attestation", "90 jours"],
             ["Session de connexion", "30 jours (12 heures pour l'administration)"],
+            ["Lien « mot de passe oublié »", "1 heure, supprimé après usage"],
             ["Compte, annonce et attestations", "Jusqu'à la suppression du compte"],
           ]}
         />
@@ -140,9 +143,10 @@ export function PrivacyFr() {
         <P>
           Vous pouvez à tout moment demander à consulter vos données, les faire corriger ou supprimer, en recevoir
           une copie dans un format courant, vous opposer à un traitement ou retirer votre consentement, en écrivant
-          à <Fill field="email" label="adresse e-mail de contact" />. Nous répondons dans un délai de 30 jours.
-          Vous pouvez aussi vous adresser au Préposé fédéral à la protection des données et à la transparence
-          (PFPDT, www.edoeb.admin.ch).
+          à <Fill field="email" label="adresse e-mail de contact" />. Les annonceuses peuvent aussi corriger leur
+          annonce et supprimer leur compte elles-mêmes depuis leur tableau de bord. Nous répondons dans un délai de
+          30 jours. Vous pouvez aussi vous adresser au Préposé fédéral à la protection des données et à la
+          transparence (PFPDT, www.edoeb.admin.ch).
         </P>
       </Section>
 

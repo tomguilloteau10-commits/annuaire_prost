@@ -1,7 +1,7 @@
 "use client";
 import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { useCsrfToken } from "@/lib/use-csrf-token";
 import { Button } from "@/components/ui/Button";
 import { FieldGroup, Label, TextInput } from "@/components/ui/Field";
@@ -64,6 +64,12 @@ export function LoginForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        <Link
+          href="/forgot-password"
+          className="self-end text-xs text-ink2-muted transition-colors hover:text-accent"
+        >
+          {t("forgotLink")}
+        </Link>
       </FieldGroup>
       {error && <p className="text-sm text-danger">{error}</p>}
       <Button type="submit" disabled={submitting || !csrfToken}>

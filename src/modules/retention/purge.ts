@@ -73,8 +73,32 @@ async function purgeStaleVerificationAudits(now: Date) {
   return result.count;
 }
 
+/** Liens « mot de passe oublié » expirés ou déjà utilisés. */
+async function purgePasswordResetTokens(now: Date) {
+  const result = await prisma.passwordResetToken.deleteMany({
+    where: { OR: [{ expiresAt: { lt: now } }, { usedAt: { not: null } }] },
+  });
+  return result.count;
+}
+
+/** Boîte d'envoi de test (sans SMTP) : vidée après 24 heures. */
+async function purgeOutboxEmails(now: Date) {
+  const result = await prisma.outboxEmail.deleteMany({ where: { purgeAt: { lt: now } } });
+  return result.count;
+}
+
 export async function purgeExpiredData(now: Date = new Date()) {
-  const [sessions, expiredSessions, attestations, contactLogs, media, verifications, verificationDocuments] = await Promise.all([
+  const [
+    sessions,
+    expiredSessions,
+    attestations,
+    contactLogs,
+    media,
+    verifications,
+    verificationDocuments,
+    resetTokens,
+    outboxEmails,
+  ] = await Promise.all([
     purgeSessionIpHashes(now),
     purgeExpiredSessions(now),
     purgeOnboardingAttestationIpHashes(now),
@@ -83,6 +107,8 @@ export async function purgeExpiredData(now: Date = new Date()) {
     purgeStaleVerificationAudits(now),
     // Pièces d'identité / permis jamais examinés dans le délai maximal.
     purgeExpiredVerificationDocuments(now),
+    purgePasswordResetTokens(now),
+    purgeOutboxEmails(now),
   ]);
 
   logger.info("retention.purge.completed", {
@@ -93,7 +119,19 @@ export async function purgeExpiredData(now: Date = new Date()) {
     rejectedMediaPurged: media,
     verificationAuditsPurged: verifications,
     verificationDocumentsPurged: verificationDocuments,
+    passwordResetTokensPurged: resetTokens,
+    outboxEmailsPurged: outboxEmails,
   });
 
-  return { sessions, expiredSessions, attestations, contactLogs, media, verifications, verificationDocuments };
+  return {
+    sessions,
+    expiredSessions,
+    attestations,
+    contactLogs,
+    media,
+    verifications,
+    verificationDocuments,
+    resetTokens,
+    outboxEmails,
+  };
 }

@@ -33,7 +33,8 @@
     "adminPermits": "Permessi",
     "adminProfiles": "Profili",
     "adminReports": "Segnalazioni",
-    "adminSubscriptions": "Abbonamenti"
+    "adminSubscriptions": "Abbonamenti",
+    "adminOutbox": "Posta in uscita (test)"
   },
   "home": {
     "title": "Trova una fornitrice indipendente in Svizzera",
@@ -203,7 +204,23 @@
     "authEyebrowRegister": "Unisciti a VelvetGirl",
     "acceptTerms": "Accetto le <terms>condizioni d'uso</terms> e l'<privacy>informativa sulla privacy</privacy>.",
     "consentSensitiveData": "Acconsento espressamente che VelvetGirl tratti le informazioni del mio annuncio, che possono rivelare dati degni di particolare protezione sulla mia sfera intima, al solo scopo di pubblicare e gestire il mio annuncio. Posso revocare questo consenso in qualsiasi momento.",
-    "consentRequired": "Seleziona entrambe le caselle per creare il tuo account."
+    "consentRequired": "Seleziona entrambe le caselle per creare il tuo account.",
+    "forgotLink": "Password dimenticata?",
+    "forgotTitle": "Password dimenticata",
+    "forgotIntro": "Indica l'indirizzo e-mail del tuo account: ti invieremo un link per scegliere una nuova password.",
+    "forgotSubmit": "Ricevi il link",
+    "forgotSent": "Se esiste un account con questo indirizzo, è appena stata inviata un'e-mail. Il link è valido 1 ora. Controlla anche la posta indesiderata.",
+    "forgotError": "La richiesta non è andata a buon fine. Riprova tra un attimo.",
+    "backToLogin": "Torna all'accesso",
+    "resetTitle": "Nuova password",
+    "resetNewPassword": "Nuova password",
+    "resetConfirmPassword": "Conferma la password",
+    "resetSubmit": "Salva la password",
+    "resetMismatch": "Le due password non coincidono.",
+    "resetInvalidLink": "Questo link non è più valido (scaduto o già utilizzato).",
+    "resetAskNewLink": "Richiedi un nuovo link",
+    "resetError": "Il salvataggio non è andato a buon fine. Riprova tra un attimo.",
+    "resetDone": "Password modificata. Ora puoi accedere."
   },
   "onboarding": {
     "title": "Maggiore età & autorizzazione",
@@ -347,6 +364,19 @@
       "pausedBody": "Il tuo profilo non è visibile nell'elenco. Resta salvato e modificabile; sarà riattivato appena ricevuto il pagamento.",
       "photos": "Fino a {maxPhotos} foto.",
       "offline": "Nessun pagamento sul sito: paghi direttamente il nostro team."
+    },
+    "deleteAccount": {
+      "title": "Elimina il mio account",
+      "explanation": "L'eliminazione è definitiva: il tuo annuncio scompare subito dal sito e il tuo account, le foto, i contatti e i documenti vengono cancellati. L'abbonamento si interrompe. L'operazione non può essere annullata.",
+      "passwordLabel": "La tua password, per confermare",
+      "confirmLabel": "Capisco che l'eliminazione è definitiva.",
+      "submit": "Elimina definitivamente il mio account",
+      "deleting": "Eliminazione…",
+      "wrongPassword": "Password errata.",
+      "error": "L'eliminazione non è andata a buon fine. Riprova tra un attimo.",
+      "doneTitle": "Il tuo account è stato eliminato",
+      "doneBody": "Il tuo annuncio non è più visibile e i tuoi dati sono stati cancellati. Grazie per aver usato VelvetGirl.",
+      "doneBack": "Torna alla home"
     }
   },
   "profileEdit": {
@@ -835,5 +865,17 @@
     "leave": "Esci",
     "notice": "Entrando confermi di avere almeno 18 anni e accetti le nostre <terms>condizioni d'uso</terms>. La tua scelta viene ricordata per 90 giorni su questo dispositivo (<privacy>privacy</privacy>).",
     "languages": "Lingua"
+  },
+  "adminOutbox": {
+    "title": "Posta in uscita di test",
+    "notice": "Nessun server e-mail è configurato: le e-mail del sito non vengono inviate, sono conservate qui (24 ore) per i test. Prima della messa online, configura un server SMTP: questa pagina scomparirà.",
+    "empty": "Nessuna e-mail per ora.",
+    "to": "A:"
+  },
+  "emails": {
+    "passwordReset": {
+      "subject": "La tua nuova password VelvetGirl",
+      "body": "Buongiorno,\n\nHai chiesto di cambiare la password del tuo account VelvetGirl. Per sceglierne una nuova, apri questo link (valido 1 ora, utilizzabile una sola volta):\n\n{link}\n\nSe non hai fatto tu questa richiesta, ignora questa e-mail: la tua password attuale resta valida.\n\nVelvetGirl"
+    }
   }
 }

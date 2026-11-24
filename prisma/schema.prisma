@@ -54,6 +54,7 @@ model User {
   sensitiveDataConsentAt DateTime?
 
   sessions               Session[]
+  passwordResetTokens    PasswordResetToken[]
   providerProfile        ProviderProfile?
   verificationRecords    VerificationRecord[]
   verificationDocuments  VerificationDocument[]
@@ -543,4 +544,35 @@ model DataRetentionPolicy {
   retentionDays Int
   description   String
   updatedAt     DateTime @updatedAt
+}
+
+// Lien « mot de passe oublié » : seul le hash du jeton est stocké (le jeton
+// lui-même ne figure que dans l'e-mail envoyé). Valable 1 heure, à usage
+// unique ; purgé automatiquement (src/modules/retention/purge.ts).
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// Boîte d'envoi de TEST (pilote d'e-mail « outbox ») : quand aucun serveur
+// SMTP n'est configuré, les e-mails sont rangés ici et lisibles dans
+// /admin/outbox au lieu d'être envoyés. Purgés après 24 heures. Jamais
+// utilisée quand SMTP est configuré (production).
+model OutboxEmail {
+  id        String   @id @default(cuid())
+  recipient String
+  subject   String
+  body      String   @db.Text
+  createdAt DateTime @default(now())
+  purgeAt   DateTime
+
+  @@index([purgeAt])
 }

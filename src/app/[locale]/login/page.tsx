@@ -3,8 +3,15 @@ import { LoginForm } from "@/components/auth/LoginForm";
 import { Card } from "@/components/ui/Card";
 import { redirectIfSignedIn } from "@/lib/page-guards";
 
-export default async function LoginPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function LoginPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ reset?: string }>;
+}) {
   const { locale } = await params;
+  const { reset } = await searchParams;
   setRequestLocale(locale);
   await redirectIfSignedIn(locale);
   const t = await getTranslations("auth");
@@ -12,11 +19,19 @@ export default async function LoginPage({ params }: { params: Promise<{ locale: 
   return (
     <main className="mx-auto flex min-h-[80vh] max-w-3xl flex-col items-center justify-center gap-6 px-4 py-16">
       <Card className="relative flex w-full max-w-sm flex-col items-center gap-6 overflow-hidden p-8 shadow-pop">
-        <div aria-hidden className="pointer-events-none absolute -top-24 left-1/2 h-48 w-64 -translate-x-1/2 rounded-full bg-accent/10 blur-3xl" />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-24 left-1/2 h-48 w-64 -translate-x-1/2 rounded-full bg-accent/10 blur-3xl"
+        />
         <div className="relative flex flex-col items-center gap-2 text-center">
           <p className="eyebrow">{t("authEyebrowLogin")}</p>
           <h1 className="font-serif text-3xl font-normal text-ink2">{t("loginTitle")}</h1>
         </div>
+        {reset === "1" && (
+          <p className="relative w-full rounded-xl border border-success/30 bg-success/10 px-4 py-3 text-center text-sm text-success">
+            {t("resetDone")}
+          </p>
+        )}
         <LoginForm />
       </Card>
     </main>

@@ -130,10 +130,10 @@ export function TermsFr() {
 
       <Section title="10. Suppression du compte">
         <P>
-          Une annonceuse peut demander à tout moment la suppression de son compte et de son annonce en écrivant à{" "}
-          <Fill field="email" label="adresse e-mail de contact" />. L&apos;annonce est retirée du site sans délai
-          et les données sont supprimées, sous réserve des durées de conservation indiquées dans la politique de
-          confidentialité.
+          Une annonceuse peut supprimer à tout moment son compte et son annonce depuis son tableau de bord («
+          Supprimer mon compte », confirmation par mot de passe), ou en écrivant à{" "}
+          <Fill field="email" label="adresse e-mail de contact" />. L&apos;annonce disparaît immédiatement du site
+          et le compte, les photos, les coordonnées et les documents sont effacés définitivement.
         </P>
       </Section>
 
